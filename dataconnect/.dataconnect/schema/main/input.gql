@@ -1,0 +1,598 @@
+"""
+✨ `EventList_KeyOutput` returns the primary key fields of table type `EventList`.
+
+It has the same format as `EventList_Key`, but is only used as mutation return value.
+"""
+scalar EventList_KeyOutput
+"""
+✨ `UserList_KeyOutput` returns the primary key fields of table type `UserList`.
+
+It has the same format as `UserList_Key`, but is only used as mutation return value.
+"""
+scalar UserList_KeyOutput
+"""
+✨ Generated data input type for table 'EventList'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input EventList_Data {
+  """
+  ✨ Generated from Field `EventList`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `EventList`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`
+  """
+  endtime: Timestamp
+  """
+  ✨ `_expr` server value variant of `endtime` (✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`)
+  """
+  endtime_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `endtime` (✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`)
+  """
+  endtime_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `endtime` (✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`)
+  """
+  endtime_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `EventList`.`eventcoord` of type `UUID!`
+  """
+  eventcoord: UUID
+  """
+  ✨ `_expr` server value variant of `eventcoord` (✨ Generated from Field `EventList`.`eventcoord` of type `UUID!`)
+  """
+  eventcoord_expr: UUID_Expr
+  """
+  ✨ Generated from Field `EventList`.`eventdesc` of type `String!`
+  """
+  eventdesc: String
+  """
+  ✨ `_expr` server value variant of `eventdesc` (✨ Generated from Field `EventList`.`eventdesc` of type `String!`)
+  """
+  eventdesc_expr: String_Expr
+  """
+  ✨ Generated from Field `EventList`.`eventid` of type `UUID!`
+  """
+  eventid: UUID
+  """
+  ✨ `_expr` server value variant of `eventid` (✨ Generated from Field `EventList`.`eventid` of type `UUID!`)
+  """
+  eventid_expr: UUID_Expr
+  """
+  ✨ Generated from Field `EventList`.`eventname` of type `String!`
+  """
+  eventname: String
+  """
+  ✨ `_expr` server value variant of `eventname` (✨ Generated from Field `EventList`.`eventname` of type `String!`)
+  """
+  eventname_expr: String_Expr
+  """
+  ✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`
+  """
+  starttime: Timestamp
+  """
+  ✨ `_expr` server value variant of `starttime` (✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`)
+  """
+  starttime_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `starttime` (✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`)
+  """
+  starttime_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `starttime` (✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`)
+  """
+  starttime_update: [Timestamp_Update!]
+}
+"""
+✨ Generated filter input type for table 'EventList'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input EventList_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [EventList_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: EventList_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [EventList_Filter!]
+  """
+  ✨ Generated from Field `EventList`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`
+  """
+  endtime: Timestamp_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventcoord` of type `UUID!`
+  """
+  eventcoord: UUID_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventdesc` of type `String!`
+  """
+  eventdesc: String_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventid` of type `UUID!`
+  """
+  eventid: UUID_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventname` of type `String!`
+  """
+  eventname: String_Filter
+  """
+  ✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`
+  """
+  starttime: Timestamp_Filter
+}
+"""
+✨ Generated first-row input type for table 'EventList'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input EventList_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [EventList_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: EventList_Filter
+}
+"""
+✨ Generated having input type for table 'EventList'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input EventList_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [EventList_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: EventList_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [EventList_Having!]
+  """
+  ✨ Generated from Field `EventList`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`endtime_count` of type `Int!`
+  """
+  endtime_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventcoord_count` of type `Int!`
+  """
+  eventcoord_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventdesc_count` of type `Int!`
+  """
+  eventdesc_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventid_count` of type `Int!`
+  """
+  eventid_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventname_count` of type `Int!`
+  """
+  eventname_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`starttime_count` of type `Int!`
+  """
+  starttime_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`endtime_min` of type `Timestamp`
+  """
+  endtime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `EventList`.`starttime_min` of type `Timestamp`
+  """
+  starttime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `EventList`.`endtime_max` of type `Timestamp`
+  """
+  endtime_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `EventList`.`starttime_max` of type `Timestamp`
+  """
+  starttime_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'EventList'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input EventList_Key {
+  """
+  ✨ Generated from Field `EventList`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `EventList`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'EventList'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input EventList_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: EventList_Filter
+}
+"""
+✨ Generated order input type for table 'EventList'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input EventList_Order {
+  """
+  ✨ Generated from Field `EventList`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`
+  """
+  endtime: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventcoord` of type `UUID!`
+  """
+  eventcoord: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventdesc` of type `String!`
+  """
+  eventdesc: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventid` of type `UUID!`
+  """
+  eventid: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventname` of type `String!`
+  """
+  eventname: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`
+  """
+  starttime: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`endtime_count` of type `Int!`
+  """
+  endtime_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventcoord_count` of type `Int!`
+  """
+  eventcoord_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventdesc_count` of type `Int!`
+  """
+  eventdesc_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventid_count` of type `Int!`
+  """
+  eventid_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventname_count` of type `Int!`
+  """
+  eventname_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`starttime_count` of type `Int!`
+  """
+  starttime_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`endtime_min` of type `Timestamp`
+  """
+  endtime_min: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`starttime_min` of type `Timestamp`
+  """
+  starttime_min: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`endtime_max` of type `Timestamp`
+  """
+  endtime_max: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`starttime_max` of type `Timestamp`
+  """
+  starttime_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'UserList'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input UserList_Data {
+  """
+  ✨ Generated from Field `UserList`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `UserList`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `UserList`.`age` of type `Int!`
+  """
+  age: Int
+  """
+  ✨ `_expr` server value variant of `age` (✨ Generated from Field `UserList`.`age` of type `Int!`)
+  """
+  age_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `age` (✨ Generated from Field `UserList`.`age` of type `Int!`)
+  """
+  age_update: [Int_Update!]
+  """
+  ✨ Generated from Field `UserList`.`firstname` of type `String!`
+  """
+  firstname: String
+  """
+  ✨ `_expr` server value variant of `firstname` (✨ Generated from Field `UserList`.`firstname` of type `String!`)
+  """
+  firstname_expr: String_Expr
+  """
+  ✨ Generated from Field `UserList`.`lastname` of type `String!`
+  """
+  lastname: String
+  """
+  ✨ `_expr` server value variant of `lastname` (✨ Generated from Field `UserList`.`lastname` of type `String!`)
+  """
+  lastname_expr: String_Expr
+  """
+  ✨ Generated from Field `UserList`.`major` of type `String!`
+  """
+  major: String
+  """
+  ✨ `_expr` server value variant of `major` (✨ Generated from Field `UserList`.`major` of type `String!`)
+  """
+  major_expr: String_Expr
+  """
+  ✨ Generated from Field `UserList`.`userid` of type `UUID!`
+  """
+  userid: UUID
+  """
+  ✨ `_expr` server value variant of `userid` (✨ Generated from Field `UserList`.`userid` of type `UUID!`)
+  """
+  userid_expr: UUID_Expr
+}
+"""
+✨ Generated filter input type for table 'UserList'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserList_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [UserList_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: UserList_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [UserList_Filter!]
+  """
+  ✨ Generated from Field `UserList`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `UserList`.`age` of type `Int!`
+  """
+  age: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`firstname` of type `String!`
+  """
+  firstname: String_Filter
+  """
+  ✨ Generated from Field `UserList`.`lastname` of type `String!`
+  """
+  lastname: String_Filter
+  """
+  ✨ Generated from Field `UserList`.`major` of type `String!`
+  """
+  major: String_Filter
+  """
+  ✨ Generated from Field `UserList`.`userid` of type `UUID!`
+  """
+  userid: UUID_Filter
+}
+"""
+✨ Generated first-row input type for table 'UserList'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input UserList_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [UserList_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: UserList_Filter
+}
+"""
+✨ Generated having input type for table 'UserList'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserList_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [UserList_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: UserList_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [UserList_Having!]
+  """
+  ✨ Generated from Field `UserList`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`age_count` of type `Int!`
+  """
+  age_count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`firstname_count` of type `Int!`
+  """
+  firstname_count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`lastname_count` of type `Int!`
+  """
+  lastname_count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`major_count` of type `Int!`
+  """
+  major_count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`userid_count` of type `Int!`
+  """
+  userid_count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`age_sum` of type `Int`
+  """
+  age_sum: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`age_avg` of type `Float`
+  """
+  age_avg: Float_Filter
+  """
+  ✨ Generated from Field `UserList`.`age_min` of type `Int`
+  """
+  age_min: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`age_max` of type `Int`
+  """
+  age_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'UserList'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input UserList_Key {
+  """
+  ✨ Generated from Field `UserList`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `UserList`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'UserList'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input UserList_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: UserList_Filter
+}
+"""
+✨ Generated order input type for table 'UserList'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input UserList_Order {
+  """
+  ✨ Generated from Field `UserList`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`age` of type `Int!`
+  """
+  age: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`firstname` of type `String!`
+  """
+  firstname: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`lastname` of type `String!`
+  """
+  lastname: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`major` of type `String!`
+  """
+  major: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`userid` of type `UUID!`
+  """
+  userid: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`age_count` of type `Int!`
+  """
+  age_count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`firstname_count` of type `Int!`
+  """
+  firstname_count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`lastname_count` of type `Int!`
+  """
+  lastname_count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`major_count` of type `Int!`
+  """
+  major_count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`userid_count` of type `Int!`
+  """
+  userid_count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`age_sum` of type `Int`
+  """
+  age_sum: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`age_avg` of type `Float`
+  """
+  age_avg: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`age_min` of type `Int`
+  """
+  age_min: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`age_max` of type `Int`
+  """
+  age_max: OrderDirection
+}

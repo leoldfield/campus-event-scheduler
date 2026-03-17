@@ -1,0 +1,226 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `EventList` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  eventList_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: EventList_Data!
+  ): EventList_KeyOutput! @fdc_generated(from: "EventList", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `UserList` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userList_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserList_Data!
+  ): UserList_KeyOutput! @fdc_generated(from: "UserList", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `EventList` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  eventList_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [EventList_Data!]!
+  ): [EventList_KeyOutput!]! @fdc_generated(from: "EventList", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `UserList` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userList_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserList_Data!]!
+  ): [UserList_KeyOutput!]! @fdc_generated(from: "UserList", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `EventList` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `EventList`.
+  """
+  eventList_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: EventList_Data!
+  ): EventList_KeyOutput! @fdc_generated(from: "EventList", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `UserList` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserList`.
+  """
+  userList_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserList_Data!
+  ): UserList_KeyOutput! @fdc_generated(from: "UserList", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `EventList` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `EventList`.
+  """
+  eventList_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [EventList_Data!]!
+  ): [EventList_KeyOutput!]! @fdc_generated(from: "EventList", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `UserList` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserList`.
+  """
+  userList_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserList_Data!]!
+  ): [UserList_KeyOutput!]! @fdc_generated(from: "UserList", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `EventList` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `EventList` or `null` if not found.
+  """
+  eventList_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: EventList_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: EventList_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: EventList_Data!
+  ): EventList_KeyOutput @fdc_generated(from: "EventList", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `UserList` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserList` or `null` if not found.
+  """
+  userList_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserList_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserList_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserList_Data!
+  ): UserList_KeyOutput @fdc_generated(from: "UserList", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `EventList` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  eventList_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: EventList_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: EventList_Data!
+  ): Int! @fdc_generated(from: "EventList", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `UserList` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userList_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserList_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserList_Data!
+  ): Int! @fdc_generated(from: "UserList", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `EventList` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  eventList_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: EventList_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: EventList_FirstRow
+  ): EventList_KeyOutput @fdc_generated(from: "EventList", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `UserList` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userList_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: UserList_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserList_FirstRow
+  ): UserList_KeyOutput @fdc_generated(from: "UserList", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `EventList` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  eventList_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: EventList_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "EventList", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserList` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userList_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserList_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserList", purpose: DELETE_MULTIPLE)
+}
