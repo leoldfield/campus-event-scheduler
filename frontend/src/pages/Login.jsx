@@ -6,10 +6,10 @@ export default function Login() {
         <h1>Login</h1>
         <p>Student login page (placeholder).</p>
   
-        <label>Email</label><br />
+        <label>Email </label><br />
         <input className="input" placeholder="email" />
   
-        <label>Password</label><br />
+        <label>Password </label><br />
         <input className="input" type="password" placeholder="password" />
   
         <button className="button">Login</button>
