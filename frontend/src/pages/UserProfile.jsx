@@ -1,5 +1,5 @@
 import React from "react";
-import "/workspaces/campus-event-scheduler/frontend/src/css/UserProfile.css";
+//import "/workspaces/campus-event-scheduler/frontend/src/css/UserProfile.css";
 
 export default function UserProfile() {
     return (
