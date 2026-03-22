@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Events from "./pages/Events";
 import CreateEvent from "./pages/CreateEvent";
+import UserProfile from "./pages/UserProfile.jsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
     <Link to="/create">Create Event</Link>
     <Link to="/login">Login</Link>
     <Link to="/register">Register</Link>
+    <Link to="/UserProfile">Profile</Link>
   </div>
 </nav>
 
@@ -29,6 +31,7 @@ export default function App() {
         <Route path="/create" element={<CreateEvent />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/UserProfile" element={<UserProfile />}/>
       </Routes>
     </div>
   );
