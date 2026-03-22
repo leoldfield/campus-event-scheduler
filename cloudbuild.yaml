@@ -8,8 +8,3 @@ steps:
     dir: 'frontend/'
     id: 'Build Frontend Application'
   # ... other steps
-
-logsBucket: 'gs://cloudbuild-bucket' # Replace with your bucket name
-
-options:
-  logging: GCS_ONLY # Ensures logs go only to your specified GCS bucket
