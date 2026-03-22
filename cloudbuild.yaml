@@ -1,0 +1,10 @@
+steps:
+- name: 'gcr.io/cloud-builders/npm' # Or 'node' if npm is globally available in the image
+  args: ['install']
+  dir: 'frontend/' # This tells Cloud Build to run 'npm install' in the frontend directory
+
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['run', 'build']
+  dir: 'frontend/' # This tells Cloud Build to run 'npm run build' in the frontend directory
+
+# Add further steps as needed, e.g., for deployment
