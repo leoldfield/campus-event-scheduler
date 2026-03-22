@@ -1,11 +1,11 @@
 steps:
   - name: 'gcr.io/cloud-builders/npm'
     args: ['install']
-    dir: 'frontend/'
+    dir: '/'
     id: 'Install Frontend Dependencies'
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'build']
-    dir: 'frontend/'
+    dir: '/'
     id: 'Build Frontend Application'
   # ... other steps
 options:
