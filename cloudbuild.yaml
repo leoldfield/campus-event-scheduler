@@ -1,10 +1,15 @@
 steps:
-- name: 'gcr.io/cloud-builders/npm' # Or 'node' if npm is globally available in the image
-  args: ['install']
-  dir: 'frontend/' # This tells Cloud Build to run 'npm install' in the frontend directory
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install']
+    dir: 'frontend/'
+    id: 'Install Frontend Dependencies'
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'build']
+    dir: 'frontend/'
+    id: 'Build Frontend Application'
+  # ... other steps
 
-- name: 'gcr.io/cloud-builders/npm'
-  args: ['run', 'build']
-  dir: 'frontend/' # This tells Cloud Build to run 'npm run build' in the frontend directory
+logsBucket: 'gs://your-custom-logs-bucket-name' # Replace with your bucket name
 
-# Add further steps as needed, e.g., for deployment
+options:
+  logging: GCS_ONLY # Ensures logs go only to your specified GCS bucket
