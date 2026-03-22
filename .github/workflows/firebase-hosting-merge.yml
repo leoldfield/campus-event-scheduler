@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        working-directory: ./frontend
         run: npm ci
 
       - name: Build frontend
