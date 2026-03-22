@@ -1,12 +1,18 @@
 steps:
+  # Step 1: Install Node.js dependencies
   - name: 'gcr.io/cloud-builders/npm'
-    args: ['install']
-    dir: '/'
+    entrypoint: 'bash' # Use bash to run multiple commands
+    args:
+      - '-c'
+      - |
+        npm cache clean --force && npm install
+    dir: 'frontend/'
     id: 'Install Frontend Dependencies'
+
+   # Step 2: Build the frontend application
   - name: 'gcr.io/cloud-builders/npm'
     args: ['run', 'build']
-    dir: '/'
     id: 'Build Frontend Application'
-  # ... other steps
+
 options:
   logging: CLOUD_LOGGING_ONLY
