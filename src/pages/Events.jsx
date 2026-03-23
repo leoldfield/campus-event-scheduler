@@ -4,16 +4,28 @@ import { dataConnect } from "../firebase";
 
 export default function Events() {
   const [firstName, setFirstName] = useState("");
+  const [loadingName, setLoadingName] = useState(true);
+  const [nameError, setNameError] = useState("");
 
   useEffect(() => {
-    const staticUserId = "574d80c88f164637919d7edd8b69d09c";
+    // UUID must be in canonical 8-4-4-4-12 format.
+    const staticUserId = "574d80c8-8f16-4637-919d-7edd8b69d09c";
 
     getFirstNameById(dataConnect, { id: staticUserId })
       .then(({ data }) => {
-        setFirstName(data.userList?.firstname ?? "");
+        if (!data.userList?.firstname) {
+          setNameError("No user found for the configured static ID.");
+          return;
+        }
+
+        setFirstName(data.userList.firstname);
       })
       .catch((error) => {
         console.error("Failed to load first name", error);
+        setNameError(error?.message || "Failed to load user first name.");
+      })
+      .finally(() => {
+        setLoadingName(false);
       });
   }, []);
 
@@ -51,7 +63,12 @@ export default function Events() {
   return (
     <div>
       <h1>UA Little Rock Campus Events</h1>
-      <h2>Welcome{firstName ? `, ${firstName}` : ""}</h2>
+      <h2>
+        Welcome
+        {loadingName ? "..." : ""}
+        {!loadingName && firstName ? `, ${firstName}` : ""}
+      </h2>
+      {nameError ? <p style={{ color: "#b00020" }}>{nameError}</p> : null}
       <p>Find upcoming University of Arkansas at Little Rock events and register easily.</p>
       
 

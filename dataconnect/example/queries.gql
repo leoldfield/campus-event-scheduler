@@ -46,7 +46,7 @@ mutation CreateEvent($id: UUID!, $eventcoord: UUID!, $eventname: String!, $event
 }
 
 # Get user first name by id
-query GetFirstNameByID($id: UUID!) @auth(level: USER) {
+query GetFirstNameByID($id: UUID!) @auth(level: PUBLIC) {
   userList(id: $id) {
     firstname
   }
