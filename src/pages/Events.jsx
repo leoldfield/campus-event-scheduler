@@ -1,6 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getFirstNameById } from "../dataconnect-generated";
+import { dataConnect } from "../firebase";
 
 export default function Events() {
+  const [firstName, setFirstName] = useState("");
+  const [loadingName, setLoadingName] = useState(true);
+  const [nameError, setNameError] = useState("");
+
+  useEffect(() => {
+    // UUID must be in canonical 8-4-4-4-12 format.
+    const staticUserId = "574d80c8-8f16-4637-919d-7edd8b69d09c";
+
+    getFirstNameById(dataConnect, { id: staticUserId })
+      .then(({ data }) => {
+        if (!data.userList?.firstname) {
+          setNameError("No user found for the configured static ID.");
+          return;
+        }
+
+        setFirstName(data.userList.firstname);
+      })
+      .catch((error) => {
+        console.error("Failed to load first name", error);
+        setNameError(error?.message || "Failed to load user first name.");
+      })
+      .finally(() => {
+        setLoadingName(false);
+      });
+  }, []);
+
   const sampleEvents = [
     {
       id: 1,
@@ -35,7 +63,14 @@ export default function Events() {
   return (
     <div>
       <h1>UA Little Rock Campus Events</h1>
+      <h2>
+        Welcome
+        {loadingName ? "..." : ""}
+        {!loadingName && firstName ? `, ${firstName}` : ""}
+      </h2>
+      {nameError ? <p style={{ color: "#b00020" }}>{nameError}</p> : null}
       <p>Find upcoming University of Arkansas at Little Rock events and register easily.</p>
+      
 
       <div className="grid">
         {sampleEvents.map((event) => (

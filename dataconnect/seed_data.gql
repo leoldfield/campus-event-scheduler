@@ -1,0 +1,32 @@
+mutation SeedData @transaction @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  user1: userList_insert(data: {
+    userid: "00000000-0000-0000-0000-000000000001"
+    firstname: "Alice"
+    lastname: "Smith"
+    age: 15
+    major: "Computer Science"
+  })
+  user2: userList_insert(data: {
+    userid: "00000000-0000-0000-0000-000000000002"
+    firstname: "Bob"
+    lastname: "Johnson"
+    age: 25
+    major: "Archaeology"
+  })
+  event1: eventList_insert(data: {
+    eventid: "10000000-0000-0000-0000-000000000001"
+    eventcoord: "00000000-0000-0000-0000-000000000002"
+    eventname: "Study Session"
+    eventdesc: "Study for math final"
+    starttime: "2026-03-08T12:00:00Z"
+    endtime: "2026-03-08T13:00:00Z"
+  })
+  event2: eventList_insert(data: {
+    eventid: "10000000-0000-0000-0000-000000000002"
+    eventcoord: "00000000-0000-0000-0000-000000000002"
+    eventname: "Charity Drive"
+    eventdesc: "Animal shelter charity drive"
+    starttime: "2026-03-22T12:00:00Z"
+    endtime: "2026-03-22T13:00:00Z"
+  })
+}

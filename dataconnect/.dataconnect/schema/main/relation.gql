@@ -1,0 +1,169 @@
+extend type EventList {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "EventList", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `EventList` table.
+  """
+  _count: Int! @fdc_generated(from: "EventList.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `endtime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  endtime_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.endtime", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `eventcoord` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  eventcoord_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.eventcoord", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `eventdesc` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  eventdesc_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.eventdesc", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `eventname` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  eventname_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.eventname", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `starttime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  starttime_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.starttime", purpose: QUERY_COUNT)
+  """
+  ✨ Minimum of the `endtime` field in the `EventList` table.
+  """
+  endtime_min: Timestamp @fdc_generated(from: "EventList.endtime", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `starttime` field in the `EventList` table.
+  """
+  starttime_min: Timestamp @fdc_generated(from: "EventList.starttime", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `endtime` field in the `EventList` table.
+  """
+  endtime_max: Timestamp @fdc_generated(from: "EventList.endtime", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `starttime` field in the `EventList` table.
+  """
+  starttime_max: Timestamp @fdc_generated(from: "EventList.starttime", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "EventList.id", purpose: GLOBAL_ID)
+}
+extend type UserList {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "UserList", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `UserList` table.
+  """
+  _count: Int! @fdc_generated(from: "UserList.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserList` table where the `age` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  age_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserList.age", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserList` table where the `firstname` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  firstname_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserList.firstname", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserList` table where the `id` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  id_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserList.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserList` table where the `lastname` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lastname_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserList.lastname", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserList` table where the `major` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  major_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserList.major", purpose: QUERY_COUNT)
+  """
+  ✨ Sum the `age` field in the `UserList` table.
+  """
+  age_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Int @fdc_generated(from: "UserList.age", purpose: QUERY_SUM)
+  """
+  ✨ Average the `age` field in the `UserList` table.
+  """
+  age_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "UserList.age", purpose: QUERY_AVG)
+  """
+  ✨ Minimum of the `age` field in the `UserList` table.
+  """
+  age_min: Int @fdc_generated(from: "UserList.age", purpose: QUERY_MIN)
+  """
+  ✨ Maximum of the `age` field in the `UserList` table.
+  """
+  age_max: Int @fdc_generated(from: "UserList.age", purpose: QUERY_MAX)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "UserList.id", purpose: GLOBAL_ID)
+}

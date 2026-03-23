@@ -1,0 +1,16 @@
+type EventList @table {
+  id: UUID!            # primary key, explicit
+  eventcoord: UUID!
+  eventname: String!
+  eventdesc: String!
+  starttime: Timestamp!
+  endtime: Timestamp!
+}
+
+type UserList @table {
+  id: UUID!            # primary key, explicit
+  firstname: String!
+  lastname: String!
+  age: Int!
+  major: String!
+}
