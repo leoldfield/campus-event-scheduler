@@ -19,6 +19,18 @@ exports.listEvents = function listEvents(dc) {
   return executeQuery(listEventsRef(dc));
 };
 
+const listUsersRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListUsers');
+}
+listUsersRef.operationName = 'ListUsers';
+exports.listUsersRef = listUsersRef;
+
+exports.listUsers = function listUsers(dc) {
+  return executeQuery(listUsersRef(dc));
+};
+
 const getEventByIdRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -41,4 +53,16 @@ exports.createEventRef = createEventRef;
 
 exports.createEvent = function createEvent(dcOrVars, vars) {
   return executeMutation(createEventRef(dcOrVars, vars));
+};
+
+const getFirstNameByIdRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetFirstNameByID', inputVars);
+}
+getFirstNameByIdRef.operationName = 'GetFirstNameByID';
+exports.getFirstNameByIdRef = getFirstNameByIdRef;
+
+exports.getFirstNameById = function getFirstNameById(dcOrVars, vars) {
+  return executeQuery(getFirstNameByIdRef(dcOrVars, vars));
 };

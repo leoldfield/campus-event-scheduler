@@ -11,7 +11,9 @@ This README will guide you through the process of using the generated JavaScript
   - [*Connecting to the local Emulator*](#connecting-to-the-local-emulator)
 - [**Queries**](#queries)
   - [*ListEvents*](#listevents)
+  - [*ListUsers*](#listusers)
   - [*GetEventByID*](#geteventbyid)
+  - [*GetFirstNameByID*](#getfirstnamebyid)
 - [**Mutations**](#mutations)
   - [*CreateEvent*](#createevent)
 
@@ -98,13 +100,13 @@ The `data` property is an object of type `ListEventsData`, which is defined in [
 ```typescript
 export interface ListEventsData {
   eventLists: ({
-    eventid: UUIDString;
+    id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
-  })[];
+  } & EventList_Key)[];
 }
 ```
 ### Using `ListEvents`'s action shortcut function
@@ -158,6 +160,103 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## ListUsers
+You can execute the `ListUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listUsers(): QueryPromise<ListUsersData, undefined>;
+
+interface ListUsersRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListUsersData, undefined>;
+}
+export const listUsersRef: ListUsersRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
+
+interface ListUsersRef {
+  ...
+  (dc: DataConnect): QueryRef<ListUsersData, undefined>;
+}
+export const listUsersRef: ListUsersRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listUsersRef:
+```typescript
+const name = listUsersRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListUsers` query has no variables.
+### Return Type
+Recall that executing the `ListUsers` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListUsersData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListUsersData {
+  userLists: ({
+    id: UUIDString;
+    firstname: string;
+    lastname: string;
+    age: number;
+    major: string;
+  } & UserList_Key)[];
+}
+```
+### Using `ListUsers`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listUsers } from '@dataconnect/generated';
+
+
+// Call the `listUsers()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listUsers();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listUsers(dataConnect);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+listUsers().then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+### Using `ListUsers`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listUsersRef } from '@dataconnect/generated';
+
+
+// Call the `listUsersRef()` function to get a reference to the query.
+const ref = listUsersRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listUsersRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
 ## GetEventByID
 You can execute the `GetEventByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
@@ -192,7 +291,7 @@ The `GetEventByID` query requires an argument of type `GetEventByIdVariables`, w
 
 ```typescript
 export interface GetEventByIdVariables {
-  eventid: UUIDString;
+  id: UUIDString;
 }
 ```
 ### Return Type
@@ -202,13 +301,13 @@ The `data` property is an object of type `GetEventByIdData`, which is defined in
 ```typescript
 export interface GetEventByIdData {
   eventList?: {
-    eventid: UUIDString;
+    id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
-  };
+  } & EventList_Key;
 }
 ```
 ### Using `GetEventByID`'s action shortcut function
@@ -219,14 +318,14 @@ import { connectorConfig, getEventById, GetEventByIdVariables } from '@dataconne
 
 // The `GetEventByID` query requires an argument of type `GetEventByIdVariables`:
 const getEventByIdVars: GetEventByIdVariables = {
-  eventid: ..., 
+  id: ..., 
 };
 
 // Call the `getEventById()` function to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await getEventById(getEventByIdVars);
 // Variables can be defined inline as well.
-const { data } = await getEventById({ eventid: ..., });
+const { data } = await getEventById({ id: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -249,13 +348,13 @@ import { connectorConfig, getEventByIdRef, GetEventByIdVariables } from '@dataco
 
 // The `GetEventByID` query requires an argument of type `GetEventByIdVariables`:
 const getEventByIdVars: GetEventByIdVariables = {
-  eventid: ..., 
+  id: ..., 
 };
 
 // Call the `getEventByIdRef()` function to get a reference to the query.
 const ref = getEventByIdRef(getEventByIdVars);
 // Variables can be defined inline as well.
-const ref = getEventByIdRef({ eventid: ..., });
+const ref = getEventByIdRef({ id: ..., });
 
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -271,6 +370,117 @@ console.log(data.eventList);
 executeQuery(ref).then((response) => {
   const data = response.data;
   console.log(data.eventList);
+});
+```
+
+## GetFirstNameByID
+You can execute the `GetFirstNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getFirstNameById(vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+
+interface GetFirstNameByIdRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetFirstNameByIdVariables): QueryRef<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+}
+export const getFirstNameByIdRef: GetFirstNameByIdRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+
+interface GetFirstNameByIdRef {
+  ...
+  (dc: DataConnect, vars: GetFirstNameByIdVariables): QueryRef<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+}
+export const getFirstNameByIdRef: GetFirstNameByIdRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getFirstNameByIdRef:
+```typescript
+const name = getFirstNameByIdRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetFirstNameByID` query requires an argument of type `GetFirstNameByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetFirstNameByIdVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `GetFirstNameByID` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetFirstNameByIdData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetFirstNameByIdData {
+  userList?: {
+    firstname: string;
+  };
+}
+```
+### Using `GetFirstNameByID`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getFirstNameById, GetFirstNameByIdVariables } from '@dataconnect/generated';
+
+// The `GetFirstNameByID` query requires an argument of type `GetFirstNameByIdVariables`:
+const getFirstNameByIdVars: GetFirstNameByIdVariables = {
+  id: ..., 
+};
+
+// Call the `getFirstNameById()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getFirstNameById(getFirstNameByIdVars);
+// Variables can be defined inline as well.
+const { data } = await getFirstNameById({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getFirstNameById(dataConnect, getFirstNameByIdVars);
+
+console.log(data.userList);
+
+// Or, you can use the `Promise` API.
+getFirstNameById(getFirstNameByIdVars).then((response) => {
+  const data = response.data;
+  console.log(data.userList);
+});
+```
+
+### Using `GetFirstNameByID`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getFirstNameByIdRef, GetFirstNameByIdVariables } from '@dataconnect/generated';
+
+// The `GetFirstNameByID` query requires an argument of type `GetFirstNameByIdVariables`:
+const getFirstNameByIdVars: GetFirstNameByIdVariables = {
+  id: ..., 
+};
+
+// Call the `getFirstNameByIdRef()` function to get a reference to the query.
+const ref = getFirstNameByIdRef(getFirstNameByIdVars);
+// Variables can be defined inline as well.
+const ref = getFirstNameByIdRef({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getFirstNameByIdRef(dataConnect, getFirstNameByIdVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userList);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userList);
 });
 ```
 
@@ -323,7 +533,7 @@ The `CreateEvent` mutation requires an argument of type `CreateEventVariables`, 
 
 ```typescript
 export interface CreateEventVariables {
-  eventid: UUIDString;
+  id: UUIDString;
   eventcoord: UUIDString;
   eventname: string;
   eventdesc: string;
@@ -348,7 +558,7 @@ import { connectorConfig, createEvent, CreateEventVariables } from '@dataconnect
 
 // The `CreateEvent` mutation requires an argument of type `CreateEventVariables`:
 const createEventVars: CreateEventVariables = {
-  eventid: ..., 
+  id: ..., 
   eventcoord: ..., 
   eventname: ..., 
   eventdesc: ..., 
@@ -360,7 +570,7 @@ const createEventVars: CreateEventVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createEvent(createEventVars);
 // Variables can be defined inline as well.
-const { data } = await createEvent({ eventid: ..., eventcoord: ..., eventname: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+const { data } = await createEvent({ id: ..., eventcoord: ..., eventname: ..., eventdesc: ..., starttime: ..., endtime: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -383,7 +593,7 @@ import { connectorConfig, createEventRef, CreateEventVariables } from '@dataconn
 
 // The `CreateEvent` mutation requires an argument of type `CreateEventVariables`:
 const createEventVars: CreateEventVariables = {
-  eventid: ..., 
+  id: ..., 
   eventcoord: ..., 
   eventname: ..., 
   eventdesc: ..., 
@@ -394,7 +604,7 @@ const createEventVars: CreateEventVariables = {
 // Call the `createEventRef()` function to get a reference to the mutation.
 const ref = createEventRef(createEventVars);
 // Variables can be defined inline as well.
-const ref = createEventRef({ eventid: ..., eventcoord: ..., eventname: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+const ref = createEventRef({ id: ..., eventcoord: ..., eventname: ..., eventdesc: ..., starttime: ..., endtime: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

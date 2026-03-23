@@ -18,7 +18,9 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*Connecting to the local Emulator*](#connecting-to-the-local-emulator)
 - [**Queries**](#queries)
   - [*ListEvents*](#listevents)
+  - [*ListUsers*](#listusers)
   - [*GetEventByID*](#geteventbyid)
+  - [*GetFirstNameByID*](#getfirstnamebyid)
 - [**Mutations**](#mutations)
   - [*CreateEvent*](#createevent)
 
@@ -134,13 +136,13 @@ To access the data returned by a Query, use the `UseQueryResult.data` field. The
 ```javascript
 export interface ListEventsData {
   eventLists: ({
-    eventid: UUIDString;
+    id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
-  })[];
+  } & EventList_Key)[];
 }
 ```
 
@@ -188,6 +190,81 @@ export default function ListEventsComponent() {
 }
 ```
 
+## ListUsers
+You can execute the `ListUsers` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListUsers(dc: DataConnect, options?: useDataConnectQueryOptions<ListUsersData>): UseDataConnectQueryResult<ListUsersData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListUsers(options?: useDataConnectQueryOptions<ListUsersData>): UseDataConnectQueryResult<ListUsersData, undefined>;
+```
+
+### Variables
+The `ListUsers` Query has no variables.
+### Return Type
+Recall that calling the `ListUsers` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListUsers` Query is of type `ListUsersData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListUsersData {
+  userLists: ({
+    id: UUIDString;
+    firstname: string;
+    lastname: string;
+    age: number;
+    major: string;
+  } & UserList_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListUsers`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useListUsers } from '@dataconnect/generated/react'
+
+export default function ListUsersComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListUsers();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListUsers(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListUsers(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListUsers(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.userLists);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
 ## GetEventByID
 You can execute the `GetEventByID` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
 
@@ -204,7 +281,7 @@ The `GetEventByID` Query requires an argument of type `GetEventByIdVariables`, w
 
 ```javascript
 export interface GetEventByIdVariables {
-  eventid: UUIDString;
+  id: UUIDString;
 }
 ```
 ### Return Type
@@ -216,13 +293,13 @@ To access the data returned by a Query, use the `UseQueryResult.data` field. The
 ```javascript
 export interface GetEventByIdData {
   eventList?: {
-    eventid: UUIDString;
+    id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
-  };
+  } & EventList_Key;
 }
 ```
 
@@ -238,14 +315,14 @@ import { useGetEventById } from '@dataconnect/generated/react'
 export default function GetEventByIdComponent() {
   // The `useGetEventById` Query hook requires an argument of type `GetEventByIdVariables`:
   const getEventByIdVars: GetEventByIdVariables = {
-    eventid: ..., 
+    id: ..., 
   };
 
   // You don't have to do anything to "execute" the Query.
   // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
   const query = useGetEventById(getEventByIdVars);
   // Variables can be defined inline as well.
-  const query = useGetEventById({ eventid: ..., });
+  const query = useGetEventById({ id: ..., });
 
   // You can also pass in a `DataConnect` instance to the Query hook function.
   const dataConnect = getDataConnect(connectorConfig);
@@ -272,6 +349,90 @@ export default function GetEventByIdComponent() {
   // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
   if (query.isSuccess) {
     console.log(query.data.eventList);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## GetFirstNameByID
+You can execute the `GetFirstNameByID` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useGetFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables, options?: useDataConnectQueryOptions<GetFirstNameByIdData>): UseDataConnectQueryResult<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useGetFirstNameById(vars: GetFirstNameByIdVariables, options?: useDataConnectQueryOptions<GetFirstNameByIdData>): UseDataConnectQueryResult<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+```
+
+### Variables
+The `GetFirstNameByID` Query requires an argument of type `GetFirstNameByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface GetFirstNameByIdVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `GetFirstNameByID` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetFirstNameByID` Query is of type `GetFirstNameByIdData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface GetFirstNameByIdData {
+  userList?: {
+    firstname: string;
+  };
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `GetFirstNameByID`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, GetFirstNameByIdVariables } from '@dataconnect/generated';
+import { useGetFirstNameById } from '@dataconnect/generated/react'
+
+export default function GetFirstNameByIdComponent() {
+  // The `useGetFirstNameById` Query hook requires an argument of type `GetFirstNameByIdVariables`:
+  const getFirstNameByIdVars: GetFirstNameByIdVariables = {
+    id: ..., 
+  };
+
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useGetFirstNameById(getFirstNameByIdVars);
+  // Variables can be defined inline as well.
+  const query = useGetFirstNameById({ id: ..., });
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useGetFirstNameById(dataConnect, getFirstNameByIdVars);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetFirstNameById(getFirstNameByIdVars, options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useGetFirstNameById(dataConnect, getFirstNameByIdVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.userList);
   }
   return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
 }
@@ -317,7 +478,7 @@ The `CreateEvent` Mutation requires an argument of type `CreateEventVariables`, 
 
 ```javascript
 export interface CreateEventVariables {
-  eventid: UUIDString;
+  id: UUIDString;
   eventcoord: UUIDString;
   eventname: string;
   eventdesc: string;
@@ -372,7 +533,7 @@ export default function CreateEventComponent() {
   // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
   // The `useCreateEvent` Mutation requires an argument of type `CreateEventVariables`:
   const createEventVars: CreateEventVariables = {
-    eventid: ..., 
+    id: ..., 
     eventcoord: ..., 
     eventname: ..., 
     eventdesc: ..., 
@@ -381,7 +542,7 @@ export default function CreateEventComponent() {
   };
   mutation.mutate(createEventVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ eventid: ..., eventcoord: ..., eventname: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+  mutation.mutate({ id: ..., eventcoord: ..., eventname: ..., eventdesc: ..., starttime: ..., endtime: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

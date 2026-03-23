@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getFirstNameById } from "../dataconnect-generated";
+import { dataConnect } from "../firebase";
 
 export default function Events() {
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    const staticUserId = "574d80c88f164637919d7edd8b69d09c";
+
+    getFirstNameById(dataConnect, { id: staticUserId })
+      .then(({ data }) => {
+        setFirstName(data.userList?.firstname ?? "");
+      })
+      .catch((error) => {
+        console.error("Failed to load first name", error);
+      });
+  }, []);
+
   const sampleEvents = [
     {
       id: 1,
@@ -35,7 +51,9 @@ export default function Events() {
   return (
     <div>
       <h1>UA Little Rock Campus Events</h1>
+      <h2>Welcome{firstName ? `, ${firstName}` : ""}</h2>
       <p>Find upcoming University of Arkansas at Little Rock events and register easily.</p>
+      
 
       <div className="grid">
         {sampleEvents.map((event) => (

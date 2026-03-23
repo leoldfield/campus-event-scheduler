@@ -15,7 +15,7 @@ export interface CreateEventData {
 }
 
 export interface CreateEventVariables {
-  eventid: UUIDString;
+  id: UUIDString;
   eventcoord: UUIDString;
   eventname: string;
   eventdesc: string;
@@ -30,28 +30,48 @@ export interface EventList_Key {
 
 export interface GetEventByIdData {
   eventList?: {
-    eventid: UUIDString;
+    id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
-  };
+  } & EventList_Key;
 }
 
 export interface GetEventByIdVariables {
-  eventid: UUIDString;
+  id: UUIDString;
+}
+
+export interface GetFirstNameByIdData {
+  userList?: {
+    firstname: string;
+  };
+}
+
+export interface GetFirstNameByIdVariables {
+  id: UUIDString;
 }
 
 export interface ListEventsData {
   eventLists: ({
-    eventid: UUIDString;
+    id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
-  })[];
+  } & EventList_Key)[];
+}
+
+export interface ListUsersData {
+  userLists: ({
+    id: UUIDString;
+    firstname: string;
+    lastname: string;
+    age: number;
+    major: string;
+  } & UserList_Key)[];
 }
 
 export interface UserList_Key {
@@ -70,6 +90,18 @@ export const listEventsRef: ListEventsRef;
 
 export function listEvents(): QueryPromise<ListEventsData, undefined>;
 export function listEvents(dc: DataConnect): QueryPromise<ListEventsData, undefined>;
+
+interface ListUsersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListUsersData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListUsersData, undefined>;
+  operationName: string;
+}
+export const listUsersRef: ListUsersRef;
+
+export function listUsers(): QueryPromise<ListUsersData, undefined>;
+export function listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
 
 interface GetEventByIdRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -94,4 +126,16 @@ export const createEventRef: CreateEventRef;
 
 export function createEvent(vars: CreateEventVariables): MutationPromise<CreateEventData, CreateEventVariables>;
 export function createEvent(dc: DataConnect, vars: CreateEventVariables): MutationPromise<CreateEventData, CreateEventVariables>;
+
+interface GetFirstNameByIdRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetFirstNameByIdVariables): QueryRef<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetFirstNameByIdVariables): QueryRef<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+  operationName: string;
+}
+export const getFirstNameByIdRef: GetFirstNameByIdRef;
+
+export function getFirstNameById(vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+export function getFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
 

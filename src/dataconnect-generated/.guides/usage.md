@@ -12,14 +12,18 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useListEvents, useGetEventById, useCreateEvent } from '@dataconnect/generated/react';
+import { useListEvents, useListUsers, useGetEventById, useCreateEvent, useGetFirstNameById } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
 const { data, isPending, isSuccess, isError, error } = useListEvents();
 
+const { data, isPending, isSuccess, isError, error } = useListUsers();
+
 const { data, isPending, isSuccess, isError, error } = useGetEventById(getEventByIdVars);
 
 const { data, isPending, isSuccess, isError, error } = useCreateEvent(createEventVars);
+
+const { data, isPending, isSuccess, isError, error } = useGetFirstNameById(getFirstNameByIdVars);
 
 ```
 
@@ -58,17 +62,23 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { listEvents, getEventById, createEvent } from '@dataconnect/generated';
+import { listEvents, listUsers, getEventById, createEvent, getFirstNameById } from '@dataconnect/generated';
 
 
 // Operation ListEvents: 
 const { data } = await ListEvents(dataConnect);
+
+// Operation ListUsers: 
+const { data } = await ListUsers(dataConnect);
 
 // Operation GetEventByID:  For variables, look at type GetEventByIdVars in ../index.d.ts
 const { data } = await GetEventById(dataConnect, getEventByIdVars);
 
 // Operation CreateEvent:  For variables, look at type CreateEventVars in ../index.d.ts
 const { data } = await CreateEvent(dataConnect, createEventVars);
+
+// Operation GetFirstNameByID:  For variables, look at type GetFirstNameByIdVars in ../index.d.ts
+const { data } = await GetFirstNameById(dataConnect, getFirstNameByIdVars);
 
 
 ```

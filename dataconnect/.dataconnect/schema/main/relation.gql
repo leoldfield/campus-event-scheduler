@@ -35,15 +35,6 @@ extend type EventList {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "EventList.eventdesc", purpose: QUERY_COUNT)
   """
-  ✨ Count the number of rows in the `EventList` table where the `eventid` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  eventid_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "EventList.eventid", purpose: QUERY_COUNT)
-  """
   ✨ Count the number of rows in the `EventList` table where the `eventname` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   eventname_count(
@@ -145,15 +136,6 @@ extend type UserList {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "UserList.major", purpose: QUERY_COUNT)
-  """
-  ✨ Count the number of rows in the `UserList` table where the `userid` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
-  """
-  userid_count(
-    """
-    Set to true to count the number of distinct values.
-    """
-    distinct: Boolean = false
-  ): Int! @fdc_generated(from: "UserList.userid", purpose: QUERY_COUNT)
   """
   ✨ Sum the `age` field in the `UserList` table.
   """
