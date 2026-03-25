@@ -1,0 +1,113 @@
+.create-page {
+  min-height: calc(100vh - 100px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f5f5;
+}
+
+.create-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.create-left-accent {
+  position: absolute;
+  left: 60px;
+  width: 180px;
+  height: 460px;
+  background: linear-gradient(to bottom, #d50000, #b30000);
+  z-index: 0;
+}
+
+.create-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.create-card h1 {
+  font-size: 40px;
+  color: #8b0000;
+  margin-bottom: 10px;
+}
+
+.create-card p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.create-card label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #444;
+}
+
+.create-card input,
+.create-card textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.create-card input:focus,
+.create-card textarea:focus {
+  outline: none;
+  border-color: #9b0000;
+  box-shadow: 0 0 0 3px rgba(155, 0, 0, 0.1);
+}
+
+.create-card textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.create-card button {
+  margin-top: 16px;
+  padding: 12px;
+  width: 100%;
+  border-radius: 999px;
+  border: none;
+  background: #9b0000;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.2s ease;
+}
+
+.create-card button:hover {
+  background: #7f0000;
+}
+
+@media (max-width: 768px) {
+  .create-left-accent {
+    display: none;
+  }
+
+  .create-card {
+    max-width: 90%;
+    padding: 30px 20px;
+  }
+
+  .create-card h1 {
+    font-size: 34px;
+  }
+}
