@@ -11,6 +11,14 @@ type UserList @table {
   id: UUID!            # primary key, explicit
   firstname: String!
   lastname: String!
+  email: String! @unique
+  password: String!
   age: Int!
   major: String!
+}
+
+type Registration @table(name: "registration", key: ["eventId", "userId"]) {
+  eventId: UUID! @col(name: "event_id")
+  userId: UUID! @col(name: "user_id")
+  notif: Boolean @col(name: "notif")
 }

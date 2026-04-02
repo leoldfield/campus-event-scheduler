@@ -82,6 +82,47 @@ extend type EventList {
   """
   _id: ID! @fdc_generated(from: "EventList.id", purpose: GLOBAL_ID)
 }
+extend type Registration {
+  """
+  Implicit metadata field that cannot be written. It provides extra information about query results.
+  """
+  _metadata: _Metadata @fdc_generated(from: "Registration", purpose: METADATA_FIELD)
+  """
+  ✨ Count the number of rows in the `Registration` table.
+  """
+  _count: Int! @fdc_generated(from: "Registration.", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Registration` table where the `eventId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  eventId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Registration.eventId", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Registration` table where the `notif` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  notif_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Registration.notif", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `Registration` table where the `userId` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  userId_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "Registration.userId", purpose: QUERY_COUNT)
+  """
+  A generated field that is used for caching results in SDKs.
+  """
+  _id: ID! @fdc_generated(from: "Registration.eventId,userId", purpose: GLOBAL_ID)
+}
 extend type UserList {
   """
   Implicit metadata field that cannot be written. It provides extra information about query results.
@@ -100,6 +141,15 @@ extend type UserList {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "UserList.age", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserList` table where the `email` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  email_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserList.email", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `UserList` table where the `firstname` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
@@ -136,6 +186,15 @@ extend type UserList {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "UserList.major", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `UserList` table where the `password` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  password_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "UserList.password", purpose: QUERY_COUNT)
   """
   ✨ Sum the `age` field in the `UserList` table.
   """

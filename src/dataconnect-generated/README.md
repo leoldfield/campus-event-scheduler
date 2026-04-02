@@ -14,8 +14,15 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListUsers*](#listusers)
   - [*GetEventByID*](#geteventbyid)
   - [*GetFirstNameByID*](#getfirstnamebyid)
+  - [*GetNameByID*](#getnamebyid)
+  - [*ValidateUserCredentials*](#validateusercredentials)
+  - [*ListRegistrations*](#listregistrations)
+  - [*GetRegistration*](#getregistration)
+  - [*FindUserByEmail*](#finduserbyemail)
 - [**Mutations**](#mutations)
   - [*CreateEvent*](#createevent)
+  - [*CreateRegistration*](#createregistration)
+  - [*CreateUser*](#createuser)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -201,6 +208,8 @@ export interface ListUsersData {
     id: UUIDString;
     firstname: string;
     lastname: string;
+    email: string;
+    password: string;
     age: number;
     major: string;
   } & UserList_Key)[];
@@ -484,6 +493,557 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## GetNameByID
+You can execute the `GetNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getNameById(vars: GetNameByIdVariables): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
+
+interface GetNameByIdRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetNameByIdVariables): QueryRef<GetNameByIdData, GetNameByIdVariables>;
+}
+export const getNameByIdRef: GetNameByIdRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getNameById(dc: DataConnect, vars: GetNameByIdVariables): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
+
+interface GetNameByIdRef {
+  ...
+  (dc: DataConnect, vars: GetNameByIdVariables): QueryRef<GetNameByIdData, GetNameByIdVariables>;
+}
+export const getNameByIdRef: GetNameByIdRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getNameByIdRef:
+```typescript
+const name = getNameByIdRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetNameByID` query requires an argument of type `GetNameByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetNameByIdVariables {
+  id: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `GetNameByID` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetNameByIdData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetNameByIdData {
+  userList?: {
+    firstname: string;
+    lastname: string;
+  };
+}
+```
+### Using `GetNameByID`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getNameById, GetNameByIdVariables } from '@dataconnect/generated';
+
+// The `GetNameByID` query requires an argument of type `GetNameByIdVariables`:
+const getNameByIdVars: GetNameByIdVariables = {
+  id: ..., 
+};
+
+// Call the `getNameById()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getNameById(getNameByIdVars);
+// Variables can be defined inline as well.
+const { data } = await getNameById({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getNameById(dataConnect, getNameByIdVars);
+
+console.log(data.userList);
+
+// Or, you can use the `Promise` API.
+getNameById(getNameByIdVars).then((response) => {
+  const data = response.data;
+  console.log(data.userList);
+});
+```
+
+### Using `GetNameByID`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getNameByIdRef, GetNameByIdVariables } from '@dataconnect/generated';
+
+// The `GetNameByID` query requires an argument of type `GetNameByIdVariables`:
+const getNameByIdVars: GetNameByIdVariables = {
+  id: ..., 
+};
+
+// Call the `getNameByIdRef()` function to get a reference to the query.
+const ref = getNameByIdRef(getNameByIdVars);
+// Variables can be defined inline as well.
+const ref = getNameByIdRef({ id: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getNameByIdRef(dataConnect, getNameByIdVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userList);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userList);
+});
+```
+
+## ValidateUserCredentials
+You can execute the `ValidateUserCredentials` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+validateUserCredentials(vars: ValidateUserCredentialsVariables): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+
+interface ValidateUserCredentialsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: ValidateUserCredentialsVariables): QueryRef<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+}
+export const validateUserCredentialsRef: ValidateUserCredentialsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+validateUserCredentials(dc: DataConnect, vars: ValidateUserCredentialsVariables): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+
+interface ValidateUserCredentialsRef {
+  ...
+  (dc: DataConnect, vars: ValidateUserCredentialsVariables): QueryRef<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+}
+export const validateUserCredentialsRef: ValidateUserCredentialsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the validateUserCredentialsRef:
+```typescript
+const name = validateUserCredentialsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ValidateUserCredentials` query requires an argument of type `ValidateUserCredentialsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface ValidateUserCredentialsVariables {
+  email: string;
+  password: string;
+}
+```
+### Return Type
+Recall that executing the `ValidateUserCredentials` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ValidateUserCredentialsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ValidateUserCredentialsData {
+  userLists: ({
+    id: UUIDString;
+    firstname: string;
+    lastname: string;
+    email: string;
+  } & UserList_Key)[];
+}
+```
+### Using `ValidateUserCredentials`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, validateUserCredentials, ValidateUserCredentialsVariables } from '@dataconnect/generated';
+
+// The `ValidateUserCredentials` query requires an argument of type `ValidateUserCredentialsVariables`:
+const validateUserCredentialsVars: ValidateUserCredentialsVariables = {
+  email: ..., 
+  password: ..., 
+};
+
+// Call the `validateUserCredentials()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await validateUserCredentials(validateUserCredentialsVars);
+// Variables can be defined inline as well.
+const { data } = await validateUserCredentials({ email: ..., password: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await validateUserCredentials(dataConnect, validateUserCredentialsVars);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+validateUserCredentials(validateUserCredentialsVars).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+### Using `ValidateUserCredentials`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, validateUserCredentialsRef, ValidateUserCredentialsVariables } from '@dataconnect/generated';
+
+// The `ValidateUserCredentials` query requires an argument of type `ValidateUserCredentialsVariables`:
+const validateUserCredentialsVars: ValidateUserCredentialsVariables = {
+  email: ..., 
+  password: ..., 
+};
+
+// Call the `validateUserCredentialsRef()` function to get a reference to the query.
+const ref = validateUserCredentialsRef(validateUserCredentialsVars);
+// Variables can be defined inline as well.
+const ref = validateUserCredentialsRef({ email: ..., password: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = validateUserCredentialsRef(dataConnect, validateUserCredentialsVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+## ListRegistrations
+You can execute the `ListRegistrations` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listRegistrations(): QueryPromise<ListRegistrationsData, undefined>;
+
+interface ListRegistrationsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListRegistrationsData, undefined>;
+}
+export const listRegistrationsRef: ListRegistrationsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listRegistrations(dc: DataConnect): QueryPromise<ListRegistrationsData, undefined>;
+
+interface ListRegistrationsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListRegistrationsData, undefined>;
+}
+export const listRegistrationsRef: ListRegistrationsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listRegistrationsRef:
+```typescript
+const name = listRegistrationsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListRegistrations` query has no variables.
+### Return Type
+Recall that executing the `ListRegistrations` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListRegistrationsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListRegistrationsData {
+  registrations: ({
+    eventId: UUIDString;
+    userId: UUIDString;
+    notif?: boolean | null;
+  } & Registration_Key)[];
+}
+```
+### Using `ListRegistrations`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listRegistrations } from '@dataconnect/generated';
+
+
+// Call the `listRegistrations()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listRegistrations();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listRegistrations(dataConnect);
+
+console.log(data.registrations);
+
+// Or, you can use the `Promise` API.
+listRegistrations().then((response) => {
+  const data = response.data;
+  console.log(data.registrations);
+});
+```
+
+### Using `ListRegistrations`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listRegistrationsRef } from '@dataconnect/generated';
+
+
+// Call the `listRegistrationsRef()` function to get a reference to the query.
+const ref = listRegistrationsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listRegistrationsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.registrations);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.registrations);
+});
+```
+
+## GetRegistration
+You can execute the `GetRegistration` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getRegistration(vars: GetRegistrationVariables): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
+
+interface GetRegistrationRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetRegistrationVariables): QueryRef<GetRegistrationData, GetRegistrationVariables>;
+}
+export const getRegistrationRef: GetRegistrationRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getRegistration(dc: DataConnect, vars: GetRegistrationVariables): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
+
+interface GetRegistrationRef {
+  ...
+  (dc: DataConnect, vars: GetRegistrationVariables): QueryRef<GetRegistrationData, GetRegistrationVariables>;
+}
+export const getRegistrationRef: GetRegistrationRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getRegistrationRef:
+```typescript
+const name = getRegistrationRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetRegistration` query requires an argument of type `GetRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetRegistrationVariables {
+  eventId: UUIDString;
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `GetRegistration` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetRegistrationData {
+  registration?: {
+    eventId: UUIDString;
+    userId: UUIDString;
+    notif?: boolean | null;
+  } & Registration_Key;
+}
+```
+### Using `GetRegistration`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getRegistration, GetRegistrationVariables } from '@dataconnect/generated';
+
+// The `GetRegistration` query requires an argument of type `GetRegistrationVariables`:
+const getRegistrationVars: GetRegistrationVariables = {
+  eventId: ..., 
+  userId: ..., 
+};
+
+// Call the `getRegistration()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getRegistration(getRegistrationVars);
+// Variables can be defined inline as well.
+const { data } = await getRegistration({ eventId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getRegistration(dataConnect, getRegistrationVars);
+
+console.log(data.registration);
+
+// Or, you can use the `Promise` API.
+getRegistration(getRegistrationVars).then((response) => {
+  const data = response.data;
+  console.log(data.registration);
+});
+```
+
+### Using `GetRegistration`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getRegistrationRef, GetRegistrationVariables } from '@dataconnect/generated';
+
+// The `GetRegistration` query requires an argument of type `GetRegistrationVariables`:
+const getRegistrationVars: GetRegistrationVariables = {
+  eventId: ..., 
+  userId: ..., 
+};
+
+// Call the `getRegistrationRef()` function to get a reference to the query.
+const ref = getRegistrationRef(getRegistrationVars);
+// Variables can be defined inline as well.
+const ref = getRegistrationRef({ eventId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getRegistrationRef(dataConnect, getRegistrationVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.registration);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.registration);
+});
+```
+
+## FindUserByEmail
+You can execute the `FindUserByEmail` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+findUserByEmail(vars: FindUserByEmailVariables): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+
+interface FindUserByEmailRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: FindUserByEmailVariables): QueryRef<FindUserByEmailData, FindUserByEmailVariables>;
+}
+export const findUserByEmailRef: FindUserByEmailRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+findUserByEmail(dc: DataConnect, vars: FindUserByEmailVariables): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+
+interface FindUserByEmailRef {
+  ...
+  (dc: DataConnect, vars: FindUserByEmailVariables): QueryRef<FindUserByEmailData, FindUserByEmailVariables>;
+}
+export const findUserByEmailRef: FindUserByEmailRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the findUserByEmailRef:
+```typescript
+const name = findUserByEmailRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `FindUserByEmail` query requires an argument of type `FindUserByEmailVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface FindUserByEmailVariables {
+  email: string;
+}
+```
+### Return Type
+Recall that executing the `FindUserByEmail` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `FindUserByEmailData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface FindUserByEmailData {
+  userLists: ({
+    id: UUIDString;
+  } & UserList_Key)[];
+}
+```
+### Using `FindUserByEmail`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, findUserByEmail, FindUserByEmailVariables } from '@dataconnect/generated';
+
+// The `FindUserByEmail` query requires an argument of type `FindUserByEmailVariables`:
+const findUserByEmailVars: FindUserByEmailVariables = {
+  email: ..., 
+};
+
+// Call the `findUserByEmail()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await findUserByEmail(findUserByEmailVars);
+// Variables can be defined inline as well.
+const { data } = await findUserByEmail({ email: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await findUserByEmail(dataConnect, findUserByEmailVars);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+findUserByEmail(findUserByEmailVars).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+### Using `FindUserByEmail`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, findUserByEmailRef, FindUserByEmailVariables } from '@dataconnect/generated';
+
+// The `FindUserByEmail` query requires an argument of type `FindUserByEmailVariables`:
+const findUserByEmailVars: FindUserByEmailVariables = {
+  email: ..., 
+};
+
+// Call the `findUserByEmailRef()` function to get a reference to the query.
+const ref = findUserByEmailRef(findUserByEmailVars);
+// Variables can be defined inline as well.
+const ref = findUserByEmailRef({ email: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = findUserByEmailRef(dataConnect, findUserByEmailVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -620,6 +1180,248 @@ console.log(data.eventList_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.eventList_insert);
+});
+```
+
+## CreateRegistration
+You can execute the `CreateRegistration` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+createRegistration(vars: CreateRegistrationVariables): MutationPromise<CreateRegistrationData, CreateRegistrationVariables>;
+
+interface CreateRegistrationRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateRegistrationVariables): MutationRef<CreateRegistrationData, CreateRegistrationVariables>;
+}
+export const createRegistrationRef: CreateRegistrationRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createRegistration(dc: DataConnect, vars: CreateRegistrationVariables): MutationPromise<CreateRegistrationData, CreateRegistrationVariables>;
+
+interface CreateRegistrationRef {
+  ...
+  (dc: DataConnect, vars: CreateRegistrationVariables): MutationRef<CreateRegistrationData, CreateRegistrationVariables>;
+}
+export const createRegistrationRef: CreateRegistrationRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createRegistrationRef:
+```typescript
+const name = createRegistrationRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreateRegistration` mutation requires an argument of type `CreateRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateRegistrationVariables {
+  eventId: UUIDString;
+  userId: UUIDString;
+  notif?: boolean | null;
+}
+```
+### Return Type
+Recall that executing the `CreateRegistration` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreateRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreateRegistrationData {
+  registration_insert: Registration_Key;
+}
+```
+### Using `CreateRegistration`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createRegistration, CreateRegistrationVariables } from '@dataconnect/generated';
+
+// The `CreateRegistration` mutation requires an argument of type `CreateRegistrationVariables`:
+const createRegistrationVars: CreateRegistrationVariables = {
+  eventId: ..., 
+  userId: ..., 
+  notif: ..., // optional
+};
+
+// Call the `createRegistration()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createRegistration(createRegistrationVars);
+// Variables can be defined inline as well.
+const { data } = await createRegistration({ eventId: ..., userId: ..., notif: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createRegistration(dataConnect, createRegistrationVars);
+
+console.log(data.registration_insert);
+
+// Or, you can use the `Promise` API.
+createRegistration(createRegistrationVars).then((response) => {
+  const data = response.data;
+  console.log(data.registration_insert);
+});
+```
+
+### Using `CreateRegistration`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createRegistrationRef, CreateRegistrationVariables } from '@dataconnect/generated';
+
+// The `CreateRegistration` mutation requires an argument of type `CreateRegistrationVariables`:
+const createRegistrationVars: CreateRegistrationVariables = {
+  eventId: ..., 
+  userId: ..., 
+  notif: ..., // optional
+};
+
+// Call the `createRegistrationRef()` function to get a reference to the mutation.
+const ref = createRegistrationRef(createRegistrationVars);
+// Variables can be defined inline as well.
+const ref = createRegistrationRef({ eventId: ..., userId: ..., notif: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createRegistrationRef(dataConnect, createRegistrationVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.registration_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.registration_insert);
+});
+```
+
+## CreateUser
+You can execute the `CreateUser` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+createUser(vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
+
+interface CreateUserRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: CreateUserVariables): MutationRef<CreateUserData, CreateUserVariables>;
+}
+export const createUserRef: CreateUserRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+createUser(dc: DataConnect, vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
+
+interface CreateUserRef {
+  ...
+  (dc: DataConnect, vars: CreateUserVariables): MutationRef<CreateUserData, CreateUserVariables>;
+}
+export const createUserRef: CreateUserRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the createUserRef:
+```typescript
+const name = createUserRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `CreateUser` mutation requires an argument of type `CreateUserVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface CreateUserVariables {
+  id: UUIDString;
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  age: number;
+  major: string;
+}
+```
+### Return Type
+Recall that executing the `CreateUser` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `CreateUserData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface CreateUserData {
+  userList_insert: UserList_Key;
+}
+```
+### Using `CreateUser`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, createUser, CreateUserVariables } from '@dataconnect/generated';
+
+// The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
+const createUserVars: CreateUserVariables = {
+  id: ..., 
+  firstname: ..., 
+  lastname: ..., 
+  email: ..., 
+  password: ..., 
+  age: ..., 
+  major: ..., 
+};
+
+// Call the `createUser()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await createUser(createUserVars);
+// Variables can be defined inline as well.
+const { data } = await createUser({ id: ..., firstname: ..., lastname: ..., email: ..., password: ..., age: ..., major: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await createUser(dataConnect, createUserVars);
+
+console.log(data.userList_insert);
+
+// Or, you can use the `Promise` API.
+createUser(createUserVars).then((response) => {
+  const data = response.data;
+  console.log(data.userList_insert);
+});
+```
+
+### Using `CreateUser`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, createUserRef, CreateUserVariables } from '@dataconnect/generated';
+
+// The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
+const createUserVars: CreateUserVariables = {
+  id: ..., 
+  firstname: ..., 
+  lastname: ..., 
+  email: ..., 
+  password: ..., 
+  age: ..., 
+  major: ..., 
+};
+
+// Call the `createUserRef()` function to get a reference to the mutation.
+const ref = createUserRef(createUserVars);
+// Variables can be defined inline as well.
+const ref = createUserRef({ id: ..., firstname: ..., lastname: ..., email: ..., password: ..., age: ..., major: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = createUserRef(dataConnect, createUserVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.userList_insert);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userList_insert);
 });
 ```
 

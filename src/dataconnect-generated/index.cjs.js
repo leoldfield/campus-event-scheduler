@@ -66,3 +66,87 @@ exports.getFirstNameByIdRef = getFirstNameByIdRef;
 exports.getFirstNameById = function getFirstNameById(dcOrVars, vars) {
   return executeQuery(getFirstNameByIdRef(dcOrVars, vars));
 };
+
+const getNameByIdRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetNameByID', inputVars);
+}
+getNameByIdRef.operationName = 'GetNameByID';
+exports.getNameByIdRef = getNameByIdRef;
+
+exports.getNameById = function getNameById(dcOrVars, vars) {
+  return executeQuery(getNameByIdRef(dcOrVars, vars));
+};
+
+const validateUserCredentialsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ValidateUserCredentials', inputVars);
+}
+validateUserCredentialsRef.operationName = 'ValidateUserCredentials';
+exports.validateUserCredentialsRef = validateUserCredentialsRef;
+
+exports.validateUserCredentials = function validateUserCredentials(dcOrVars, vars) {
+  return executeQuery(validateUserCredentialsRef(dcOrVars, vars));
+};
+
+const listRegistrationsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListRegistrations');
+}
+listRegistrationsRef.operationName = 'ListRegistrations';
+exports.listRegistrationsRef = listRegistrationsRef;
+
+exports.listRegistrations = function listRegistrations(dc) {
+  return executeQuery(listRegistrationsRef(dc));
+};
+
+const getRegistrationRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetRegistration', inputVars);
+}
+getRegistrationRef.operationName = 'GetRegistration';
+exports.getRegistrationRef = getRegistrationRef;
+
+exports.getRegistration = function getRegistration(dcOrVars, vars) {
+  return executeQuery(getRegistrationRef(dcOrVars, vars));
+};
+
+const createRegistrationRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateRegistration', inputVars);
+}
+createRegistrationRef.operationName = 'CreateRegistration';
+exports.createRegistrationRef = createRegistrationRef;
+
+exports.createRegistration = function createRegistration(dcOrVars, vars) {
+  return executeMutation(createRegistrationRef(dcOrVars, vars));
+};
+
+const createUserRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'CreateUser', inputVars);
+}
+createUserRef.operationName = 'CreateUser';
+exports.createUserRef = createUserRef;
+
+exports.createUser = function createUser(dcOrVars, vars) {
+  return executeMutation(createUserRef(dcOrVars, vars));
+};
+
+const findUserByEmailRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'FindUserByEmail', inputVars);
+}
+findUserByEmailRef.operationName = 'FindUserByEmail';
+exports.findUserByEmailRef = findUserByEmailRef;
+
+exports.findUserByEmail = function findUserByEmail(dcOrVars, vars) {
+  return executeQuery(findUserByEmailRef(dcOrVars, vars));
+};
