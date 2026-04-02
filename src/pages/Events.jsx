@@ -21,8 +21,8 @@ export default function Events() {
         setFirstName(data.userList.firstname);
       })
       .catch((error) => {
-        console.error("Failed to load first name", error);
-        setNameError(error?.message || "Failed to load user first name.");
+        console.error("Failed to load user name", error);
+        setNameError(error?.message || "Failed to load user name.");
       })
       .finally(() => {
         setLoadingName(false);
