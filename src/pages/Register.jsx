@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { createUser, findUserByEmail } from "../dataconnect-generated";
-import { dataConnect } from "../firebase";
+import { auth, getDataConnectClient } from "../firebase";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -36,24 +37,23 @@ export default function Register() {
     setIsSubmitting(true);
 
     try {
-      const { data: existingUserData } = await findUserByEmail(dataConnect, {
+      const { data: existingUserData } = await findUserByEmail(getDataConnectClient(), {
         email: normalizedEmail,
       });
 
-      if (existingUserData.userLists.length > 0) {
-        setError("An account with this email already exists.");
-        return;
+      await createUserWithEmailAndPassword(auth, normalizedEmail, password);
+
+      if (existingUserData.userLists.length === 0) {
+        await createUser(getDataConnectClient(), {
+          id: crypto.randomUUID(),
+          firstname: firstName.trim(),
+          lastname: lastName.trim(),
+          email: normalizedEmail,
+          password,
+          age: parsedAge,
+          major: major.trim(),
+        });
       }
-
-      await createUser(dataConnect, {
-        id: crypto.randomUUID(),
-        firstname: firstName.trim(),
-        lastname: lastName.trim(),
-        email: normalizedEmail,
-        password,
-        age: parsedAge,
-        major: major.trim(),
-      });
 
       setSuccessMessage("Account created. Redirecting to login...");
       setFirstName("");
@@ -66,11 +66,19 @@ export default function Register() {
       setTimeout(() => navigate("/login"), 700);
     } catch (createError) {
       console.error("Failed to create account", createError);
-      const errorMessage = createError?.message || "Failed to create account.";
-      if (errorMessage.toLowerCase().includes("unique")) {
-        setError("An account with this email already exists.");
+      if (createError?.code === "auth/email-already-in-use") {
+        setError("A Firebase login already exists for this email. Please use Login.");
+      } else if (createError?.code === "auth/operation-not-allowed") {
+        setError("Email/Password sign-in is disabled in Firebase Authentication. Enable it in Firebase Console > Authentication > Sign-in method.");
+      } else if (createError?.code === "auth/weak-password") {
+        setError("Password is too weak. Use at least 6 characters.");
       } else {
-        setError(errorMessage);
+        const errorMessage = createError?.message || "Failed to create account.";
+        if (errorMessage.toLowerCase().includes("unique")) {
+          setError("An account with this email already exists.");
+        } else {
+          setError(errorMessage);
+        }
       }
     } finally {
       setIsSubmitting(false);

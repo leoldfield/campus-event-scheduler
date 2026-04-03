@@ -18,6 +18,7 @@ export interface CreateEventVariables {
   id: UUIDString;
   eventcoord: UUIDString;
   eventname: string;
+  location: string;
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
@@ -67,6 +68,7 @@ export interface GetEventByIdData {
     id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
+    location?: string | null;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
@@ -116,6 +118,7 @@ export interface ListEventsData {
     id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
+    location?: string | null;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;

@@ -69,6 +69,14 @@ input EventList_Data {
   """
   eventname_expr: String_Expr
   """
+  ✨ Generated from Field `EventList`.`location` of type `String`
+  """
+  location: String
+  """
+  ✨ `_expr` server value variant of `location` (✨ Generated from Field `EventList`.`location` of type `String`)
+  """
+  location_expr: String_Expr
+  """
   ✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`
   """
   starttime: Timestamp
@@ -121,6 +129,10 @@ input EventList_Filter {
   ✨ Generated from Field `EventList`.`eventname` of type `String!`
   """
   eventname: String_Filter
+  """
+  ✨ Generated from Field `EventList`.`location` of type `String`
+  """
+  location: String_Filter
   """
   ✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`
   """
@@ -183,6 +195,10 @@ input EventList_Having {
   ✨ Generated from Field `EventList`.`id_count` of type `Int!`
   """
   id_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`location_count` of type `Int!`
+  """
+  location_count: Int_Filter
   """
   ✨ Generated from Field `EventList`.`starttime_count` of type `Int!`
   """
@@ -255,6 +271,10 @@ input EventList_Order {
   """
   eventname: OrderDirection
   """
+  ✨ Generated from Field `EventList`.`location` of type `String`
+  """
+  location: OrderDirection
+  """
   ✨ Generated from Field `EventList`.`starttime` of type `Timestamp!`
   """
   starttime: OrderDirection
@@ -282,6 +302,10 @@ input EventList_Order {
   ✨ Generated from Field `EventList`.`id_count` of type `Int!`
   """
   id_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`location_count` of type `Int!`
+  """
+  location_count: OrderDirection
   """
   ✨ Generated from Field `EventList`.`starttime_count` of type `Int!`
   """

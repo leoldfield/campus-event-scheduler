@@ -146,6 +146,7 @@ export interface ListEventsData {
     id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
+    location?: string | null;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
@@ -305,6 +306,7 @@ export interface GetEventByIdData {
     id: UUIDString;
     eventcoord: UUIDString;
     eventname: string;
+    location?: string | null;
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
@@ -909,6 +911,7 @@ export interface CreateEventVariables {
   id: UUIDString;
   eventcoord: UUIDString;
   eventname: string;
+  location: string;
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
@@ -964,13 +967,14 @@ export default function CreateEventComponent() {
     id: ..., 
     eventcoord: ..., 
     eventname: ..., 
+    location: ..., 
     eventdesc: ..., 
     starttime: ..., 
     endtime: ..., 
   };
   mutation.mutate(createEventVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., eventcoord: ..., eventname: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+  mutation.mutate({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

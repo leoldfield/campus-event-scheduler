@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { validateUserCredentials } from "../dataconnect-generated";
-import { dataConnect } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { findUserByEmail } from "../dataconnect-generated";
+import { auth, getDataConnectClient } from "../firebase";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -9,6 +10,19 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const normalizeUuid = (value) => {
+    const compactHex = String(value || "").replace(/-/g, "").toLowerCase();
+    if (/^[0-9a-f]{32}$/.test(compactHex)) {
+      return `${compactHex.slice(0, 8)}-${compactHex.slice(8, 12)}-${compactHex.slice(12, 16)}-${compactHex.slice(16, 20)}-${compactHex.slice(20)}`;
+    }
+
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(value || ""))) {
+      return String(value).toLowerCase();
+    }
+
+    return "";
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,19 +36,28 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const { data } = await validateUserCredentials(dataConnect, {
-        email: email.trim().toLowerCase(),
-        password,
+      const normalizedEmail = email.trim().toLowerCase();
+
+      await signInWithEmailAndPassword(auth, normalizedEmail, password);
+
+      const { data } = await findUserByEmail(getDataConnectClient(), {
+        email: normalizedEmail,
       });
 
       const matchingUser = data.userLists?.[0];
 
       if (!matchingUser) {
-        setError("No matching account was found.");
+        setError("Your account exists in Firebase Auth but is missing a profile record. Please register again.");
         return;
       }
 
-      localStorage.setItem("loggedInUserId", matchingUser.id);
+      const normalizedUserId = normalizeUuid(matchingUser.id);
+      if (!normalizedUserId) {
+        setError("Login succeeded but user ID format is invalid.");
+        return;
+      }
+
+      localStorage.setItem("loggedInUserId", normalizedUserId);
       localStorage.setItem(
         "loggedInUserName",
         `${matchingUser.firstname} ${matchingUser.lastname}`.trim()
@@ -43,7 +66,19 @@ export default function Login() {
       navigate("/");
     } catch (loginError) {
       console.error("Login failed", loginError);
-      setError(loginError?.message || "Login request failed.");
+      if (
+        loginError?.code === "auth/invalid-credential" ||
+        loginError?.code === "auth/user-not-found" ||
+        loginError?.code === "auth/wrong-password"
+      ) {
+        setError("Invalid email or password.");
+      } else if (loginError?.code === "auth/operation-not-allowed") {
+        setError("Email/Password sign-in is disabled in Firebase Authentication. Enable it in Firebase Console > Authentication > Sign-in method.");
+      } else if (loginError?.code === "auth/too-many-requests") {
+        setError("Too many login attempts. Try again later.");
+      } else {
+        setError(loginError?.message || "Login request failed.");
+      }
     } finally {
       setIsSubmitting(false);
     }
