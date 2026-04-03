@@ -16,6 +16,8 @@ query ListUsers @auth(level: USER) {
     id
     firstname
     lastname
+    email
+    password
     age
     major
   }
@@ -49,5 +51,71 @@ mutation CreateEvent($id: UUID!, $eventcoord: UUID!, $eventname: String!, $event
 query GetFirstNameByID($id: UUID!) @auth(level: PUBLIC) {
   userList(id: $id) {
     firstname
+  }
+}
+
+query GetNameByID($id: UUID!) @auth(level: PUBLIC) {
+  userList(id: $id) {
+    firstname
+    lastname
+  }
+}
+
+query ValidateUserCredentials($email: String!, $password: String!) @auth(level: PUBLIC, insecureReason: "Used for MVP login prototype while auth is not yet integrated.") {
+  userLists(where: { email: { eq: $email }, password: { eq: $password } }, limit: 1) {
+    id
+    firstname
+    lastname
+    email
+  }
+}
+
+query ListRegistrations @auth(level: USER) {
+  registrations {
+    eventId
+    userId
+    notif
+  }
+}
+
+query GetRegistration($eventId: UUID!, $userId: UUID!) @auth(level: USER) {
+  registration(key: { eventId: $eventId, userId: $userId }) {
+    eventId
+    userId
+    notif
+  }
+}
+
+mutation CreateRegistration($eventId: UUID!, $userId: UUID!, $notif: Boolean) @auth(level: USER) {
+  registration_insert(data: {
+    eventId: $eventId
+    userId: $userId
+    notif: $notif
+  })
+}
+
+mutation CreateUser(
+  $id: UUID!
+  $firstname: String!
+  $lastname: String!
+  $email: String!
+  $password: String!
+  $age: Int!
+  $major: String!
+) @auth(level: PUBLIC, insecureReason: "Used for MVP signup flow before Firebase Auth integration.") {
+  userList_insert(data: {
+    id: $id
+    firstname: $firstname
+    lastname: $lastname
+    email: $email
+    password: $password
+    age: $age
+    major: $major
+  })
+}
+
+query FindUserByEmail($email: String!) @auth(level: PUBLIC, insecureReason: "Used for duplicate email prevention in signup flow before Firebase Auth integration.") {
+  userLists(where: { email: { eq: $email } }, limit: 1) {
+    id
   }
 }

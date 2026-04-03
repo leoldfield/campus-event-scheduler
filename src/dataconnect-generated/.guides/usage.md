@@ -12,7 +12,7 @@ For each operation, there is a wrapper hook that can be used to call the operati
 
 Here are all of the hooks that get generated:
 ```ts
-import { useListEvents, useListUsers, useGetEventById, useCreateEvent, useGetFirstNameById } from '@dataconnect/generated/react';
+import { useListEvents, useListUsers, useGetEventById, useCreateEvent, useGetFirstNameById, useGetNameById, useValidateUserCredentials, useListRegistrations, useGetRegistration, useCreateRegistration } from '@dataconnect/generated/react';
 // The types of these hooks are available in react/index.d.ts
 
 const { data, isPending, isSuccess, isError, error } = useListEvents();
@@ -24,6 +24,16 @@ const { data, isPending, isSuccess, isError, error } = useGetEventById(getEventB
 const { data, isPending, isSuccess, isError, error } = useCreateEvent(createEventVars);
 
 const { data, isPending, isSuccess, isError, error } = useGetFirstNameById(getFirstNameByIdVars);
+
+const { data, isPending, isSuccess, isError, error } = useGetNameById(getNameByIdVars);
+
+const { data, isPending, isSuccess, isError, error } = useValidateUserCredentials(validateUserCredentialsVars);
+
+const { data, isPending, isSuccess, isError, error } = useListRegistrations();
+
+const { data, isPending, isSuccess, isError, error } = useGetRegistration(getRegistrationVars);
+
+const { data, isPending, isSuccess, isError, error } = useCreateRegistration(createRegistrationVars);
 
 ```
 
@@ -62,7 +72,7 @@ If a user is not using a supported framework, they can use the generated SDK dir
 Here's an example of how to use it with the first 5 operations:
 
 ```js
-import { listEvents, listUsers, getEventById, createEvent, getFirstNameById } from '@dataconnect/generated';
+import { listEvents, listUsers, getEventById, createEvent, getFirstNameById, getNameById, validateUserCredentials, listRegistrations, getRegistration, createRegistration } from '@dataconnect/generated';
 
 
 // Operation ListEvents: 
@@ -79,6 +89,21 @@ const { data } = await CreateEvent(dataConnect, createEventVars);
 
 // Operation GetFirstNameByID:  For variables, look at type GetFirstNameByIdVars in ../index.d.ts
 const { data } = await GetFirstNameById(dataConnect, getFirstNameByIdVars);
+
+// Operation GetNameByID:  For variables, look at type GetNameByIdVars in ../index.d.ts
+const { data } = await GetNameById(dataConnect, getNameByIdVars);
+
+// Operation ValidateUserCredentials:  For variables, look at type ValidateUserCredentialsVars in ../index.d.ts
+const { data } = await ValidateUserCredentials(dataConnect, validateUserCredentialsVars);
+
+// Operation ListRegistrations: 
+const { data } = await ListRegistrations(dataConnect);
+
+// Operation GetRegistration:  For variables, look at type GetRegistrationVars in ../index.d.ts
+const { data } = await GetRegistration(dataConnect, getRegistrationVars);
+
+// Operation CreateRegistration:  For variables, look at type CreateRegistrationVars in ../index.d.ts
+const { data } = await CreateRegistration(dataConnect, createRegistrationVars);
 
 
 ```
