@@ -89,7 +89,7 @@ extend type EventList {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "EventList.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "EventList.id", purpose: ENTITY_ID)
 }
 extend type Registration {
   """
@@ -130,7 +130,7 @@ extend type Registration {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "Registration.eventId,userId", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "Registration.eventId,userId", purpose: ENTITY_ID)
 }
 extend type UserList {
   """
@@ -233,5 +233,5 @@ extend type UserList {
   """
   A generated field that is used for caching results in SDKs.
   """
-  _id: ID! @fdc_generated(from: "UserList.id", purpose: GLOBAL_ID)
+  _id: ID! @fdc_generated(from: "UserList.id", purpose: ENTITY_ID)
 }
