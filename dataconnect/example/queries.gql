@@ -4,6 +4,7 @@ query ListEvents @auth(level: USER) {
     id
     eventcoord
     eventname
+    location
     eventdesc
     starttime
     endtime
@@ -29,6 +30,7 @@ query GetEventByID($id: UUID!) @auth(level: USER) {
     id
     eventcoord
     eventname
+    location
     eventdesc
     starttime
     endtime
@@ -36,11 +38,12 @@ query GetEventByID($id: UUID!) @auth(level: USER) {
 }
 
 # Create an event
-mutation CreateEvent($id: UUID!, $eventcoord: UUID!, $eventname: String!, $eventdesc: String!, $starttime: Timestamp!, $endtime: Timestamp!) @auth(level: USER) {
+mutation CreateEvent($id: UUID!, $eventcoord: UUID!, $eventname: String!, $location: String!, $eventdesc: String!, $starttime: Timestamp!, $endtime: Timestamp!) @auth(level: USER) {
   eventList_insert(data: {
     id: $id
     eventcoord: $eventcoord
     eventname: $eventname
+    location: $location
     eventdesc: $eventdesc
     starttime: $starttime
     endtime: $endtime
