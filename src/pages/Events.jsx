@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getFirstNameById } from "../dataconnect-generated";
-import { dataConnect } from "../firebase";
+import { getDataConnectClient } from "../firebase";
 
 export default function Events() {
   const [firstName, setFirstName] = useState("");
@@ -11,7 +11,7 @@ export default function Events() {
     // UUID must be in canonical 8-4-4-4-12 format.
     const staticUserId = "574d80c8-8f16-4637-919d-7edd8b69d09c";
 
-    getFirstNameById(dataConnect, { id: staticUserId })
+    getFirstNameById(getDataConnectClient(), { id: staticUserId })
       .then(({ data }) => {
         if (!data.userList?.firstname) {
           setNameError("No user found for the configured static ID.");

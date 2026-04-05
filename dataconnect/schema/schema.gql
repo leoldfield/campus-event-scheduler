@@ -2,6 +2,7 @@ type EventList @table {
   id: UUID!            # primary key, explicit
   eventcoord: UUID!
   eventname: String!
+  location: String
   eventdesc: String!
   starttime: Timestamp!
   endtime: Timestamp!
