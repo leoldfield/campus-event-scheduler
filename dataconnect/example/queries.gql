@@ -1,6 +1,6 @@
 # List all events
 query ListEvents @auth(level: USER) {
-  eventLists {
+  eventLists(orderBy: { starttime: ASC }, limit: 10) {
     id
     eventcoord
     eventname
