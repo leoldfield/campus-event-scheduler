@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { findUserByEmail } from "../dataconnect-generated";
+import { findUserByEmail, getUserByFirebaseUid } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
 
 export default function Login() {
@@ -10,6 +10,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const normalizeEmail = (value) => value.trim().toLowerCase();
 
   const normalizeUuid = (value) => {
     const compactHex = String(value || "").replace(/-/g, "").toLowerCase();
@@ -36,15 +38,24 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedEmail = normalizeEmail(email);
 
-      await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      await userCredential.user.getIdToken(true);
 
-      const { data } = await findUserByEmail(getDataConnectClient(), {
-        email: normalizedEmail,
+      const { data: firebaseUidData } = await getUserByFirebaseUid(getDataConnectClient(), {
+        firebaseUid: userCredential.user.uid,
       });
 
-      const matchingUser = data.userLists?.[0];
+      let matchingUser = firebaseUidData.userLists?.[0];
+
+      if (!matchingUser) {
+        const { data } = await findUserByEmail(getDataConnectClient(), {
+          email: normalizedEmail,
+        });
+
+        matchingUser = data.userLists?.[0];
+      }
 
       if (!matchingUser) {
         setError("Your account exists in Firebase Auth but is missing a profile record. Please register again.");
@@ -100,6 +111,8 @@ export default function Login() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
         />
         <br />
         <br />

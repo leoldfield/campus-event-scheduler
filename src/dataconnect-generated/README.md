@@ -19,6 +19,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*ListRegistrations*](#listregistrations)
   - [*GetRegistration*](#getregistration)
   - [*FindUserByEmail*](#finduserbyemail)
+  - [*GetUserByFirebaseUid*](#getuserbyfirebaseuid)
 - [**Mutations**](#mutations)
   - [*CreateEvent*](#createevent)
   - [*CreateRegistration*](#createregistration)
@@ -72,7 +73,7 @@ Below are examples of how to use the `example` connector's generated functions t
 ## ListEvents
 You can execute the `ListEvents` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listEvents(options?: ExecuteQueryOptions): QueryPromise<ListEventsData, undefined>;
+listEvents(): QueryPromise<ListEventsData, undefined>;
 
 interface ListEventsRef {
   ...
@@ -83,7 +84,7 @@ export const listEventsRef: ListEventsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listEvents(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEventsData, undefined>;
+listEvents(dc: DataConnect): QueryPromise<ListEventsData, undefined>;
 
 interface ListEventsRef {
   ...
@@ -171,7 +172,7 @@ executeQuery(ref).then((response) => {
 ## ListUsers
 You can execute the `ListUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+listUsers(): QueryPromise<ListUsersData, undefined>;
 
 interface ListUsersRef {
   ...
@@ -182,7 +183,7 @@ export const listUsersRef: ListUsersRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
 
 interface ListUsersRef {
   ...
@@ -270,7 +271,7 @@ executeQuery(ref).then((response) => {
 ## GetEventByID
 You can execute the `GetEventByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getEventById(vars: GetEventByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
+getEventById(vars: GetEventByIdVariables): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
 
 interface GetEventByIdRef {
   ...
@@ -281,7 +282,7 @@ export const getEventByIdRef: GetEventByIdRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getEventById(dc: DataConnect, vars: GetEventByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
+getEventById(dc: DataConnect, vars: GetEventByIdVariables): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
 
 interface GetEventByIdRef {
   ...
@@ -387,7 +388,7 @@ executeQuery(ref).then((response) => {
 ## GetFirstNameByID
 You can execute the `GetFirstNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getFirstNameById(vars: GetFirstNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+getFirstNameById(vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
 
 interface GetFirstNameByIdRef {
   ...
@@ -398,7 +399,7 @@ export const getFirstNameByIdRef: GetFirstNameByIdRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+getFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
 
 interface GetFirstNameByIdRef {
   ...
@@ -498,7 +499,7 @@ executeQuery(ref).then((response) => {
 ## GetNameByID
 You can execute the `GetNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getNameById(vars: GetNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
+getNameById(vars: GetNameByIdVariables): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
 
 interface GetNameByIdRef {
   ...
@@ -509,7 +510,7 @@ export const getNameByIdRef: GetNameByIdRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getNameById(dc: DataConnect, vars: GetNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
+getNameById(dc: DataConnect, vars: GetNameByIdVariables): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
 
 interface GetNameByIdRef {
   ...
@@ -610,7 +611,7 @@ executeQuery(ref).then((response) => {
 ## ValidateUserCredentials
 You can execute the `ValidateUserCredentials` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-validateUserCredentials(vars: ValidateUserCredentialsVariables, options?: ExecuteQueryOptions): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+validateUserCredentials(vars: ValidateUserCredentialsVariables): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
 
 interface ValidateUserCredentialsRef {
   ...
@@ -621,7 +622,7 @@ export const validateUserCredentialsRef: ValidateUserCredentialsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-validateUserCredentials(dc: DataConnect, vars: ValidateUserCredentialsVariables, options?: ExecuteQueryOptions): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+validateUserCredentials(dc: DataConnect, vars: ValidateUserCredentialsVariables): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
 
 interface ValidateUserCredentialsRef {
   ...
@@ -727,7 +728,7 @@ executeQuery(ref).then((response) => {
 ## ListRegistrations
 You can execute the `ListRegistrations` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listRegistrations(options?: ExecuteQueryOptions): QueryPromise<ListRegistrationsData, undefined>;
+listRegistrations(): QueryPromise<ListRegistrationsData, undefined>;
 
 interface ListRegistrationsRef {
   ...
@@ -738,7 +739,7 @@ export const listRegistrationsRef: ListRegistrationsRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listRegistrations(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListRegistrationsData, undefined>;
+listRegistrations(dc: DataConnect): QueryPromise<ListRegistrationsData, undefined>;
 
 interface ListRegistrationsRef {
   ...
@@ -822,7 +823,7 @@ executeQuery(ref).then((response) => {
 ## GetRegistration
 You can execute the `GetRegistration` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-getRegistration(vars: GetRegistrationVariables, options?: ExecuteQueryOptions): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
+getRegistration(vars: GetRegistrationVariables): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
 
 interface GetRegistrationRef {
   ...
@@ -833,7 +834,7 @@ export const getRegistrationRef: GetRegistrationRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-getRegistration(dc: DataConnect, vars: GetRegistrationVariables, options?: ExecuteQueryOptions): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
+getRegistration(dc: DataConnect, vars: GetRegistrationVariables): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
 
 interface GetRegistrationRef {
   ...
@@ -938,7 +939,7 @@ executeQuery(ref).then((response) => {
 ## FindUserByEmail
 You can execute the `FindUserByEmail` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-findUserByEmail(vars: FindUserByEmailVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+findUserByEmail(vars: FindUserByEmailVariables): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
 
 interface FindUserByEmailRef {
   ...
@@ -949,7 +950,7 @@ export const findUserByEmailRef: FindUserByEmailRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-findUserByEmail(dc: DataConnect, vars: FindUserByEmailVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+findUserByEmail(dc: DataConnect, vars: FindUserByEmailVariables): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
 
 interface FindUserByEmailRef {
   ...
@@ -980,6 +981,10 @@ The `data` property is an object of type `FindUserByEmailData`, which is defined
 export interface FindUserByEmailData {
   userLists: ({
     id: UUIDString;
+    firebaseUid?: string | null;
+    firstname: string;
+    lastname: string;
+    email: string;
   } & UserList_Key)[];
 }
 ```
@@ -1032,6 +1037,121 @@ const ref = findUserByEmailRef({ email: ..., });
 // You can also pass in a `DataConnect` instance to the `QueryRef` function.
 const dataConnect = getDataConnect(connectorConfig);
 const ref = findUserByEmailRef(dataConnect, findUserByEmailVars);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+## GetUserByFirebaseUid
+You can execute the `GetUserByFirebaseUid` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+getUserByFirebaseUid(vars: GetUserByFirebaseUidVariables): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+
+interface GetUserByFirebaseUidRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetUserByFirebaseUidVariables): QueryRef<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+}
+export const getUserByFirebaseUidRef: GetUserByFirebaseUidRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+getUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+
+interface GetUserByFirebaseUidRef {
+  ...
+  (dc: DataConnect, vars: GetUserByFirebaseUidVariables): QueryRef<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+}
+export const getUserByFirebaseUidRef: GetUserByFirebaseUidRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the getUserByFirebaseUidRef:
+```typescript
+const name = getUserByFirebaseUidRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `GetUserByFirebaseUid` query requires an argument of type `GetUserByFirebaseUidVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface GetUserByFirebaseUidVariables {
+  firebaseUid: string;
+}
+```
+### Return Type
+Recall that executing the `GetUserByFirebaseUid` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `GetUserByFirebaseUidData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface GetUserByFirebaseUidData {
+  userLists: ({
+    id: UUIDString;
+    firebaseUid?: string | null;
+    firstname: string;
+    lastname: string;
+    email: string;
+  } & UserList_Key)[];
+}
+```
+### Using `GetUserByFirebaseUid`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, getUserByFirebaseUid, GetUserByFirebaseUidVariables } from '@dataconnect/generated';
+
+// The `GetUserByFirebaseUid` query requires an argument of type `GetUserByFirebaseUidVariables`:
+const getUserByFirebaseUidVars: GetUserByFirebaseUidVariables = {
+  firebaseUid: ..., 
+};
+
+// Call the `getUserByFirebaseUid()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await getUserByFirebaseUid(getUserByFirebaseUidVars);
+// Variables can be defined inline as well.
+const { data } = await getUserByFirebaseUid({ firebaseUid: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await getUserByFirebaseUid(dataConnect, getUserByFirebaseUidVars);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+getUserByFirebaseUid(getUserByFirebaseUidVars).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+### Using `GetUserByFirebaseUid`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, getUserByFirebaseUidRef, GetUserByFirebaseUidVariables } from '@dataconnect/generated';
+
+// The `GetUserByFirebaseUid` query requires an argument of type `GetUserByFirebaseUidVariables`:
+const getUserByFirebaseUidVars: GetUserByFirebaseUidVariables = {
+  firebaseUid: ..., 
+};
+
+// Call the `getUserByFirebaseUidRef()` function to get a reference to the query.
+const ref = getUserByFirebaseUidRef(getUserByFirebaseUidVars);
+// Variables can be defined inline as well.
+const ref = getUserByFirebaseUidRef({ firebaseUid: ..., });
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = getUserByFirebaseUidRef(dataConnect, getUserByFirebaseUidVars);
 
 // Call `executeQuery()` on the reference to execute the query.
 // You can use the `await` keyword to wait for the promise to resolve.
@@ -1338,6 +1458,7 @@ The `CreateUser` mutation requires an argument of type `CreateUserVariables`, wh
 ```typescript
 export interface CreateUserVariables {
   id: UUIDString;
+  firebaseUid?: string | null;
   firstname: string;
   lastname: string;
   email: string;
@@ -1364,6 +1485,7 @@ import { connectorConfig, createUser, CreateUserVariables } from '@dataconnect/g
 // The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
 const createUserVars: CreateUserVariables = {
   id: ..., 
+  firebaseUid: ..., // optional
   firstname: ..., 
   lastname: ..., 
   email: ..., 
@@ -1376,7 +1498,7 @@ const createUserVars: CreateUserVariables = {
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createUser(createUserVars);
 // Variables can be defined inline as well.
-const { data } = await createUser({ id: ..., firstname: ..., lastname: ..., email: ..., password: ..., age: ..., major: ..., });
+const { data } = await createUser({ id: ..., firebaseUid: ..., firstname: ..., lastname: ..., email: ..., password: ..., age: ..., major: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1400,6 +1522,7 @@ import { connectorConfig, createUserRef, CreateUserVariables } from '@dataconnec
 // The `CreateUser` mutation requires an argument of type `CreateUserVariables`:
 const createUserVars: CreateUserVariables = {
   id: ..., 
+  firebaseUid: ..., // optional
   firstname: ..., 
   lastname: ..., 
   email: ..., 
@@ -1411,7 +1534,7 @@ const createUserVars: CreateUserVariables = {
 // Call the `createUserRef()` function to get a reference to the mutation.
 const ref = createUserRef(createUserVars);
 // Variables can be defined inline as well.
-const ref = createUserRef({ id: ..., firstname: ..., lastname: ..., email: ..., password: ..., age: ..., major: ..., });
+const ref = createUserRef({ id: ..., firebaseUid: ..., firstname: ..., lastname: ..., email: ..., password: ..., age: ..., major: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

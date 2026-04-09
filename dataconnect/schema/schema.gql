@@ -10,6 +10,7 @@ type EventList @table {
 
 type UserList @table {
   id: UUID!            # primary key, explicit
+  firebaseUid: String @unique
   firstname: String!
   lastname: String!
   email: String! @unique

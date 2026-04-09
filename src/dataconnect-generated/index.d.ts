@@ -1,4 +1,4 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -40,6 +40,7 @@ export interface CreateUserData {
 
 export interface CreateUserVariables {
   id: UUIDString;
+  firebaseUid?: string | null;
   firstname: string;
   lastname: string;
   email: string;
@@ -56,6 +57,10 @@ export interface EventList_Key {
 export interface FindUserByEmailData {
   userLists: ({
     id: UUIDString;
+    firebaseUid?: string | null;
+    firstname: string;
+    lastname: string;
+    email: string;
   } & UserList_Key)[];
 }
 
@@ -111,6 +116,20 @@ export interface GetRegistrationData {
 export interface GetRegistrationVariables {
   eventId: UUIDString;
   userId: UUIDString;
+}
+
+export interface GetUserByFirebaseUidData {
+  userLists: ({
+    id: UUIDString;
+    firebaseUid?: string | null;
+    firstname: string;
+    lastname: string;
+    email: string;
+  } & UserList_Key)[];
+}
+
+export interface GetUserByFirebaseUidVariables {
+  firebaseUid: string;
 }
 
 export interface ListEventsData {
@@ -179,8 +198,8 @@ interface ListEventsRef {
 }
 export const listEventsRef: ListEventsRef;
 
-export function listEvents(options?: ExecuteQueryOptions): QueryPromise<ListEventsData, undefined>;
-export function listEvents(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListEventsData, undefined>;
+export function listEvents(): QueryPromise<ListEventsData, undefined>;
+export function listEvents(dc: DataConnect): QueryPromise<ListEventsData, undefined>;
 
 interface ListUsersRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -191,8 +210,8 @@ interface ListUsersRef {
 }
 export const listUsersRef: ListUsersRef;
 
-export function listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
-export function listUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
+export function listUsers(): QueryPromise<ListUsersData, undefined>;
+export function listUsers(dc: DataConnect): QueryPromise<ListUsersData, undefined>;
 
 interface GetEventByIdRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -203,8 +222,8 @@ interface GetEventByIdRef {
 }
 export const getEventByIdRef: GetEventByIdRef;
 
-export function getEventById(vars: GetEventByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
-export function getEventById(dc: DataConnect, vars: GetEventByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
+export function getEventById(vars: GetEventByIdVariables): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
+export function getEventById(dc: DataConnect, vars: GetEventByIdVariables): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
 
 interface CreateEventRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -227,8 +246,8 @@ interface GetFirstNameByIdRef {
 }
 export const getFirstNameByIdRef: GetFirstNameByIdRef;
 
-export function getFirstNameById(vars: GetFirstNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
-export function getFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+export function getFirstNameById(vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
+export function getFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
 
 interface GetNameByIdRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -239,8 +258,8 @@ interface GetNameByIdRef {
 }
 export const getNameByIdRef: GetNameByIdRef;
 
-export function getNameById(vars: GetNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
-export function getNameById(dc: DataConnect, vars: GetNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
+export function getNameById(vars: GetNameByIdVariables): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
+export function getNameById(dc: DataConnect, vars: GetNameByIdVariables): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
 
 interface ValidateUserCredentialsRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -251,8 +270,8 @@ interface ValidateUserCredentialsRef {
 }
 export const validateUserCredentialsRef: ValidateUserCredentialsRef;
 
-export function validateUserCredentials(vars: ValidateUserCredentialsVariables, options?: ExecuteQueryOptions): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
-export function validateUserCredentials(dc: DataConnect, vars: ValidateUserCredentialsVariables, options?: ExecuteQueryOptions): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+export function validateUserCredentials(vars: ValidateUserCredentialsVariables): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
+export function validateUserCredentials(dc: DataConnect, vars: ValidateUserCredentialsVariables): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
 
 interface ListRegistrationsRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -263,8 +282,8 @@ interface ListRegistrationsRef {
 }
 export const listRegistrationsRef: ListRegistrationsRef;
 
-export function listRegistrations(options?: ExecuteQueryOptions): QueryPromise<ListRegistrationsData, undefined>;
-export function listRegistrations(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListRegistrationsData, undefined>;
+export function listRegistrations(): QueryPromise<ListRegistrationsData, undefined>;
+export function listRegistrations(dc: DataConnect): QueryPromise<ListRegistrationsData, undefined>;
 
 interface GetRegistrationRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -275,8 +294,8 @@ interface GetRegistrationRef {
 }
 export const getRegistrationRef: GetRegistrationRef;
 
-export function getRegistration(vars: GetRegistrationVariables, options?: ExecuteQueryOptions): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
-export function getRegistration(dc: DataConnect, vars: GetRegistrationVariables, options?: ExecuteQueryOptions): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
+export function getRegistration(vars: GetRegistrationVariables): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
+export function getRegistration(dc: DataConnect, vars: GetRegistrationVariables): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
 
 interface CreateRegistrationRef {
   /* Allow users to create refs without passing in DataConnect */
@@ -311,6 +330,18 @@ interface FindUserByEmailRef {
 }
 export const findUserByEmailRef: FindUserByEmailRef;
 
-export function findUserByEmail(vars: FindUserByEmailVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
-export function findUserByEmail(dc: DataConnect, vars: FindUserByEmailVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+export function findUserByEmail(vars: FindUserByEmailVariables): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+export function findUserByEmail(dc: DataConnect, vars: FindUserByEmailVariables): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+
+interface GetUserByFirebaseUidRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetUserByFirebaseUidVariables): QueryRef<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetUserByFirebaseUidVariables): QueryRef<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+  operationName: string;
+}
+export const getUserByFirebaseUidRef: GetUserByFirebaseUidRef;
+
+export function getUserByFirebaseUid(vars: GetUserByFirebaseUidVariables): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+export function getUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 
