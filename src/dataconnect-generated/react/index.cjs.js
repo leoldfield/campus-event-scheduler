@@ -1,4 +1,4 @@
-const { listEventsRef, listUsersRef, getEventByIdRef, createEventRef, getFirstNameByIdRef, getNameByIdRef, validateUserCredentialsRef, listRegistrationsRef, getRegistrationRef, createRegistrationRef, createUserRef, findUserByEmailRef, connectorConfig } = require('../index.cjs.js');
+const { listEventsRef, listUsersRef, getEventByIdRef, createEventRef, getFirstNameByIdRef, getNameByIdRef, validateUserCredentialsRef, listRegistrationsRef, getRegistrationRef, createRegistrationRef, createUserRef, findUserByEmailRef, getUserByFirebaseUidRef, connectorConfig } = require('../index.cjs.js');
 const { validateArgs, CallerSdkTypeEnum } = require('firebase/data-connect');
 const { useDataConnectQuery, useDataConnectMutation, validateReactArgs } = require('@tanstack-query-firebase/react/data-connect');
 
@@ -78,5 +78,11 @@ exports.useCreateUser = function useCreateUser(dcOrOptions, options) {
 exports.useFindUserByEmail = function useFindUserByEmail(dcOrVars, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   const ref = findUserByEmailRef(dcInstance, inputVars);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useGetUserByFirebaseUid = function useGetUserByFirebaseUid(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateReactArgs(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  const ref = getUserByFirebaseUidRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }

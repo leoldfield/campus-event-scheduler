@@ -1,50 +1,102 @@
 import React, { useEffect, useState } from "react";
-import { getFirstNameById, listEvents } from "../dataconnect-generated";
-import { getDataConnectClient } from "../firebase";
+import { signInAnonymously } from "firebase/auth";
+import { findUserByEmail, getUserByFirebaseUid, listEvents } from "../dataconnect-generated";
+import { getDataConnectClient, auth } from "../firebase";
 
 export default function Events() {
   const [firstName, setFirstName] = useState("");
   const [loadingName, setLoadingName] = useState(true);
   const [nameError, setNameError] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState("");
+  const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
 
   useEffect(() => {
-    // UUID must be in canonical 8-4-4-4-12 format.
-    const staticUserId = "574d80c8-8f16-4637-919d-7edd8b69d09c";
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
 
-    getFirstNameById(getDataConnectClient(), { id: staticUserId })
-      .then(({ data }) => {
-        if (!data.userList?.firstname) {
-          setNameError("No user found for the configured static ID.");
-          return;
-        }
-
-        setFirstName(data.userList.firstname);
-      })
-      .catch((error) => {
-        console.error("Failed to load user name", error);
-        setNameError(error?.message || "Failed to load user name.");
-      })
-      .finally(() => {
+      if (!user || user.isAnonymous) {
+        setFirstName("");
+        setNameError("");
         setLoadingName(false);
-      });
+        return;
+      }
+
+      setLoadingName(true);
+
+      const loadUserFirstName = async () => {
+        try {
+          // Primary path: direct lookup by Firebase UID.
+          const uidResult = await getUserByFirebaseUid(getDataConnectClient(), { firebaseUid: user.uid });
+          const uidMatch = uidResult.data?.userLists?.[0];
+          if (uidMatch?.firstname) {
+            setFirstName(uidMatch.firstname);
+            return;
+          }
+
+          // Migration fallback: lookup by email for users not backfilled yet.
+          if (user.email) {
+            const emailResult = await findUserByEmail(getDataConnectClient(), {
+              email: user.email.toLowerCase(),
+            });
+            const emailMatch = emailResult.data?.userLists?.[0];
+            if (emailMatch?.firstname) {
+              setFirstName(emailMatch.firstname);
+              return;
+            }
+          }
+
+          setFirstName(user.displayName || "");
+        } catch (error) {
+          console.error("Failed to load user name", error);
+          setNameError(error?.message || "Failed to load user name.");
+          setFirstName(user.displayName || "");
+        } finally {
+          setLoadingName(false);
+        }
+      };
+
+      loadUserFirstName();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
-    listEvents(getDataConnectClient())
-      .then(({ data }) => {
-        const fetchedEvents = data?.eventLists || [];
-        setEvents(fetchedEvents);
-      })
-      .catch((error) => {
+    const loadEvents = async () => {
+      try {
+        await auth.authStateReady();
+        const { data } = await listEvents(getDataConnectClient());
+        setEvents(data?.eventLists || []);
+      } catch (error) {
+        const errorMessage = String(error?.message || "");
+        const isUnauthenticated = /unauthenticated|requires a signed-in user/i.test(errorMessage);
+
+        if (isUnauthenticated) {
+          try {
+            const credential = await signInAnonymously(auth);
+            await credential.user.getIdToken(true);
+            const { data } = await listEvents(getDataConnectClient());
+            setEvents(data?.eventLists || []);
+            setEventsError("");
+            return;
+          } catch (retryError) {
+            console.error("Failed to load events after guest sign-in", retryError);
+            setEventsError(retryError?.message || "Failed to load events.");
+            return;
+          }
+        }
+
         console.error("Failed to load events", error);
         setEventsError(error?.message || "Failed to load events.");
-      })
-      .finally(() => {
+      } finally {
         setLoadingEvents(false);
-      });
+      }
+    };
+
+    loadEvents();
   }, []);
 
   const formatEventDate = (timestamp) => {
@@ -62,12 +114,13 @@ export default function Events() {
   return (
     <div>
       <h1>UA Little Rock Campus Events</h1>
-      <h2>
-        Welcome
-        {loadingName ? "..." : ""}
-        {!loadingName && firstName ? `, ${firstName}` : ""}
-      </h2>
-      {nameError ? <p style={{ color: "#b00020" }}>{nameError}</p> : null}
+      {isSignedInUser && (
+        <h2>
+          Welcome
+          {loadingName ? "..." : ""}
+          {!loadingName && firstName ? `, ${firstName}` : ""}
+        </h2>
+      )}
       <p>Find upcoming University of Arkansas at Little Rock events and register easily.</p>
 
       {loadingEvents ? <p>Loading events...</p> : null}
