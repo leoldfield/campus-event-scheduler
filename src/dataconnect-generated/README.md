@@ -1055,6 +1055,7 @@ executeQuery(ref).then((response) => {
 You can execute the `GetUserByFirebaseUid` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 getUserByFirebaseUid(vars: GetUserByFirebaseUidVariables): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+getUserByFirebaseUid(vars: GetUserByFirebaseUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 
 interface GetUserByFirebaseUidRef {
   ...
@@ -1066,6 +1067,7 @@ export const getUserByFirebaseUidRef: GetUserByFirebaseUidRef;
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
 getUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+getUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 
 interface GetUserByFirebaseUidRef {
   ...
@@ -1100,6 +1102,8 @@ export interface GetUserByFirebaseUidData {
     firstname: string;
     lastname: string;
     email: string;
+    age: number;
+    major: string;
   } & UserList_Key)[];
 }
 ```

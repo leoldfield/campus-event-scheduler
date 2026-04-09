@@ -136,6 +136,8 @@ query GetUserByFirebaseUid($firebaseUid: String!) @auth(level: USER) {
     firstname
     lastname
     email
+    age
+    major
   }
 }
 

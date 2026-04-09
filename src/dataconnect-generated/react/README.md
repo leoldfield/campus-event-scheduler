@@ -906,6 +906,8 @@ export interface GetUserByFirebaseUidData {
     firstname: string;
     lastname: string;
     email: string;
+    age: number;
+    major: string;
   } & UserList_Key)[];
 }
 ```
