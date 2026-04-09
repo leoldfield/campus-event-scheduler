@@ -183,3 +183,18 @@ exports.findUserByEmail = function findUserByEmail(dcOrVars, varsOrOptions, opti
   return executeQuery(findUserByEmailRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 ;
+
+const getUserByFirebaseUidRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'GetUserByFirebaseUid', inputVars);
+}
+getUserByFirebaseUidRef.operationName = 'GetUserByFirebaseUid';
+exports.getUserByFirebaseUidRef = getUserByFirebaseUidRef;
+
+exports.getUserByFirebaseUid = function getUserByFirebaseUid(dcOrVars, varsOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(getUserByFirebaseUidRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+;

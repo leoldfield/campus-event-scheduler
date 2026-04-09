@@ -40,6 +40,7 @@ export interface CreateUserData {
 
 export interface CreateUserVariables {
   id: UUIDString;
+  firebaseUid?: string | null;
   firstname: string;
   lastname: string;
   email: string;
@@ -56,6 +57,9 @@ export interface EventList_Key {
 export interface FindUserByEmailData {
   userLists: ({
     id: UUIDString;
+    firstname: string;
+    lastname: string;
+    email: string;
   } & UserList_Key)[];
 }
 
@@ -111,6 +115,22 @@ export interface GetRegistrationData {
 export interface GetRegistrationVariables {
   eventId: UUIDString;
   userId: UUIDString;
+}
+
+export interface GetUserByFirebaseUidData {
+  userLists: ({
+    id: UUIDString;
+    firebaseUid?: string | null;
+    firstname: string;
+    lastname: string;
+    email: string;
+    age: number;
+    major: string;
+  } & UserList_Key)[];
+}
+
+export interface GetUserByFirebaseUidVariables {
+  firebaseUid: string;
 }
 
 export interface ListEventsData {
@@ -313,4 +333,16 @@ export const findUserByEmailRef: FindUserByEmailRef;
 
 export function findUserByEmail(vars: FindUserByEmailVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
 export function findUserByEmail(dc: DataConnect, vars: FindUserByEmailVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
+
+interface GetUserByFirebaseUidRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: GetUserByFirebaseUidVariables): QueryRef<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: GetUserByFirebaseUidVariables): QueryRef<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+  operationName: string;
+}
+export const getUserByFirebaseUidRef: GetUserByFirebaseUidRef;
+
+export function getUserByFirebaseUid(vars: GetUserByFirebaseUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
+export function getUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 

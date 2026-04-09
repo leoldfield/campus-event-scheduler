@@ -41,11 +41,13 @@ export default function Register() {
         email: normalizedEmail,
       });
 
-      await createUserWithEmailAndPassword(auth, normalizedEmail, password);
+  const authCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
+  const firebaseUid = authCredential.user.uid;
 
       if (existingUserData.userLists.length === 0) {
         await createUser(getDataConnectClient(), {
           id: crypto.randomUUID(),
+                    firebaseUid,
           firstname: firstName.trim(),
           lastname: lastName.trim(),
           email: normalizedEmail,

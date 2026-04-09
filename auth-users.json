@@ -1,0 +1,26 @@
+{"users": [
+{
+  "localId": "0YKydBc06XNk5xxCrWq4HNX1OlC2",
+  "email": "awalker@ualr.edu",
+  "emailVerified": false,
+  "passwordHash": "vSdGlv+Scm+Wh/EPVEWjqjkgiq2comMJjGWUa38tpRyJVPPK/in/EkHHsy3qV+qPJqfTynb8Fk7J3JYJ5Y2i0Q==",
+  "salt": "FYMBGst4Vmrv7g==",
+  "lastSignedInAt": "1775498685513",
+  "createdAt": "1775498505948",
+  "providerUserInfo": []
+},
+{
+  "localId": "QOlNGLoSCVY3p23A1XKWJ2GrKFq1",
+  "email": "junejohnson@ualr.edu",
+  "emailVerified": false,
+  "passwordHash": "hzinonZv3JErn9QVXBJ5dXLtJ1i5rkG3KLiH4SUioG9dpWRlEIbkj6mkw2jc9+N5cEW6jESHAqx+hX4VTe0DTQ==",
+  "salt": "sSnW/6IGPNAKOw==",
+  "lastSignedInAt": "1775498397776",
+  "createdAt": "1775232092409",
+  "providerUserInfo": []
+},
+{
+  "localId": "nAzSx3MATzadMNr0p69eqj7K2ZN2",
+  "lastSignedInAt": "1775229989986",
+  "createdAt": "1775229989986"
+}]}

@@ -535,6 +535,14 @@ input UserList_Data {
   """
   email_expr: String_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `UserList`.`firebaseUid` of type `String`
+  """
+  firebaseUid: String
+  """
+  ✨ `_expr` server value variant of `firebaseUid` (✨ Generated from Field `UserList`.`firebaseUid` of type `String`)
+  """
+  firebaseUid_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `UserList`.`firstname` of type `String!`
   """
   firstname: String
@@ -595,6 +603,10 @@ input UserList_Filter {
   ✨ Generated from Field `UserList`.`email` of type `String!`
   """
   email: String_Filter
+  """
+  ✨ Generated from Field `UserList`.`firebaseUid` of type `String`
+  """
+  firebaseUid: String_Filter
   """
   ✨ Generated from Field `UserList`.`firstname` of type `String!`
   """
@@ -657,6 +669,10 @@ input UserList_Having {
   ✨ Generated from Field `UserList`.`email_count` of type `Int!`
   """
   email_count: Int_Filter
+  """
+  ✨ Generated from Field `UserList`.`firebaseUid_count` of type `Int!`
+  """
+  firebaseUid_count: Int_Filter
   """
   ✨ Generated from Field `UserList`.`firstname_count` of type `Int!`
   """
@@ -737,6 +753,10 @@ input UserList_Order {
   """
   email: OrderDirection
   """
+  ✨ Generated from Field `UserList`.`firebaseUid` of type `String`
+  """
+  firebaseUid: OrderDirection
+  """
   ✨ Generated from Field `UserList`.`firstname` of type `String!`
   """
   firstname: OrderDirection
@@ -764,6 +784,10 @@ input UserList_Order {
   ✨ Generated from Field `UserList`.`email_count` of type `Int!`
   """
   email_count: OrderDirection
+  """
+  ✨ Generated from Field `UserList`.`firebaseUid_count` of type `Int!`
+  """
+  firebaseUid_count: OrderDirection
   """
   ✨ Generated from Field `UserList`.`firstname_count` of type `Int!`
   """
