@@ -981,6 +981,7 @@ The `data` property is an object of type `FindUserByEmailData`, which is defined
 export interface FindUserByEmailData {
   userLists: ({
     id: UUIDString;
+    firebaseUid?: string | null;
     firstname: string;
     lastname: string;
     email: string;

@@ -814,6 +814,7 @@ To access the data returned by a Query, use the `UseQueryResult.data` field. The
 export interface FindUserByEmailData {
   userLists: ({
     id: UUIDString;
+    firebaseUid?: string | null;
     firstname: string;
     lastname: string;
     email: string;

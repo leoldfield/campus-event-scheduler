@@ -57,6 +57,7 @@ export interface EventList_Key {
 export interface FindUserByEmailData {
   userLists: ({
     id: UUIDString;
+    firebaseUid?: string | null;
     firstname: string;
     lastname: string;
     email: string;

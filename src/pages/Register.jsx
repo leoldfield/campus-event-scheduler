@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createUser, findUserByEmail } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
+import { hashPasswordWithArgon2id } from "../security/passwordHashing";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -15,6 +16,23 @@ export default function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  const normalizeEmail = (value) => value.trim().toLowerCase();
+
+  const createProfileRecord = async ({ user, normalizedEmail, parsedAge }) => {
+    const passwordHash = await hashPasswordWithArgon2id(password);
+
+    await createUser(getDataConnectClient(), {
+      id: crypto.randomUUID(),
+      firebaseUid: user.uid,
+      firstname: firstName.trim(),
+      lastname: lastName.trim(),
+      email: normalizedEmail,
+      password: passwordHash,
+      age: parsedAge,
+      major: major.trim(),
+    });
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,7 +50,7 @@ export default function Register() {
       return;
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = normalizeEmail(email);
 
     setIsSubmitting(true);
 
@@ -41,21 +59,17 @@ export default function Register() {
         email: normalizedEmail,
       });
 
-  const authCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
-  const firebaseUid = authCredential.user.uid;
+      const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
 
       if (existingUserData.userLists.length === 0) {
-        await createUser(getDataConnectClient(), {
-          id: crypto.randomUUID(),
-                    firebaseUid,
-          firstname: firstName.trim(),
-          lastname: lastName.trim(),
-          email: normalizedEmail,
-          password,
-          age: parsedAge,
-          major: major.trim(),
+        await createProfileRecord({
+          user: userCredential.user,
+          normalizedEmail,
+          parsedAge,
         });
       }
+
+      await signOut(auth);
 
       setSuccessMessage("Account created. Redirecting to login...");
       setFirstName("");
@@ -69,7 +83,45 @@ export default function Register() {
     } catch (createError) {
       console.error("Failed to create account", createError);
       if (createError?.code === "auth/email-already-in-use") {
-        setError("A Firebase login already exists for this email. Please use Login.");
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
+          const { data: existingUserData } = await findUserByEmail(getDataConnectClient(), {
+            email: normalizedEmail,
+          });
+
+          if (existingUserData.userLists.length > 0) {
+            await signOut(auth);
+            setError("A Firebase login already exists for this email. Please use Login.");
+            return;
+          }
+
+          await createProfileRecord({
+            user: userCredential.user,
+            normalizedEmail,
+            parsedAge,
+          });
+          await signOut(auth);
+
+          setSuccessMessage("Account profile restored. Redirecting to login...");
+          setFirstName("");
+          setLastName("");
+          setEmail("");
+          setPassword("");
+          setAge("");
+          setMajor("");
+          setTimeout(() => navigate("/login"), 700);
+        } catch (recoveryError) {
+          console.error("Failed to restore deleted profile", recoveryError);
+          if (
+            recoveryError?.code === "auth/invalid-credential" ||
+            recoveryError?.code === "auth/wrong-password" ||
+            recoveryError?.code === "auth/user-not-found"
+          ) {
+            setError("This email already exists in Firebase Auth. Enter the original password to restore the deleted profile, or use Login.");
+          } else {
+            setError(recoveryError?.message || "Failed to restore deleted profile.");
+          }
+        }
       } else if (createError?.code === "auth/operation-not-allowed") {
         setError("Email/Password sign-in is disabled in Firebase Authentication. Enable it in Firebase Console > Authentication > Sign-in method.");
       } else if (createError?.code === "auth/weak-password") {
@@ -122,6 +174,8 @@ export default function Register() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
         />
         <br /><br />
 
