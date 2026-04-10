@@ -141,3 +141,20 @@ query GetUserByFirebaseUid($firebaseUid: String!) @auth(level: USER) {
   }
 }
 
+mutation UpdateUserProfile(
+  $id: UUID!
+  $firstname: String!
+  $lastname: String!
+  $age: Int!
+  $major: String!
+) @auth(level: USER) {
+  userList_update(
+    id: $id
+    data: {
+      firstname: $firstname
+      lastname: $lastname
+      age: $age
+      major: $major
+    }
+  )
+}
