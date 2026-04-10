@@ -23,7 +23,6 @@ export default function Events() {
   const [registerMessage, setRegisterMessage] = useState("");
   const [registerError, setRegisterError] = useState("");
 
-  // New filter/search state
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -280,17 +279,22 @@ export default function Events() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "12px",
+            gridTemplateColumns: "1.25fr 1fr 1fr 220px",
+            columnGap: "18px",
+            rowGap: "12px",
             margin: "24px 0",
             padding: "16px",
             border: "1px solid #ddd",
             borderRadius: "12px",
             background: "#f8f9fa",
+            alignItems: "end",
           }}
         >
           <div>
-            <label htmlFor="event-search" style={{ display: "block", marginBottom: "6px" }}>
+            <label
+              htmlFor="event-search"
+              style={{ display: "block", marginBottom: "6px" }}
+            >
               Search events
             </label>
             <input
@@ -309,7 +313,10 @@ export default function Events() {
           </div>
 
           <div>
-            <label htmlFor="location-filter" style={{ display: "block", marginBottom: "6px" }}>
+            <label
+              htmlFor="location-filter"
+              style={{ display: "block", marginBottom: "6px" }}
+            >
               Filter by location
             </label>
             <select
@@ -333,7 +340,10 @@ export default function Events() {
           </div>
 
           <div>
-            <label htmlFor="status-filter" style={{ display: "block", marginBottom: "6px" }}>
+            <label
+              htmlFor="status-filter"
+              style={{ display: "block", marginBottom: "6px" }}
+            >
               Filter by status
             </label>
             <select
@@ -401,10 +411,13 @@ export default function Events() {
             onClick={() => handleRegister(event.id)}
             disabled={registerLoadingId === event.id}
             style={{
-              padding: "10px 14px",
+              padding: "10px 16px",
               borderRadius: "8px",
               border: "none",
               cursor: registerLoadingId === event.id ? "not-allowed" : "pointer",
+              backgroundColor: "#b30000",
+              color: "white",
+              fontWeight: "600",
             }}
           >
             {registerLoadingId === event.id ? "Registering..." : "Register"}
