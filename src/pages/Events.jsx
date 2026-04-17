@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import "../css/Events.css";
+import React, { useEffect, useMemo, useState } from "react";
 import { signInAnonymously } from "firebase/auth";
 import {
   createRegistration,
@@ -15,12 +14,20 @@ export default function Events() {
   const [loadingName, setLoadingName] = useState(true);
   const [nameError, setNameError] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+
   const [events, setEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState("");
+
   const [registerLoadingId, setRegisterLoadingId] = useState(null);
   const [registerMessage, setRegisterMessage] = useState("");
   const [registerError, setRegisterError] = useState("");
+
+  // New filter/search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
   const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
 
   useEffect(() => {
@@ -88,12 +95,14 @@ export default function Events() {
         setEventsError("");
       } catch (error) {
         const errorMessage = String(error?.message || "");
-        const isUnauthenticated = /unauthenticated|requires a signed-in user/i.test(errorMessage);
+        const isUnauthenticated =
+          /unauthenticated|requires a signed-in user/i.test(errorMessage);
 
         if (isUnauthenticated) {
           try {
             const credential = await signInAnonymously(auth);
             await credential.user.getIdToken(true);
+
             const { data } = await listEvents(getDataConnectClient());
             setEvents(data?.eventLists || []);
             setEventsError("");
@@ -196,49 +205,215 @@ export default function Events() {
     }
   };
 
+  const uniqueLocations = useMemo(() => {
+    const locations = events
+      .map((event) => (event.location || "").trim())
+      .filter(Boolean);
+
+    return [...new Set(locations)].sort((a, b) => a.localeCompare(b));
+  }, [events]);
+
+  const filteredEvents = useMemo(() => {
+    const now = new Date();
+
+    return events.filter((event) => {
+      const name = (event.eventname || "").toLowerCase();
+      const desc = (event.eventdesc || "").toLowerCase();
+      const location = (event.location || "").toLowerCase();
+      const query = searchTerm.trim().toLowerCase();
+
+      const eventStart = new Date(event.starttime);
+      const isValidDate = !Number.isNaN(eventStart.getTime());
+
+      const matchesSearch =
+        !query ||
+        name.includes(query) ||
+        desc.includes(query) ||
+        location.includes(query);
+
+      const matchesLocation =
+        selectedLocation === "all" || (event.location || "") === selectedLocation;
+
+      let matchesStatus = true;
+      if (selectedStatus === "upcoming") {
+        matchesStatus = isValidDate ? eventStart >= now : false;
+      } else if (selectedStatus === "past") {
+        matchesStatus = isValidDate ? eventStart < now : false;
+      }
+
+      return matchesSearch && matchesLocation && matchesStatus;
+    });
+  }, [events, searchTerm, selectedLocation, selectedStatus]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedLocation("all");
+    setSelectedStatus("all");
+  };
+
   return (
-    <div>
-      <div className="introText">
+    <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "24px" }}>
       <h1>UA Little Rock Campus Events</h1>
 
       {isSignedInUser && (
         <h2>
-          Welcome
-          {loadingName ? "..." : ""}
+          Welcome {loadingName ? "..." : ""}
+
           {!loadingName && firstName ? `, ${firstName}` : ""}
         </h2>
       )}
 
-      <p>Find upcoming University of Arkansas at Little Rock events and register easily.</p>
+      <p>
+        Find upcoming University of Arkansas at Little Rock events and register
+        easily.
+      </p>
 
       {loadingEvents ? <p>Loading events...</p> : null}
-      {eventsError ? <p style={{ color: "#b00020" }}>{eventsError}</p> : null}
-      {registerError ? <p style={{ color: "#b00020" }}>{registerError}</p> : null}
-      {registerMessage ? <p style={{ color: "#0a7a28" }}>{registerMessage}</p> : null}
-      {!isSignedInUser ? <p>Please log in to register for events.</p> : null}
-      {nameError && !firstName ? (
-        <p style={{ color: "#b00020" }}>Could not load user name.</p>
-      ) : null}
-      </div>
-      <div className="grid">
-        {events.map((event) => (
-          <div className="card" key={event.id}>
-            <h2>{event.eventname}</h2>
-            <p><strong>Start:</strong> {formatEventDate(event.starttime)}</p>
-            <p><strong>End:</strong> {formatEventDate(event.endtime)}</p>
-            <p><strong>Location:</strong> {event.location || "TBD"}</p>
-            <p2>{event.eventdesc}</p2>
+      {eventsError ? <p style={{ color: "crimson" }}>{eventsError}</p> : null}
+      {registerError ? <p style={{ color: "crimson" }}>{registerError}</p> : null}
+      {registerMessage ? (
+        <p style={{ color: "green" }}>{registerMessage}</p>
 
-            <button
-              className="button"
-              onClick={() => handleRegister(event.id)}
-              disabled={registerLoadingId === event.id}
+
+      ) : null}
+      {!isSignedInUser ? <p>Please log in to register for events.</p> : null}
+      {nameError && !firstName ? <p>Could not load user name.</p> : null}
+
+      {!loadingEvents && !eventsError && events.length > 0 && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "12px",
+            margin: "24px 0",
+            padding: "16px",
+            border: "1px solid #ddd",
+            borderRadius: "12px",
+            background: "#f8f9fa",
+          }}
+        >
+          <div>
+            <label htmlFor="event-search" style={{ display: "block", marginBottom: "6px" }}>
+              Search events
+            </label>
+            <input
+              id="event-search"
+              type="text"
+              placeholder="Search by name, description, or location"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+              }}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="location-filter" style={{ display: "block", marginBottom: "6px" }}>
+              Filter by location
+            </label>
+            <select
+              id="location-filter"
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+              }}
             >
-              {registerLoadingId === event.id ? "Registering..." : "Register"}
+              <option value="all">All locations</option>
+              {uniqueLocations.map((location) => (
+                <option key={location} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="status-filter" style={{ display: "block", marginBottom: "6px" }}>
+              Filter by status
+            </label>
+            <select
+              id="status-filter"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+              }}
+            >
+              <option value="all">All events</option>
+              <option value="upcoming">Upcoming</option>
+              <option value="past">Past</option>
+            </select>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "end" }}>
+            <button
+              onClick={clearFilters}
+              style={{
+                width: "100%",
+                padding: "10px 14px",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Clear Filters
             </button>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {!loadingEvents && !eventsError && filteredEvents.length === 0 && events.length > 0 ? (
+        <p>No events match your current search or filters.</p>
+      ) : null}
+
+      {filteredEvents.map((event) => (
+        <div
+          key={event.id}
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "12px",
+            padding: "18px",
+            marginBottom: "16px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+          }}
+        >
+          <h2>{event.eventname}</h2>
+          <p>
+            <strong>Start:</strong> {formatEventDate(event.starttime)}
+          </p>
+          <p>
+            <strong>End:</strong> {formatEventDate(event.endtime)}
+          </p>
+          <p>
+            <strong>Location:</strong> {event.location || "TBD"}
+          </p>
+          <p>{event.eventdesc}</p>
+
+          <button
+            onClick={() => handleRegister(event.id)}
+            disabled={registerLoadingId === event.id}
+            style={{
+              padding: "10px 14px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: registerLoadingId === event.id ? "not-allowed" : "pointer",
+            }}
+          >
+            {registerLoadingId === event.id ? "Registering..." : "Register"}
+          </button>
+        </div>
+      ))}
 
       {!loadingEvents && !eventsError && events.length === 0 ? (
         <p>No events are available right now.</p>

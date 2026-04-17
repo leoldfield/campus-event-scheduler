@@ -172,6 +172,18 @@ export interface Registration_Key {
   __typename?: 'Registration_Key';
 }
 
+export interface UpdateUserProfileData {
+  userList_update?: UserList_Key | null;
+}
+
+export interface UpdateUserProfileVariables {
+  id: UUIDString;
+  firstname: string;
+  lastname: string;
+  age: number;
+  major: string;
+}
+
 export interface UserList_Key {
   id: UUIDString;
   __typename?: 'UserList_Key';
@@ -347,3 +359,14 @@ export const getUserByFirebaseUidRef: GetUserByFirebaseUidRef;
 export function getUserByFirebaseUid(vars: GetUserByFirebaseUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 export function getUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 
+interface UpdateUserProfileRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateUserProfileVariables): MutationRef<UpdateUserProfileData, UpdateUserProfileVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateUserProfileVariables): MutationRef<UpdateUserProfileData, UpdateUserProfileVariables>;
+  operationName: string;
+}
+export const updateUserProfileRef: UpdateUserProfileRef;
+
+export function updateUserProfile(vars: UpdateUserProfileVariables): MutationPromise<UpdateUserProfileData, UpdateUserProfileVariables>;
+export function updateUserProfile(dc: DataConnect, vars: UpdateUserProfileVariables): MutationPromise<UpdateUserProfileData, UpdateUserProfileVariables>;
