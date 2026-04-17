@@ -8,6 +8,7 @@ query ListEvents @auth(level: PUBLIC) {
     eventdesc
     starttime
     endtime
+    eventstatus
   }
 }
 
@@ -47,6 +48,7 @@ mutation CreateEvent($id: UUID!, $eventcoord: UUID!, $eventname: String!, $locat
     eventdesc: $eventdesc
     starttime: $starttime
     endtime: $endtime
+    eventstatus: true
   })
 }
 

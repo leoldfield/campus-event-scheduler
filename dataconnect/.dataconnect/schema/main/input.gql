@@ -69,6 +69,14 @@ input EventList_Data {
   """
   eventname_expr: String_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `EventList`.`eventstatus` of type `Boolean!`
+  """
+  eventstatus: Boolean
+  """
+  ✨ `_expr` server value variant of `eventstatus` (✨ Generated from Field `EventList`.`eventstatus` of type `Boolean!`)
+  """
+  eventstatus_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `EventList`.`location` of type `String`
   """
   location: String
@@ -129,6 +137,10 @@ input EventList_Filter {
   ✨ Generated from Field `EventList`.`eventname` of type `String!`
   """
   eventname: String_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventstatus` of type `Boolean!`
+  """
+  eventstatus: Boolean_Filter
   """
   ✨ Generated from Field `EventList`.`location` of type `String`
   """
@@ -191,6 +203,10 @@ input EventList_Having {
   ✨ Generated from Field `EventList`.`eventname_count` of type `Int!`
   """
   eventname_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`eventstatus_count` of type `Int!`
+  """
+  eventstatus_count: Int_Filter
   """
   ✨ Generated from Field `EventList`.`id_count` of type `Int!`
   """
@@ -271,6 +287,10 @@ input EventList_Order {
   """
   eventname: OrderDirection
   """
+  ✨ Generated from Field `EventList`.`eventstatus` of type `Boolean!`
+  """
+  eventstatus: OrderDirection
+  """
   ✨ Generated from Field `EventList`.`location` of type `String`
   """
   location: OrderDirection
@@ -298,6 +318,10 @@ input EventList_Order {
   ✨ Generated from Field `EventList`.`eventname_count` of type `Int!`
   """
   eventname_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`eventstatus_count` of type `Int!`
+  """
+  eventstatus_count: OrderDirection
   """
   ✨ Generated from Field `EventList`.`id_count` of type `Int!`
   """
