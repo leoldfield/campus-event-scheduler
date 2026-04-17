@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logo from "./assets/ualr-logo.png";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebase";
 import "../src/css/App.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -12,6 +14,26 @@ import notiBell from "./assets/notificationBell.png";
 import profilePicture from "./assets/johndoe.png"
 
 export default function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
   return (
     <>
       {/* ✅ FULL WIDTH NAVBAR */}
@@ -26,8 +48,31 @@ export default function App() {
         <div className="nav-right">
           <Link to="/">Events</Link>
           <Link to="/create">Create Event</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          {isSignedInUser ? (
+            <button
+              onClick={handleLogout}
+              style={{
+                marginLeft: "18px",
+                background: "none",
+                border: "none",
+                color: "white",
+                cursor: "pointer",
+                padding: "0",
+                font: "inherit",
+                fontWeight: "500",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
+              onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
+              <Link to="/register">Register</Link>
+            </>
+          )}
           <Link to="/Notification">
             <img src={notiBell} style={{ height: 35 }} />
           </Link>

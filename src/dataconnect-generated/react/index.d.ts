@@ -1,4 +1,4 @@
-import { ListEventsData, ListUsersData, GetEventByIdData, GetEventByIdVariables, CreateEventData, CreateEventVariables, GetFirstNameByIdData, GetFirstNameByIdVariables, GetNameByIdData, GetNameByIdVariables, ValidateUserCredentialsData, ValidateUserCredentialsVariables, ListRegistrationsData, GetRegistrationData, GetRegistrationVariables, CreateRegistrationData, CreateRegistrationVariables, CreateUserData, CreateUserVariables, FindUserByEmailData, FindUserByEmailVariables, GetUserByFirebaseUidData, GetUserByFirebaseUidVariables, UpdateUserProfileData, UpdateUserProfileVariables } from '../';
+import { ListEventsData, ListUsersData, GetEventByIdData, GetEventByIdVariables, CreateEventData, CreateEventVariables, GetFirstNameByIdData, GetFirstNameByIdVariables, GetNameByIdData, GetNameByIdVariables, ValidateUserCredentialsData, ValidateUserCredentialsVariables, ListRegistrationsData, GetRegistrationData, GetRegistrationVariables, CreateRegistrationData, CreateRegistrationVariables, CreateUserData, CreateUserVariables, FindUserByEmailData, FindUserByEmailVariables, GetUserByFirebaseUidData, GetUserByFirebaseUidVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
@@ -43,6 +43,3 @@ export function useFindUserByEmail(dc: DataConnect, vars: FindUserByEmailVariabl
 
 export function useGetUserByFirebaseUid(vars: GetUserByFirebaseUidVariables, options?: useDataConnectQueryOptions<GetUserByFirebaseUidData>): UseDataConnectQueryResult<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 export function useGetUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables, options?: useDataConnectQueryOptions<GetUserByFirebaseUidData>): UseDataConnectQueryResult<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
-
-export function useUpdateUserProfile(options?: useDataConnectMutationOptions<UpdateUserProfileData, FirebaseError, UpdateUserProfileVariables>): UseDataConnectMutationResult<UpdateUserProfileData, UpdateUserProfileVariables>;
-export function useUpdateUserProfile(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateUserProfileData, FirebaseError, UpdateUserProfileVariables>): UseDataConnectMutationResult<UpdateUserProfileData, UpdateUserProfileVariables>;

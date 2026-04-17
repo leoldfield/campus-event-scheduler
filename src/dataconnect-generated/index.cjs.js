@@ -198,18 +198,3 @@ exports.getUserByFirebaseUid = function getUserByFirebaseUid(dcOrVars, varsOrOpt
   return executeQuery(getUserByFirebaseUidRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 ;
-
-
-const updateUserProfileRef = (dcOrVars, vars) => {
-  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
-  dcInstance._useGeneratedSdk();
-  return mutationRef(dcInstance, 'UpdateUserProfile', inputVars);
-}
-updateUserProfileRef.operationName = 'UpdateUserProfile';
-exports.updateUserProfileRef = updateUserProfileRef;
-
-exports.updateUserProfile = function updateUserProfile(dcOrVars, vars) {
-  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
-  return executeMutation(updateUserProfileRef(dcInstance, inputVars));
-}
-;
