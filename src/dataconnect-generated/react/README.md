@@ -1402,3 +1402,4 @@ export default function UpdateUserProfileComponent() {
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }
 ```
+

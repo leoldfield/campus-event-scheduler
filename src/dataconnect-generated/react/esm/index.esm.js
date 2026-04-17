@@ -86,7 +86,6 @@ export function useGetUserByFirebaseUid(dcOrVars, varsOrOptions, options) {
   const ref = getUserByFirebaseUidRef(dcInstance, inputVars);
   return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }
-
 export function useUpdateUserProfile(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
