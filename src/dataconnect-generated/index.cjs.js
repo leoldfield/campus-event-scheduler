@@ -199,7 +199,6 @@ exports.getUserByFirebaseUid = function getUserByFirebaseUid(dcOrVars, varsOrOpt
 }
 ;
 
-
 const updateUserProfileRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

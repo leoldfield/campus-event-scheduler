@@ -182,3 +182,4 @@ export function updateUserProfile(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(updateUserProfileRef(dcInstance, inputVars));
 }
+
