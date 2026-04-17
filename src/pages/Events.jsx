@@ -27,6 +27,7 @@ export default function Events() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedEventStatus, setSelectedEventStatus] = useState("all");
 
   const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
 
@@ -234,6 +235,11 @@ export default function Events() {
       const matchesLocation =
         selectedLocation === "all" || (event.location || "") === selectedLocation;
 
+      const matchesEventStatus =
+        selectedEventStatus === "all" ||
+        (selectedEventStatus === "ongoing" && event.eventstatus === true) ||
+        (selectedEventStatus === "cancelled" && event.eventstatus === false);
+
       let matchesStatus = true;
       if (selectedStatus === "upcoming") {
         matchesStatus = isValidDate ? eventStart >= now : false;
@@ -241,14 +247,15 @@ export default function Events() {
         matchesStatus = isValidDate ? eventStart < now : false;
       }
 
-      return matchesSearch && matchesLocation && matchesStatus;
+      return matchesSearch && matchesLocation && matchesEventStatus && matchesStatus;
     });
-  }, [events, searchTerm, selectedLocation, selectedStatus]);
+  }, [events, searchTerm, selectedLocation, selectedStatus, selectedEventStatus]);
 
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedLocation("all");
     setSelectedStatus("all");
+    setSelectedEventStatus("all");
   };
 
   return (
@@ -364,6 +371,31 @@ export default function Events() {
               <option value="all">All events</option>
               <option value="upcoming">Upcoming</option>
               <option value="past">Past</option>
+            </select>
+          </div>
+
+          <div style={{ minWidth: 0 }}>
+            <label
+              htmlFor="event-status-filter"
+              style={{ display: "block", marginBottom: "6px" }}
+            >
+              Filter by event status
+            </label>
+            <select
+              id="event-status-filter"
+              value={selectedEventStatus}
+              onChange={(e) => setSelectedEventStatus(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                boxSizing: "border-box",
+              }}
+            >
+              <option value="all">All statuses</option>
+              <option value="ongoing">Ongoing</option>
+              <option value="cancelled">Cancelled</option>
             </select>
           </div>
 

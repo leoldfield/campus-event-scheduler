@@ -116,6 +116,7 @@ export interface ListEventsData {
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
+    eventstatus: boolean;
   } & EventList_Key)[];
 }
 ```

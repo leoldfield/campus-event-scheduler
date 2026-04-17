@@ -20,6 +20,7 @@ mutation SeedData @transaction @auth(level: USER, insecureReason: "This operatio
     eventdesc: "Study for math final"
     starttime: "2026-03-08T12:00:00Z"
     endtime: "2026-03-08T13:00:00Z"
+    eventstatus: true
   })
   event2: eventList_insert(data: {
     eventid: "10000000-0000-0000-0000-000000000002"
@@ -28,5 +29,6 @@ mutation SeedData @transaction @auth(level: USER, insecureReason: "This operatio
     eventdesc: "Animal shelter charity drive"
     starttime: "2026-03-22T12:00:00Z"
     endtime: "2026-03-22T13:00:00Z"
+    eventstatus: true
   })
 }

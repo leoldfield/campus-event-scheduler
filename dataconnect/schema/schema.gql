@@ -6,6 +6,7 @@ type EventList @table {
   eventdesc: String!
   starttime: Timestamp!
   endtime: Timestamp!
+  eventstatus: Boolean! @default(value: true)
 }
 
 type UserList @table {
