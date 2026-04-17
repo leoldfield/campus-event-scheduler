@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/UserProfile.css";
-import profilePic from "../assets/blank-profile-pic.jpeg";
+import profilePic from "../assets/johndoe.png";
 
 export default function UserProfile() {
   return (

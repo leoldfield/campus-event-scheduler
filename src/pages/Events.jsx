@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "../css/Events.css";
 import { signInAnonymously } from "firebase/auth";
 import {
   createRegistration,
@@ -197,6 +198,7 @@ export default function Events() {
 
   return (
     <div>
+      <div className="introText">
       <h1>UA Little Rock Campus Events</h1>
 
       {isSignedInUser && (
@@ -217,7 +219,7 @@ export default function Events() {
       {nameError && !firstName ? (
         <p style={{ color: "#b00020" }}>Could not load user name.</p>
       ) : null}
-
+      </div>
       <div className="grid">
         {events.map((event) => (
           <div className="card" key={event.id}>
@@ -225,7 +227,7 @@ export default function Events() {
             <p><strong>Start:</strong> {formatEventDate(event.starttime)}</p>
             <p><strong>End:</strong> {formatEventDate(event.endtime)}</p>
             <p><strong>Location:</strong> {event.location || "TBD"}</p>
-            <p>{event.eventdesc}</p>
+            <p2>{event.eventdesc}</p2>
 
             <button
               className="button"

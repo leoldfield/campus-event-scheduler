@@ -1,0 +1,83 @@
+/* ===== GLOBAL STYLES ===== */
+body {
+  background: #f7f7f7;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: #8b0000;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+/* LEFT SIDE */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+/* TITLE */
+.nav-title {
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* RIGHT SIDE */
+.nav-right a {
+  margin-left: 18px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-right a:hover {
+  text-decoration: underline;
+}
+
+.nav-right img {
+  vertical-align: middle;
+}
+
+/* ===== PAGE LAYOUT ===== */
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== SHARED COMPONENTS ===== */
+.card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.button {
+  background: #b22222;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: #8b0000;
+}
