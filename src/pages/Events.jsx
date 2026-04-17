@@ -251,7 +251,7 @@ export default function Events() {
   };
 
   return (
-    <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "24px" }}>
+    <div className="introText">
       <h1>UA Little Rock Campus Events</h1>
 
       {isSignedInUser && (

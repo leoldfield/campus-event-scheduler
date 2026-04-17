@@ -5,6 +5,7 @@ import {
   updateUserProfile,
 } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
+import "../css/UserProfile.css";
 
 export default function UserProfile() {
   const [currentUser, setCurrentUser] = useState(null);
