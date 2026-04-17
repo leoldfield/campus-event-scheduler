@@ -1,130 +1,360 @@
-import React from "react";
-import "../css/UserProfile.css";
-import profilePic from "../assets/johndoe.png";
+import React, { useEffect, useState } from "react";
+import {
+  findUserByEmail,
+  getUserByFirebaseUid,
+  updateUserProfile,
+} from "../dataconnect-generated";
+import { auth, getDataConnectClient } from "../firebase";
 
 export default function UserProfile() {
-  return (
-    <div className="profile-page">
-      <div className="profile-container">
-        <div className="left-column">
-          <div className="card profile-card">
-            <img
-              className="profile-img"
-              src={profilePic}
-              alt="Profile"
-            />
+  const [currentUser, setCurrentUser] = useState(null);
+  const [profileId, setProfileId] = useState("");
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    age: "",
+    major: "",
+  });
 
-            <h1 className="profile-name">John Doe</h1>
-            <p className="profile-subtitle">Senior</p>
-            <p className="profile-description">Computer Science BS</p>
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-            <div className="profile-actions">
-              <button className="btn btn-primary">Follow</button>
-              <button className="btn btn-outline">Message</button>
-            </div>
-          </div>
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user || null);
+    });
 
-          <div className="card social-card">
-            <div className="social-row">
-              <div className="social-left">Website</div>
-              <div className="social-right">website.com</div>
-            </div>
-            <div className="social-row">
-              <div className="social-left">Twitter</div>
-              <div className="social-right">@johndoe</div>
-            </div>
-            <div className="social-row">
-              <div className="social-left">Facebook</div>
-              <div className="social-right">John Doe</div>
-            </div>
-            <div className="social-row">
-              <div className="social-left">Instagram</div>
-              <div className="social-right">@john.doe</div>
-            </div>
-          </div>
-        </div>
+    return () => unsubscribe();
+  }, []);
 
-        <div className="right-column">
-          <div className="card">
-            <table className="info-table">
-              <tbody>
-                <tr>
-                  <td>Full Name</td>
-                  <td>John Doe</td>
-                </tr>
-                <tr>
-                  <td>Email</td>
-                  <td>johndoe@ualr.edu</td>
-                </tr>
-                <tr>
-                  <td>Phone</td>
-                  <td>(123) 456-7890</td>
-                </tr>
-                <tr>
-                  <td>ID Number</td>
-                  <td>123456789</td>
-                </tr>
-                <tr>
-                  <td>Major</td>
-                  <td>Computer Science</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!currentUser || currentUser.isAnonymous) {
+        setLoading(false);
+        return;
+      }
 
-          <div className="stats-grid">
-            <div className="card">
-              <div className="section-title">Student Info</div>
+      setLoading(true);
+      setError("");
+      setSuccessMessage("");
 
-              <div className="stat-item">
-                <span className="stat-label">Credits Completed</span>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "45%" }}></div>
-                </div>
-              </div>
+      try {
+        let matchedUser = null;
 
-              <div className="stat-item">
-                <span className="stat-label">Degree Progress</span>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "65%" }}></div>
-                </div>
-              </div>
+        try {
+          const uidResult = await getUserByFirebaseUid(getDataConnectClient(), {
+            firebaseUid: currentUser.uid,
+          });
+          matchedUser = uidResult.data?.userLists?.[0] || null;
+        } catch (uidError) {
+          console.warn("User not found by firebase uid, trying email fallback", uidError);
+        }
 
-              <div className="stat-item">
-                <span className="stat-label">Semester Progress</span>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "72%" }}></div>
-                </div>
-              </div>
-            </div>
+        if (!matchedUser && currentUser.email) {
+          const emailResult = await findUserByEmail(getDataConnectClient(), {
+            email: currentUser.email.toLowerCase(),
+          });
+          matchedUser = emailResult.data?.userLists?.[0] || null;
+        }
 
-            <div className="card">
-              <div className="section-title">Activity</div>
+        if (!matchedUser) {
+          setError("Could not find your profile.");
+          setLoading(false);
+          return;
+        }
 
-              <div className="stat-item">
-                <span className="stat-label">Events Attended</span>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "58%" }}></div>
-                </div>
-              </div>
+        setProfileId(matchedUser.id);
+        setFormData({
+          firstname: matchedUser.firstname || "",
+          lastname: matchedUser.lastname || "",
+          email: matchedUser.email || currentUser.email || "",
+          age: matchedUser.age != null ? String(matchedUser.age) : "",
+          major: matchedUser.major || "",
+        });
+      } catch (loadError) {
+        console.error("Failed to load profile", loadError);
+        setError(loadError?.message || "Failed to load profile.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-              <div className="stat-item">
-                <span className="stat-label">Profile Completion</span>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "80%" }}></div>
-                </div>
-              </div>
+    loadProfile();
+  }, [currentUser]);
 
-              <div className="stat-item">
-                <span className="stat-label">Engagement</span>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "50%" }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setSuccessMessage("");
+
+    if (!currentUser || currentUser.isAnonymous) {
+      setError("Please log in to edit your profile.");
+      return;
+    }
+
+    if (
+      !profileId ||
+      !formData.firstname.trim() ||
+      !formData.lastname.trim() ||
+      !formData.age.trim() ||
+      !formData.major.trim()
+    ) {
+      setError("Please fill out all editable fields.");
+      return;
+    }
+
+    const parsedAge = Number.parseInt(formData.age, 10);
+    if (Number.isNaN(parsedAge) || parsedAge < 0) {
+      setError("Please enter a valid age.");
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      await updateUserProfile(getDataConnectClient(), {
+        id: profileId,
+        firstname: formData.firstname.trim(),
+        lastname: formData.lastname.trim(),
+        age: parsedAge,
+        major: formData.major.trim(),
+      });
+
+      setSuccessMessage("Profile updated successfully.");
+    } catch (saveError) {
+      console.error("Failed to update profile", saveError);
+      setError(saveError?.message || "Failed to update profile.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: "700px", margin: "0 auto", padding: "24px" }}>
+        <h1>User Profile</h1>
+        <p>Loading profile...</p>
       </div>
+    );
+  }
+
+  if (!currentUser || currentUser.isAnonymous) {
+    return (
+      <div style={{ maxWidth: "700px", margin: "0 auto", padding: "24px" }}>
+        <h1>User Profile</h1>
+        <p>Please log in to view and edit your profile.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ maxWidth: "700px", margin: "0 auto", padding: "24px" }}>
+      <h1>User Profile</h1>
+      <p>View and update your account information below.</p>
+
+      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
+      {successMessage ? <p style={{ color: "green" }}>{successMessage}</p> : null}
+
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "grid",
+          gap: "16px",
+          marginTop: "24px",
+          padding: "24px",
+          border: "1px solid #ddd",
+          borderRadius: "12px",
+          background: "#fff",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        }}
+      >
+        <div>
+          <label htmlFor="firstname" style={{ display: "block", marginBottom: "6px" }}>
+            First Name
+          </label>
+          <input
+            id="firstname"
+            name="firstname"
+            type="text"
+            value={formData.firstname}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+            }}
+          />
+
+        </div>
+
+        <div>
+          <label htmlFor="lastname" style={{ display: "block", marginBottom: "6px" }}>
+            Last Name
+          </label>
+          <input
+            id="lastname"
+            name="lastname"
+            type="text"
+            value={formData.lastname}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+            }}
+          />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        <div>
+          <label htmlFor="email" style={{ display: "block", marginBottom: "6px" }}>
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email}
+            readOnly
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              backgroundColor: "#f3f3f3",
+            }}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="age" style={{ display: "block", marginBottom: "6px" }}>
+            Age
+          </label>
+          <input
+            id="age"
+            name="age"
+            type="number"
+            min="0"
+            value={formData.age}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="major" style={{ display: "block", marginBottom: "6px" }}>
+            Major
+          </label>
+          <input
+            id="major"
+            name="major"
+            type="text"
+            value={formData.major}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={saving}
+          style={{
+            padding: "12px 16px",
+            borderRadius: "8px",
+            border: "none",
+            backgroundColor: "#b30000",
+            color: "white",
+            fontWeight: "600",
+            cursor: saving ? "not-allowed" : "pointer",
+          }}
+        >
+          {saving ? "Saving..." : "Save Changes"}
+        </button>
+      </form>
     </div>
   );
 }
