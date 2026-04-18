@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { findUserByEmail, getUserByFirebaseUid } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
+import "../css/Login.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -96,13 +97,16 @@ export default function Login() {
   };
 
   return (
-    <div className="page">
+  <div className="auth-wrapper">
+    <div className="auth-card">
       <h1>Login</h1>
+      <div className="auth-card-p1">
       <p>Enter your campus account credentials.</p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="auth-form">
+
         <label htmlFor="email">Email</label>
-        <br />
         <input
           id="email"
           className="input"
@@ -114,11 +118,8 @@ export default function Login() {
           autoCapitalize="none"
           spellCheck={false}
         />
-        <br />
-        <br />
 
         <label htmlFor="password">Password</label>
-        <br />
         <input
           id="password"
           className="input"
@@ -128,16 +129,21 @@ export default function Login() {
           onChange={(event) => setPassword(event.target.value)}
           autoComplete="current-password"
         />
-        <br />
-        <br />
         
+        <p className="auth-switch">
+        Don’t have an account?{" "}
+          <span onClick={() => navigate("/register")}>
+            Register here
+          </span>
+        </p>
 
-        {error ? <p style={{ color: "#b00020" }}>{error}</p> : null}
+        {error && <p className="error-text">{error}</p>}
 
         <button className="button" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Checking..." : "Login"}
         </button>
+
       </form>
     </div>
-  );
-}
+  </div>
+);}

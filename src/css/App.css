@@ -15,48 +15,108 @@ body {
 /* ===== NAVBAR ===== */
 .navbar {
   background: #8b0000;
-  padding: 16px 24px;
+  padding: 14px 28px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
+
+  /* subtle depth */
+  box-shadow: 0 5px 16px rgba(0,0,0,0.15);
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-/* LEFT SIDE */
+/* ===== LEFT SIDE ===== */
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 28px; /* tighter = more professional */
+}
+
+/* logo image */
+.nav-left img {
+  height: 38px;
 }
 
 /* TITLE */
 .nav-title {
   color: white;
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.3px;
 }
 
-/* RIGHT SIDE */
+/* ===== RIGHT SIDE ===== */
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+/* links */
 .nav-right a {
-  margin-left: 18px;
+  margin-left: 20px;
   color: white;
   text-decoration: none;
   font-weight: 500;
+  font-size: 14px;
+
+  position: relative;
+  transition: 0.2s;
 }
 
-.nav-right a:hover {
+/* underline animation */
+.nav-right a:not(:has(img))::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0%;
+  height: 2px;
+  background: white;
+  transition: width 0.4s ease;
+}
+
+.nav-right a:hover::after {
+  width: 100%;
+}
+
+.logout-button {
+  margin-left: 18px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.logout-button:hover {
   text-decoration: underline;
 }
 
+/* notification bell */
 .nav-right img {
-  vertical-align: middle;
+  margin-left: 0px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.nav-right img:hover {
+  transform: scale(1.1);
 }
 
 /* ===== PAGE LAYOUT ===== */
 .page {
-  max-width: 1400px;
+  max-width: 100%;
+  max-height: 100vh;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0px;
 }
 
 /* ===== SHARED COMPONENTS ===== */
