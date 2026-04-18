@@ -1,0 +1,107 @@
+/* ===== BACKGROUND WRAPPER ===== */
+.create-event-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(180deg, #f2f2f2 70%, #550101 30%);
+}
+
+/* ===== CARD ===== */
+.create-event-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+  transition: transform 0.2s ease;
+}
+
+.create-event-card:hover {
+  transform: translateY(-3px);
+}
+
+/* ===== HEADER ===== */
+.create-event-card h1 {
+  background: #b22222; 
+  color: white;
+  margin: 0;
+  padding: 16px;
+  padding-left: 20px;
+  font-size: 20px;
+  text-align: left;
+}
+
+/* subtitle */
+.create-event-card p {
+  text-align: left;
+  padding: 10px 20px;
+  margin: 0;
+  color: #555;
+}
+
+/* ===== FORM ===== */
+.create-event-form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== LABELS ===== */
+.create-event-form label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* ===== INPUTS ===== */
+.input {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 15px;
+  outline: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.input:focus {
+  border-color: #8b0000;
+  background: #fff;
+}
+
+/* textarea */
+textarea.input {
+  resize: none;
+}
+
+/* ===== BUTTON ===== */
+.button {
+  margin-top: 10px;
+  background: #b22222;
+  border: none;
+  border-radius: 20px;
+  padding: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.button:hover {
+  background: #8b0000;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== ERROR / SUCCESS ===== */
+.create-event-form p {
+  font-size: 13px;
+  margin: 5px 0;
+}

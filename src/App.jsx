@@ -36,34 +36,21 @@ export default function App() {
   const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
   return (
     <>
-      {/* ✅ FULL WIDTH NAVBAR */}
       <nav className="navbar">
         <div className="nav-left">
           <img src={logo} style={{ height: 40 }} />
-           <div className="nav-title">
-          UA Little Rock Events
+          <div className="nav-title">
+            UA Little Rock Events
           </div>
         </div>
 
         <div className="nav-right">
           <Link to="/">Events</Link>
-          <Link to="/create">Create Event</Link>
+          <Link to="/create">Create</Link>
           {isSignedInUser ? (
             <button
               onClick={handleLogout}
-              style={{
-                marginLeft: "18px",
-                background: "none",
-                border: "none",
-                color: "white",
-                cursor: "pointer",
-                padding: "0",
-                font: "inherit",
-                fontWeight: "500",
-                textDecoration: "none",
-              }}
-              onMouseEnter={(e) => (e.target.style.textDecoration = "underline")}
-              onMouseLeave={(e) => (e.target.style.textDecoration = "none")}
+              className="logout-button"
             >
               Logout
             </button>
@@ -74,7 +61,7 @@ export default function App() {
             </>
           )}
           <Link to="/Notification">
-            <img src={notiBell} style={{ height: 35 }} />
+            <img src={notiBell} style={{ height: 28 }} />
           </Link>
           <Link to="/UserProfile">
             <img src={profilePicture} style={{ height: 40, width: 40, borderRadius: '50%', objectFit: 'cover' }} />

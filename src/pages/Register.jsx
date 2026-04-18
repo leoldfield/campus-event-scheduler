@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } f
 import { createUser, findUserByEmail } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
 import { hashPasswordWithArgon2id } from "../security/passwordHashing";
+import "../css/Register.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -140,12 +141,15 @@ export default function Register() {
   };
 
   return (
-    <div className="page">
+  <div className="auth-wrapper">
+    <div className="auth-card">
       <h1>Register</h1>
-      <p>Create your account.</p>
+      <div className="auth-card-p1">
+        <p>Create your account.</p>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="firstName">First Name</label><br />
+      <form onSubmit={handleSubmit} className="auth-form">
+        <label htmlFor="firstName">First Name</label>
         <input
           id="firstName"
           className="input"
@@ -153,9 +157,8 @@ export default function Register() {
           value={firstName}
           onChange={(event) => setFirstName(event.target.value)}
         />
-        <br /><br />
 
-        <label htmlFor="lastName">Last Name</label><br />
+        <label htmlFor="lastName">Last Name</label>
         <input
           id="lastName"
           className="input"
@@ -163,7 +166,6 @@ export default function Register() {
           value={lastName}
           onChange={(event) => setLastName(event.target.value)}
         />
-        <br /><br />
 
         <label htmlFor="email">Email</label><br />
         <input
@@ -177,7 +179,6 @@ export default function Register() {
           autoCapitalize="none"
           spellCheck={false}
         />
-        <br /><br />
 
         <label htmlFor="password">Password</label><br />
         <input
@@ -189,7 +190,6 @@ export default function Register() {
           onChange={(event) => setPassword(event.target.value)}
           autoComplete="new-password"
         />
-        <br /><br />
 
         <label htmlFor="age">Age</label><br />
         <input
@@ -201,7 +201,6 @@ export default function Register() {
           value={age}
           onChange={(event) => setAge(event.target.value)}
         />
-        <br /><br />
 
         <label htmlFor="major">Major</label><br />
         <input
@@ -211,7 +210,6 @@ export default function Register() {
           value={major}
           onChange={(event) => setMajor(event.target.value)}
         />
-        <br /><br />
 
         {error ? <p style={{ color: "#b00020" }}>{error}</p> : null}
         {successMessage ? <p style={{ color: "#0b6b2f" }}>{successMessage}</p> : null}
@@ -219,8 +217,15 @@ export default function Register() {
         <button className="button" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Creating..." : "Create Account"}
         </button>
+      
+        <p className="auth-switch">
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")}>
+            Login here
+          </span>
+        </p>
+
       </form>
     </div>
-  );
-}
-  
+  </div>
+);}

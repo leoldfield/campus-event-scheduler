@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createEvent } from "../dataconnect-generated";
 import { ensureUserSession, getDataConnectClient } from "../firebase";
+import "../css/CreateEvent.css";
 
 export default function CreateEvent() {
   const navigate = useNavigate();
@@ -124,70 +125,67 @@ export default function CreateEvent() {
   };
 
   return (
-    <div className="page" style={{ padding: 24 }}>
-      <h1>Create Event</h1>
-      <p>Create a new event and add it to the event list.</p>
+    <div className="create-event-wrapper">
+      <div className="create-event-card">
+        <h1>Event Registration</h1>
+        <p>Create a new event and add it to the event list.</p>
 
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="eventName">Title</label><br />
-        <input
-          id="eventName"
-          className="input"
-          placeholder="Event title"
-          value={eventName}
-          onChange={(e) => setEventName(e.target.value)}
-        />
-        <br /><br />
+        <form onSubmit={handleSubmit} className="create-event-form">
 
-        <label htmlFor="location">Location</label><br />
-        <input
-          id="location"
-          className="input"
-          placeholder="Event location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
-        <br /><br />
+          <label htmlFor="eventName">Title</label>
+          <input 
+            id="eventName"
+            className="input"
+            placeholder="Event title"
+            value={eventName}
+            onChange={(e) => setEventName(e.target.value)}
+          />
 
-        <label htmlFor="startTime">Start Time</label><br />
-        <input
-          id="startTime"
-          className="input"
-          type="datetime-local"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-        />
-        <br /><br />
+          <label htmlFor="location">Location</label>
+          <input
+            id="location"
+            className="input"
+            placeholder="Event location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
 
-        <label htmlFor="endTime">End Time</label><br />
-        <input
-          id="endTime"
-          className="input"
-          type="datetime-local"
-          value={endTime}
-          onChange={(e) => setEndTime(e.target.value)}
-        />
-        <br /><br />
+          <label htmlFor="startTime">Start Time</label>
+          <input
+            id="startTime"
+            className="input"
+            type="datetime-local"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+          />
 
-        <label htmlFor="eventDescription">Description</label><br />
-        <textarea
-          id="eventDescription"
-          className="input"
-          placeholder="Event description"
-          value={eventDescription}
-          onChange={(e) => setEventDescription(e.target.value)}
-          rows={5}
-        />
-        <br /><br />
+          <label htmlFor="endTime">End Time</label>
+          <input
+            id="endTime"
+            className="input"
+            type="datetime-local"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+          />
 
-        {error ? <p style={{ color: "#b00020" }}>{error}</p> : null}
-        {successMessage ? <p style={{ color: "#0b6b2f" }}>{successMessage}</p> : null}
+          <label htmlFor="eventDescription">Description</label>
+          <textarea
+            id="eventDescription"
+            className="input"
+            placeholder="Event description"
+            value={eventDescription}
+            onChange={(e) => setEventDescription(e.target.value)}
+            rows={5}
+          />
 
-        <button className="button" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Event"}
-        </button>
-      </form>
+          {error && <p style={{ color: "#b00020" }}>{error}</p>}
+          {successMessage && <p style={{ color: "#0b6b2f" }}>{successMessage}</p>}
+
+          <button className="button" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create Event"}
+          </button>
+
+        </form>
+      </div>
     </div>
-  );
-}
-  
+  );}
