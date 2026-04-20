@@ -8,11 +8,21 @@ import {
   listEvents,
 } from "../dataconnect-generated";
 import { getDataConnectClient, auth } from "../firebase";
+import { useEventContext } from "./EventContext.jsx";
+
+import EventCard from "./Components/EventCard";
+import EventModal from "./Components/EventModal";
+import "../css/Events.css";
+import "../css/EventModal.css";
 
 export default function Events() {
-  const [firstName, setFirstName] = useState("");
-  const [loadingName, setLoadingName] = useState(true);
-  const [nameError, setNameError] = useState("");
+  const { registeredEventIds, setRegisteredEventIds } = useEventContext();
+  const [prevUserId, setPrevUserId] = useState(null);
+
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedEventStatus, setSelectedEventStatus] = useState("all");
+
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   const [events, setEvents] = useState([]);
@@ -23,11 +33,8 @@ export default function Events() {
   const [registerMessage, setRegisterMessage] = useState("");
   const [registerError, setRegisterError] = useState("");
 
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedEventStatus, setSelectedEventStatus] = useState("all");
 
   const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
 
@@ -35,153 +42,105 @@ export default function Events() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
 
-      if (!user || user.isAnonymous) {
-        setFirstName("");
-        setNameError("");
-        setLoadingName(false);
-        return;
+      const newUserId = user?.uid || null;
+
+      if (newUserId !== prevUserId) {
+        setRegisteredEventIds(new Set());
+        setPrevUserId(newUserId);
       }
-
-      setLoadingName(true);
-
-      const loadUserFirstName = async () => {
-        try {
-          let matchedUser = null;
-
-          try {
-            const uidResult = await getUserByFirebaseUid(getDataConnectClient(), {
-              firebaseUid: user.uid,
-            });
-            matchedUser = uidResult.data?.userLists?.[0] || null;
-          } catch (uidError) {
-            console.warn("User not found by firebase uid, trying email fallback", uidError);
-          }
-
-          if (!matchedUser && user.email) {
-            const emailResult = await findUserByEmail(getDataConnectClient(), {
-              email: user.email.toLowerCase(),
-            });
-            matchedUser = emailResult.data?.userLists?.[0] || null;
-          }
-
-          if (matchedUser?.firstname) {
-            setFirstName(matchedUser.firstname);
-            setNameError("");
-            return;
-          }
-
-          setFirstName(user.displayName || "");
-          setNameError("");
-        } catch (error) {
-          console.error("Failed to load user name", error);
-          setNameError(error?.message || "Failed to load user name.");
-          setFirstName(user.displayName || "");
-        } finally {
-          setLoadingName(false);
-        }
-      };
-
-      loadUserFirstName();
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [prevUserId]);
 
   useEffect(() => {
     const loadEvents = async () => {
       try {
-        await auth.authStateReady();
+        if (!currentUser) return;
+
         const { data } = await listEvents(getDataConnectClient());
-        setEvents(data?.eventLists || []);
-        setEventsError("");
-      } catch (error) {
-        const errorMessage = String(error?.message || "");
-        const isUnauthenticated =
-          /unauthenticated|requires a signed-in user/i.test(errorMessage);
+        const eventList = data?.eventLists || [];
 
-        if (isUnauthenticated) {
+        setEvents(eventList);
+
+        const registeredIds = new Set();
+
+        if (currentUser && !currentUser.isAnonymous) {
+          let dbUser = null;
+
           try {
-            const credential = await signInAnonymously(auth);
-            await credential.user.getIdToken(true);
+            const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
+              firebaseUid: currentUser.uid,
+            });
+            dbUser = userResult.data?.userLists?.[0];
+          } catch { }
 
-            const { data } = await listEvents(getDataConnectClient());
-            setEvents(data?.eventLists || []);
-            setEventsError("");
-            return;
-          } catch (retryError) {
-            console.error("Failed to load events after guest sign-in", retryError);
-            setEventsError(retryError?.message || "Failed to load events.");
-            return;
+          if (!dbUser && currentUser.email) {
+            const emailResult = await findUserByEmail(getDataConnectClient(), {
+              email: currentUser.email.toLowerCase(),
+            });
+            dbUser = emailResult.data?.userLists?.[0];
+          }
+
+          if (dbUser?.id) {
+            for (const event of eventList) {
+              try {
+                const reg = await getRegistration(getDataConnectClient(), {
+                  eventId: event.id,
+                  userId: dbUser.id,
+                });
+
+                if (reg.data?.registration) {
+                  registeredIds.add(event.id);
+                }
+              } catch { }
+            }
           }
         }
 
-        console.error("Failed to load events", error);
-        setEventsError(error?.message || "Failed to load events.");
+        setRegisteredEventIds((prev) => {
+          const merged = new Set(prev);
+          registeredIds.forEach(id => merged.add(id));
+          return merged;
+        });
+      } catch (error) {
+        try {
+          await signInAnonymously(auth);
+          const { data } = await listEvents(getDataConnectClient());
+          setEvents(data?.eventLists || []);
+        } catch (err) {
+          setEventsError(err.message);
+        }
       } finally {
         setLoadingEvents(false);
       }
     };
 
     loadEvents();
-  }, []);
-
-  const formatEventDate = (timestamp) => {
-    const eventDate = new Date(timestamp);
-
-    if (Number.isNaN(eventDate.getTime())) {
-      return "Invalid date";
-    }
-
-    return eventDate.toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  };
+  }, [currentUser]);
 
   const handleRegister = async (eventId) => {
-    setRegisterMessage("");
-    setRegisterError("");
-
-    if (!isSignedInUser || !currentUser) {
-      setRegisterError("Please log in before registering for an event.");
-      return;
-    }
+    if (!isSignedInUser || !currentUser) return;
 
     setRegisterLoadingId(eventId);
 
     try {
       let dbUser = null;
 
-      try {
-        const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
-          firebaseUid: currentUser.uid,
-        });
-        dbUser = userResult.data?.userLists?.[0] || null;
-      } catch (uidError) {
-        console.warn("User not found by firebase uid, trying email fallback", uidError);
-      }
+      const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
+        firebaseUid: currentUser.uid,
+      });
 
-      if (!dbUser?.id && currentUser.email) {
+      dbUser = userResult.data?.userLists?.[0];
+
+      if (!dbUser && currentUser.email) {
         const emailResult = await findUserByEmail(getDataConnectClient(), {
           email: currentUser.email.toLowerCase(),
         });
-        dbUser = emailResult.data?.userLists?.[0] || null;
+        dbUser = emailResult.data?.userLists?.[0];
       }
 
-      if (!dbUser?.id) {
-        throw new Error("Could not find the current user in the database.");
-      }
-
-      const existingRegistration = await getRegistration(getDataConnectClient(), {
-        eventId,
-        userId: dbUser.id,
-      });
-
-      if (existingRegistration.data?.registration) {
-        setRegisterMessage("You are already registered for this event.");
-        setRegisterError("");
-        return;
-      }
+      if (!dbUser?.id) throw new Error("User not found");
 
       await createRegistration(getDataConnectClient(), {
         eventId,
@@ -189,21 +148,33 @@ export default function Events() {
         notif: false,
       });
 
-      setRegisterMessage("Registration successful.");
-      setRegisterError("");
-    } catch (error) {
-      const errorMessage = String(error?.message || "");
+      setRegisteredEventIds((prev) => {
+        const updated = new Set(prev);
+        updated.add(eventId);
+        return updated;
+      });
 
-      if (/already exists|duplicate|unique/i.test(errorMessage)) {
-        setRegisterMessage("You are already registered for this event.");
-        setRegisterError("");
-      } else {
-        console.error("Failed to register for event", error);
-        setRegisterError(error?.message || "Failed to register for the event.");
-      }
+      setRegisterMessage("Registered!");
+    } catch (err) {
+      setRegisterError(err.message);
     } finally {
       setRegisterLoadingId(null);
     }
+  };
+
+  const handleShare = async (event) => {
+    const url = `${window.location.origin}/event/${event.id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: event.eventname,
+          url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        alert("Link copied!");
+      }
+    } catch { }
   };
 
   const uniqueLocations = useMemo(() => {
@@ -233,7 +204,8 @@ export default function Events() {
         location.includes(query);
 
       const matchesLocation =
-        selectedLocation === "all" || (event.location || "") === selectedLocation;
+        selectedLocation === "all" ||
+        (event.location || "") === selectedLocation;
 
       const matchesEventStatus =
         selectedEventStatus === "all" ||
@@ -247,9 +219,20 @@ export default function Events() {
         matchesStatus = isValidDate ? eventStart < now : false;
       }
 
-      return matchesSearch && matchesLocation && matchesEventStatus && matchesStatus;
+      return (
+        matchesSearch &&
+        matchesLocation &&
+        matchesEventStatus &&
+        matchesStatus
+      );
     });
-  }, [events, searchTerm, selectedLocation, selectedStatus, selectedEventStatus]);
+  }, [
+    events,
+    searchTerm,
+    selectedLocation,
+    selectedStatus,
+    selectedEventStatus,
+  ]);
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -262,209 +245,141 @@ export default function Events() {
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "24px" }}>
       <h1>UA Little Rock Campus Events</h1>
 
-      {isSignedInUser && (
-        <h2>
-          Welcome {loadingName ? "..." : ""}
-          {!loadingName && firstName ? `, ${firstName}` : ""}
-        </h2>
-      )}
-
       <p>
-        Find upcoming University of Arkansas at Little Rock events and register
-        easily.
+        Find upcoming University of Arkansas at Little Rock events and register easily.
       </p>
 
-      {loadingEvents ? <p>Loading events...</p> : null}
-      {eventsError ? <p style={{ color: "crimson" }}>{eventsError}</p> : null}
-      {registerError ? <p style={{ color: "crimson" }}>{registerError}</p> : null}
-      {registerMessage ? (
-        <p style={{ color: "green" }}>{registerMessage}</p>
-      ) : null}
-      {!isSignedInUser ? <p>Please log in to register for events.</p> : null}
-      {nameError && !firstName ? <p>Could not load user name.</p> : null}
-
-      {!loadingEvents && !eventsError && events.length > 0 && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            columnGap: "18px",
-            rowGap: "12px",
-            margin: "24px 0",
-            padding: "16px",
-            border: "1px solid #ddd",
-            borderRadius: "12px",
-            background: "#f8f9fa",
-            alignItems: "end",
-          }}
-        >
-          <div style={{ minWidth: 0 }}>
-            <label
-              htmlFor="event-search"
-              style={{ display: "block", marginBottom: "6px" }}
-            >
-              Search events
-            </label>
-            <input
-              id="event-search"
-              type="text"
-              placeholder="Search by name, description, or location"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
-
-          <div style={{ minWidth: 0 }}>
-            <label
-              htmlFor="location-filter"
-              style={{ display: "block", marginBottom: "6px" }}
-            >
-              Filter by location
-            </label>
-            <select
-              id="location-filter"
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                boxSizing: "border-box",
-              }}
-            >
-              <option value="all">All locations</option>
-              {uniqueLocations.map((location) => (
-                <option key={location} value={location}>
-                  {location}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ minWidth: 0 }}>
-            <label
-              htmlFor="status-filter"
-              style={{ display: "block", marginBottom: "6px" }}
-            >
-              Filter by status
-            </label>
-            <select
-              id="status-filter"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                boxSizing: "border-box",
-              }}
-            >
-              <option value="all">All events</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="past">Past</option>
-            </select>
-          </div>
-
-          <div style={{ minWidth: 0 }}>
-            <label
-              htmlFor="event-status-filter"
-              style={{ display: "block", marginBottom: "6px" }}
-            >
-              Filter by event status
-            </label>
-            <select
-              id="event-status-filter"
-              value={selectedEventStatus}
-              onChange={(e) => setSelectedEventStatus(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                boxSizing: "border-box",
-              }}
-            >
-              <option value="all">All statuses</option>
-              <option value="ongoing">Ongoing</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "end", minWidth: 0 }}>
-            <button
-              onClick={clearFilters}
-              style={{
-                width: "100%",
-                padding: "10px 14px",
-                borderRadius: "8px",
-                border: "none",
-                cursor: "pointer",
-                boxSizing: "border-box",
-              }}
-            >
-              Clear Filters
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!loadingEvents && !eventsError && filteredEvents.length === 0 && events.length > 0 ? (
-        <p>No events match your current search or filters.</p>
-      ) : null}
-
-      {filteredEvents.map((event) => (
-        <div
-          key={event.id}
-          style={{
-            border: "1px solid #ddd",
-            borderRadius: "12px",
-            padding: "18px",
-            marginBottom: "16px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-          }}
-        >
-          <h2>{event.eventname}</h2>
-          <p>
-            <strong>Start:</strong> {formatEventDate(event.starttime)}
-          </p>
-          <p>
-            <strong>End:</strong> {formatEventDate(event.endtime)}
-          </p>
-          <p>
-            <strong>Location:</strong> {event.location || "TBD"}
-          </p>
-          <p>{event.eventdesc}</p>
-
-          <button
-            onClick={() => handleRegister(event.id)}
-            disabled={registerLoadingId === event.id}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          columnGap: "18px",
+          rowGap: "12px",
+          margin: "24px 0",
+          padding: "16px",
+          border: "1px solid #ddd",
+          borderRadius: "12px",
+          background: "#f8f9fa",
+          alignItems: "end",
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <label style={{ display: "block", marginBottom: "6px" }}>
+            Search events
+          </label>
+          <input
+            type="text"
+            placeholder="Search by name, description, or location"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             style={{
-              padding: "10px 16px",
+              width: "100%",
+              padding: "10px",
               borderRadius: "8px",
-              border: "none",
-              cursor: registerLoadingId === event.id ? "not-allowed" : "pointer",
-              backgroundColor: "#b30000",
-              color: "white",
-              fontWeight: "600",
+              border: "1px solid #ccc",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <label style={{ display: "block", marginBottom: "6px" }}>
+            Filter by location
+          </label>
+          <select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
             }}
           >
-            {registerLoadingId === event.id ? "Registering..." : "Register"}
+            <option value="all">All locations</option>
+            {uniqueLocations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <label style={{ display: "block", marginBottom: "6px" }}>
+            Filter by status
+          </label>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+            }}
+          >
+            <option value="all">All events</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="past">Past</option>
+          </select>
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <label style={{ display: "block", marginBottom: "6px" }}>
+            Event status
+          </label>
+          <select
+            value={selectedEventStatus}
+            onChange={(e) => setSelectedEventStatus(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+            }}
+          >
+            <option value="all">All statuses</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "end" }}>
+          <button
+            onClick={clearFilters}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Clear Filters
           </button>
         </div>
+      </div>
+      {filteredEvents.map((event) => (
+        <EventCard
+          key={event.id}
+          event={event}
+          isRegistered={registeredEventIds.has(event.id)}
+          loading={registerLoadingId === event.id}
+          onRegister={handleRegister}
+          onShare={handleShare}
+          onOpen={setSelectedEvent}
+        />
       ))}
 
-      {!loadingEvents && !eventsError && events.length === 0 ? (
-        <p>No events are available right now.</p>
-      ) : null}
+      <EventModal
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+        onRegister={handleRegister}
+        onShare={handleShare}
+        isRegistered={selectedEvent && registeredEventIds.has(selectedEvent.id)}
+        loading={registerLoadingId === selectedEvent?.id}
+      />
     </div>
   );
 }

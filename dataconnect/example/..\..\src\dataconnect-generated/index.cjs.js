@@ -1,190 +1,214 @@
-import { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs, makeMemoryCacheProvider } from 'firebase/data-connect';
+const { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs } = require('firebase/data-connect');
 
-export const connectorConfig = {
+const connectorConfig = {
   connector: 'example',
   service: 'campus-event-scheduler',
   location: 'us-central1'
 };
-export const dataConnectSettings = {
-  cacheSettings: {
-    cacheProvider: makeMemoryCacheProvider()
-  }
-};
-export const listEventsRef = (dc) => {
+exports.connectorConfig = connectorConfig;
+
+const listEventsRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'ListEvents');
 }
 listEventsRef.operationName = 'ListEvents';
+exports.listEventsRef = listEventsRef;
 
-export function listEvents(dcOrOptions, options) {
+exports.listEvents = function listEvents(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(listEventsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const listUsersRef = (dc) => {
+const listUsersRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'ListUsers');
 }
 listUsersRef.operationName = 'ListUsers';
+exports.listUsersRef = listUsersRef;
 
-export function listUsers(dcOrOptions, options) {
+exports.listUsers = function listUsers(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(listUsersRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const getEventByIdRef = (dcOrVars, vars) => {
+const getEventByIdRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'GetEventByID', inputVars);
 }
 getEventByIdRef.operationName = 'GetEventByID';
+exports.getEventByIdRef = getEventByIdRef;
 
-export function getEventById(dcOrVars, varsOrOptions, options) {
+exports.getEventById = function getEventById(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getEventByIdRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const createEventRef = (dcOrVars, vars) => {
+const createEventRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return mutationRef(dcInstance, 'CreateEvent', inputVars);
 }
 createEventRef.operationName = 'CreateEvent';
+exports.createEventRef = createEventRef;
 
-export function createEvent(dcOrVars, vars) {
+exports.createEvent = function createEvent(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(createEventRef(dcInstance, inputVars));
 }
+;
 
-export const getFirstNameByIdRef = (dcOrVars, vars) => {
+const getFirstNameByIdRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'GetFirstNameByID', inputVars);
 }
 getFirstNameByIdRef.operationName = 'GetFirstNameByID';
+exports.getFirstNameByIdRef = getFirstNameByIdRef;
 
-export function getFirstNameById(dcOrVars, varsOrOptions, options) {
+exports.getFirstNameById = function getFirstNameById(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getFirstNameByIdRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const getNameByIdRef = (dcOrVars, vars) => {
+const getNameByIdRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'GetNameByID', inputVars);
 }
 getNameByIdRef.operationName = 'GetNameByID';
+exports.getNameByIdRef = getNameByIdRef;
 
-export function getNameById(dcOrVars, varsOrOptions, options) {
+exports.getNameById = function getNameById(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getNameByIdRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const validateUserCredentialsRef = (dcOrVars, vars) => {
+const validateUserCredentialsRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'ValidateUserCredentials', inputVars);
 }
 validateUserCredentialsRef.operationName = 'ValidateUserCredentials';
+exports.validateUserCredentialsRef = validateUserCredentialsRef;
 
-export function validateUserCredentials(dcOrVars, varsOrOptions, options) {
+exports.validateUserCredentials = function validateUserCredentials(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(validateUserCredentialsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const listRegistrationsRef = (dc) => {
+const listRegistrationsRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'ListRegistrations');
 }
 listRegistrationsRef.operationName = 'ListRegistrations';
+exports.listRegistrationsRef = listRegistrationsRef;
 
-export function listRegistrations(dcOrOptions, options) {
+exports.listRegistrations = function listRegistrations(dcOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
   return executeQuery(listRegistrationsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const getRegistrationRef = (dcOrVars, vars) => {
+const getRegistrationRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'GetRegistration', inputVars);
 }
 getRegistrationRef.operationName = 'GetRegistration';
+exports.getRegistrationRef = getRegistrationRef;
 
-export function getRegistration(dcOrVars, varsOrOptions, options) {
+exports.getRegistration = function getRegistration(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getRegistrationRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const createRegistrationRef = (dcOrVars, vars) => {
+const createRegistrationRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return mutationRef(dcInstance, 'CreateRegistration', inputVars);
 }
 createRegistrationRef.operationName = 'CreateRegistration';
+exports.createRegistrationRef = createRegistrationRef;
 
-export function createRegistration(dcOrVars, vars) {
+exports.createRegistration = function createRegistration(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(createRegistrationRef(dcInstance, inputVars));
 }
+;
 
-export const createUserRef = (dcOrVars, vars) => {
+const createUserRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return mutationRef(dcInstance, 'CreateUser', inputVars);
 }
 createUserRef.operationName = 'CreateUser';
+exports.createUserRef = createUserRef;
 
-export function createUser(dcOrVars, vars) {
+exports.createUser = function createUser(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(createUserRef(dcInstance, inputVars));
 }
+;
 
-export const findUserByEmailRef = (dcOrVars, vars) => {
+const findUserByEmailRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'FindUserByEmail', inputVars);
 }
 findUserByEmailRef.operationName = 'FindUserByEmail';
+exports.findUserByEmailRef = findUserByEmailRef;
 
-export function findUserByEmail(dcOrVars, varsOrOptions, options) {
+exports.findUserByEmail = function findUserByEmail(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(findUserByEmailRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const getUserByFirebaseUidRef = (dcOrVars, vars) => {
+const getUserByFirebaseUidRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return queryRef(dcInstance, 'GetUserByFirebaseUid', inputVars);
 }
 getUserByFirebaseUidRef.operationName = 'GetUserByFirebaseUid';
+exports.getUserByFirebaseUidRef = getUserByFirebaseUidRef;
 
-export function getUserByFirebaseUid(dcOrVars, varsOrOptions, options) {
+exports.getUserByFirebaseUid = function getUserByFirebaseUid(dcOrVars, varsOrOptions, options) {
   
   const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
   return executeQuery(getUserByFirebaseUidRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
+;
 
-export const updateUserProfileRef = (dcOrVars, vars) => {
+const updateUserProfileRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
   return mutationRef(dcInstance, 'UpdateUserProfile', inputVars);
 }
 updateUserProfileRef.operationName = 'UpdateUserProfile';
+exports.updateUserProfileRef = updateUserProfileRef;
 
-export function updateUserProfile(dcOrVars, vars) {
+exports.updateUserProfile = function updateUserProfile(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(updateUserProfileRef(dcInstance, inputVars));
 }
-
+;

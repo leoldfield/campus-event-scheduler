@@ -1,14 +1,9 @@
-import { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs, makeMemoryCacheProvider } from 'firebase/data-connect';
+import { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs } from 'firebase/data-connect';
 
 export const connectorConfig = {
   connector: 'example',
   service: 'campus-event-scheduler',
   location: 'us-central1'
-};
-export const dataConnectSettings = {
-  cacheSettings: {
-    cacheProvider: makeMemoryCacheProvider()
-  }
 };
 export const listEventsRef = (dc) => {
   const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
