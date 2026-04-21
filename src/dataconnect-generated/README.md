@@ -23,6 +23,7 @@ This README will guide you through the process of using the generated JavaScript
 - [**Mutations**](#mutations)
   - [*CreateEvent*](#createevent)
   - [*CreateRegistration*](#createregistration)
+  - [*DeleteRegistration*](#deleteregistration)
   - [*CreateUser*](#createuser)
   - [*UpdateUserProfile*](#updateuserprofile)
 
@@ -1424,6 +1425,118 @@ console.log(data.registration_insert);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.registration_insert);
+});
+```
+
+## DeleteRegistration
+You can execute the `DeleteRegistration` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+deleteRegistration(vars: DeleteRegistrationVariables): MutationPromise<DeleteRegistrationData, DeleteRegistrationVariables>;
+
+interface DeleteRegistrationRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteRegistrationVariables): MutationRef<DeleteRegistrationData, DeleteRegistrationVariables>;
+}
+export const deleteRegistrationRef: DeleteRegistrationRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+deleteRegistration(dc: DataConnect, vars: DeleteRegistrationVariables): MutationPromise<DeleteRegistrationData, DeleteRegistrationVariables>;
+
+interface DeleteRegistrationRef {
+  ...
+  (dc: DataConnect, vars: DeleteRegistrationVariables): MutationRef<DeleteRegistrationData, DeleteRegistrationVariables>;
+}
+export const deleteRegistrationRef: DeleteRegistrationRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the deleteRegistrationRef:
+```typescript
+const name = deleteRegistrationRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `DeleteRegistration` mutation requires an argument of type `DeleteRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface DeleteRegistrationVariables {
+  eventId: UUIDString;
+  userId: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `DeleteRegistration` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `DeleteRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface DeleteRegistrationData {
+  registration_delete?: Registration_Key | null;
+}
+```
+### Using `DeleteRegistration`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, deleteRegistration, DeleteRegistrationVariables } from '@dataconnect/generated';
+
+// The `DeleteRegistration` mutation requires an argument of type `DeleteRegistrationVariables`:
+const deleteRegistrationVars: DeleteRegistrationVariables = {
+  eventId: ..., 
+  userId: ..., 
+};
+
+// Call the `deleteRegistration()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await deleteRegistration(deleteRegistrationVars);
+// Variables can be defined inline as well.
+const { data } = await deleteRegistration({ eventId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await deleteRegistration(dataConnect, deleteRegistrationVars);
+
+console.log(data.registration_delete);
+
+// Or, you can use the `Promise` API.
+deleteRegistration(deleteRegistrationVars).then((response) => {
+  const data = response.data;
+  console.log(data.registration_delete);
+});
+```
+
+### Using `DeleteRegistration`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, deleteRegistrationRef, DeleteRegistrationVariables } from '@dataconnect/generated';
+
+// The `DeleteRegistration` mutation requires an argument of type `DeleteRegistrationVariables`:
+const deleteRegistrationVars: DeleteRegistrationVariables = {
+  eventId: ..., 
+  userId: ..., 
+};
+
+// Call the `deleteRegistrationRef()` function to get a reference to the mutation.
+const ref = deleteRegistrationRef(deleteRegistrationVars);
+// Variables can be defined inline as well.
+const ref = deleteRegistrationRef({ eventId: ..., userId: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = deleteRegistrationRef(dataConnect, deleteRegistrationVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.registration_delete);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.registration_delete);
 });
 ```
 

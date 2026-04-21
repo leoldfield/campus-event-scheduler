@@ -1,4 +1,4 @@
-import { ListEventsData, ListUsersData, GetEventByIdData, GetEventByIdVariables, CreateEventData, CreateEventVariables, GetFirstNameByIdData, GetFirstNameByIdVariables, GetNameByIdData, GetNameByIdVariables, ValidateUserCredentialsData, ValidateUserCredentialsVariables, ListRegistrationsData, GetRegistrationData, GetRegistrationVariables, CreateRegistrationData, CreateRegistrationVariables, CreateUserData, CreateUserVariables, FindUserByEmailData, FindUserByEmailVariables, GetUserByFirebaseUidData, GetUserByFirebaseUidVariables, UpdateUserProfileData, UpdateUserProfileVariables } from '../';
+import { ListEventsData, ListUsersData, GetEventByIdData, GetEventByIdVariables, CreateEventData, CreateEventVariables, GetFirstNameByIdData, GetFirstNameByIdVariables, GetNameByIdData, GetNameByIdVariables, ValidateUserCredentialsData, ValidateUserCredentialsVariables, ListRegistrationsData, GetRegistrationData, GetRegistrationVariables, CreateRegistrationData, CreateRegistrationVariables, DeleteRegistrationData, DeleteRegistrationVariables, CreateUserData, CreateUserVariables, FindUserByEmailData, FindUserByEmailVariables, GetUserByFirebaseUidData, GetUserByFirebaseUidVariables, UpdateUserProfileData, UpdateUserProfileVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
@@ -34,6 +34,9 @@ export function useGetRegistration(dc: DataConnect, vars: GetRegistrationVariabl
 
 export function useCreateRegistration(options?: useDataConnectMutationOptions<CreateRegistrationData, FirebaseError, CreateRegistrationVariables>): UseDataConnectMutationResult<CreateRegistrationData, CreateRegistrationVariables>;
 export function useCreateRegistration(dc: DataConnect, options?: useDataConnectMutationOptions<CreateRegistrationData, FirebaseError, CreateRegistrationVariables>): UseDataConnectMutationResult<CreateRegistrationData, CreateRegistrationVariables>;
+
+export function useDeleteRegistration(options?: useDataConnectMutationOptions<DeleteRegistrationData, FirebaseError, DeleteRegistrationVariables>): UseDataConnectMutationResult<DeleteRegistrationData, DeleteRegistrationVariables>;
+export function useDeleteRegistration(dc: DataConnect, options?: useDataConnectMutationOptions<DeleteRegistrationData, FirebaseError, DeleteRegistrationVariables>): UseDataConnectMutationResult<DeleteRegistrationData, DeleteRegistrationVariables>;
 
 export function useCreateUser(options?: useDataConnectMutationOptions<CreateUserData, FirebaseError, CreateUserVariables>): UseDataConnectMutationResult<CreateUserData, CreateUserVariables>;
 export function useCreateUser(dc: DataConnect, options?: useDataConnectMutationOptions<CreateUserData, FirebaseError, CreateUserVariables>): UseDataConnectMutationResult<CreateUserData, CreateUserVariables>;

@@ -161,6 +161,20 @@ exports.createRegistration = function createRegistration(dcOrVars, vars) {
 }
 ;
 
+const deleteRegistrationRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteRegistration', inputVars);
+}
+deleteRegistrationRef.operationName = 'DeleteRegistration';
+exports.deleteRegistrationRef = deleteRegistrationRef;
+
+exports.deleteRegistration = function deleteRegistration(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteRegistrationRef(dcInstance, inputVars));
+}
+;
+
 const createUserRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();

@@ -1,4 +1,4 @@
-const { listEventsRef, listUsersRef, getEventByIdRef, createEventRef, getFirstNameByIdRef, getNameByIdRef, validateUserCredentialsRef, listRegistrationsRef, getRegistrationRef, createRegistrationRef, createUserRef, findUserByEmailRef, getUserByFirebaseUidRef, updateUserProfileRef, connectorConfig } = require('../index.cjs.js');
+const { listEventsRef, listUsersRef, getEventByIdRef, createEventRef, getFirstNameByIdRef, getNameByIdRef, validateUserCredentialsRef, listRegistrationsRef, getRegistrationRef, createRegistrationRef, deleteRegistrationRef, createUserRef, findUserByEmailRef, getUserByFirebaseUidRef, updateUserProfileRef, connectorConfig } = require('../index.cjs.js');
 const { validateArgs, CallerSdkTypeEnum } = require('firebase/data-connect');
 const { useDataConnectQuery, useDataConnectMutation, validateReactArgs } = require('@tanstack-query-firebase/react/data-connect');
 
@@ -62,6 +62,14 @@ exports.useCreateRegistration = function useCreateRegistration(dcOrOptions, opti
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
     return createRegistrationRef(dcInstance, vars);
+  }
+  return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useDeleteRegistration = function useDeleteRegistration(dcOrOptions, options) {
+  const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
+  function refFactory(vars) {
+    return deleteRegistrationRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }

@@ -50,6 +50,15 @@ export interface CreateUserVariables {
   major: string;
 }
 
+export interface DeleteRegistrationData {
+  registration_delete?: Registration_Key | null;
+}
+
+export interface DeleteRegistrationVariables {
+  eventId: UUIDString;
+  userId: UUIDString;
+}
+
 export interface EventList_Key {
   id: UUIDString;
   __typename?: 'EventList_Key';
@@ -324,6 +333,18 @@ export const createRegistrationRef: CreateRegistrationRef;
 
 export function createRegistration(vars: CreateRegistrationVariables): MutationPromise<CreateRegistrationData, CreateRegistrationVariables>;
 export function createRegistration(dc: DataConnect, vars: CreateRegistrationVariables): MutationPromise<CreateRegistrationData, CreateRegistrationVariables>;
+
+interface DeleteRegistrationRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteRegistrationVariables): MutationRef<DeleteRegistrationData, DeleteRegistrationVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteRegistrationVariables): MutationRef<DeleteRegistrationData, DeleteRegistrationVariables>;
+  operationName: string;
+}
+export const deleteRegistrationRef: DeleteRegistrationRef;
+
+export function deleteRegistration(vars: DeleteRegistrationVariables): MutationPromise<DeleteRegistrationData, DeleteRegistrationVariables>;
+export function deleteRegistration(dc: DataConnect, vars: DeleteRegistrationVariables): MutationPromise<DeleteRegistrationData, DeleteRegistrationVariables>;
 
 interface CreateUserRef {
   /* Allow users to create refs without passing in DataConnect */
