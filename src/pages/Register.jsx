@@ -8,20 +8,69 @@ import "../css/Register.css";
 
 export default function Register() {
   const navigate = useNavigate();
+
+  // STEP STATE //
+  const [step, setStep] = useState(1);
+
+  // FORM STATE //
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [age, setAge] = useState("");
   const [major, setMajor] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const normalizeEmail = (value) => value.trim().toLowerCase();
 
+  // ===== STEP NAVIGATION ===== //
+  const nextStep = () => {
+    setError("");
+
+    if (step === 1) {
+      if (!firstName.trim() || !lastName.trim()) {
+        setError("Please fill out all fields.");
+        return;
+      }
+    }
+
+    if (step === 2) {
+      if (!email.trim() || !password) {
+        setError("Please complete all fields.");
+        return;
+      }
+
+      // Strong password rules //
+      const hasMinLength = password.length >= 6;
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+      if (!hasMinLength || !hasUppercase || !hasNumber || !hasSpecialChar) {
+        setError(
+          "Password must be at least 6 characters and include a capital letter, number, and special character."
+        );
+        return;
+      }
+    }
+
+    setStep((prev) => prev + 1);
+
+
+  };
+
+  const prevStep = () => {
+    setError("");
+    setStep((prev) => prev - 1);
+  };
+
+  // ===== PROFILE CREATION ===== //
   const createProfileRecord = async ({ user, normalizedEmail, parsedAge }) => {
     const passwordHash = await hashPasswordWithArgon2id(password);
+
 
     await createUser(getDataConnectClient(), {
       id: crypto.randomUUID(),
@@ -33,14 +82,18 @@ export default function Register() {
       age: parsedAge,
       major: major.trim(),
     });
+
+
   };
 
+  // ===== FINAL SUBMIT ===== //
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setSuccessMessage("");
 
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password || !age.trim() || !major.trim()) {
+
+    if (!age.trim() || !major.trim()) {
       setError("Please fill out all fields.");
       return;
     }
@@ -73,19 +126,15 @@ export default function Register() {
       await signOut(auth);
 
       setSuccessMessage("Account created. Redirecting to login...");
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-      setPassword("");
-      setAge("");
-      setMajor("");
 
       setTimeout(() => navigate("/login"), 700);
     } catch (createError) {
       console.error("Failed to create account", createError);
+
       if (createError?.code === "auth/email-already-in-use") {
         try {
           const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
+
           const { data: existingUserData } = await findUserByEmail(getDataConnectClient(), {
             email: normalizedEmail,
           });
@@ -101,131 +150,166 @@ export default function Register() {
             normalizedEmail,
             parsedAge,
           });
-          await signOut(auth);
 
-          setSuccessMessage("Account profile restored. Redirecting to login...");
-          setFirstName("");
-          setLastName("");
-          setEmail("");
-          setPassword("");
-          setAge("");
-          setMajor("");
+          await signOut(auth);
+          setSuccessMessage("Account profile restored. Redirecting...");
           setTimeout(() => navigate("/login"), 700);
+
         } catch (recoveryError) {
-          console.error("Failed to restore deleted profile", recoveryError);
-          if (
-            recoveryError?.code === "auth/invalid-credential" ||
-            recoveryError?.code === "auth/wrong-password" ||
-            recoveryError?.code === "auth/user-not-found"
-          ) {
-            setError("This email already exists in Firebase Auth. Enter the original password to restore the deleted profile, or use Login.");
-          } else {
-            setError(recoveryError?.message || "Failed to restore deleted profile.");
-          }
+          setError("Failed to restore deleted profile.");
         }
-      } else if (createError?.code === "auth/operation-not-allowed") {
-        setError("Email/Password sign-in is disabled in Firebase Authentication. Enable it in Firebase Console > Authentication > Sign-in method.");
       } else if (createError?.code === "auth/weak-password") {
         setError("Password is too weak. Use at least 6 characters.");
       } else {
-        const errorMessage = createError?.message || "Failed to create account.";
-        if (errorMessage.toLowerCase().includes("unique")) {
-          setError("An account with this email already exists.");
-        } else {
-          setError(errorMessage);
-        }
+        setError(createError?.message || "Failed to create account.");
       }
     } finally {
       setIsSubmitting(false);
     }
+
+
   };
 
-  return (
-  <div className="auth-wrapper">
-    <div className="auth-card">
+  return (<div className="create-event-wrapper">
+    <div className="create-event-card">
+
       <h1>Register</h1>
-      <div className="auth-card-p1">
-        <p>Create your account.</p>
+
+      {/* Progress Bar */}
+      <div className="progress-bar">
+        <div
+          className="progress-fill"
+          style={{ width: `${(step / 4) * 100}%` }}
+        />
       </div>
 
-      <form onSubmit={handleSubmit} className="auth-form">
-        <label htmlFor="firstName">First Name</label>
-        <input
-          id="firstName"
-          className="input"
-          placeholder="First name"
-          value={firstName}
-          onChange={(event) => setFirstName(event.target.value)}
-        />
+      <p>Step {step} of 4</p>
 
-        <label htmlFor="lastName">Last Name</label>
-        <input
-          id="lastName"
-          className="input"
-          placeholder="Last name"
-          value={lastName}
-          onChange={(event) => setLastName(event.target.value)}
-        />
+      <div className="form-report">
+        {error && <p style={{ color: "#b00020" }}>{error}</p>}
+        {successMessage && <p style={{ color: "#0b6b2f" }}>{successMessage}</p>}
+      </div>
 
-        <label htmlFor="email">Email</label><br />
-        <input
-          id="email"
-          className="input"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          autoComplete="email"
-          autoCapitalize="none"
-          spellCheck={false}
-        />
+      <form onSubmit={handleSubmit} className="create-event-form">
 
-        <label htmlFor="password">Password</label><br />
-        <input
-          id="password"
-          className="input"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          autoComplete="new-password"
-        />
+        {/* STEP 1 */}
+        {step === 1 && (
+          <div className="form-step">
+            <h2>Basic Info</h2>
 
-        <label htmlFor="age">Age</label><br />
-        <input
-          id="age"
-          className="input"
-          type="number"
-          placeholder="Age"
-          min="0"
-          value={age}
-          onChange={(event) => setAge(event.target.value)}
-        />
+            <input
+              className="input"
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
 
-        <label htmlFor="major">Major</label><br />
-        <input
-          id="major"
-          className="input"
-          placeholder="Major"
-          value={major}
-          onChange={(event) => setMajor(event.target.value)}
-        />
+            <input
+              className="input"
+              placeholder="Last name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
 
-        {error ? <p style={{ color: "#b00020" }}>{error}</p> : null}
-        {successMessage ? <p style={{ color: "#0b6b2f" }}>{successMessage}</p> : null}
+            <button type="button" className="stepButtonNext" onClick={nextStep}>
+              Next
+            </button>
+          </div>
+        )}
 
-        <button className="button" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Account"}
-        </button>
-      
-        <p className="auth-switch">
-          Already have an account?{" "}
-          <span onClick={() => navigate("/login")}>
-            Login here
-          </span>
-        </p>
+        {/* STEP 2 */}
+        {step === 2 && (
+          <div className="form-step">
+            <h2>Account Info</h2>
+
+            <input
+              className="input"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <input
+              className="input"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <p className="password-hint">
+              Must be 6+ characters, include a capital letter, number, and special character.
+            </p>
+
+            <div className="step-buttons">
+              <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
+              <button type="button" className="stepButtonNext" onClick={nextStep}>Next</button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3 */}
+        {step === 3 && (
+          <div className="form-step">
+            <h2>Additional Info</h2>
+
+            <input className="input" type="number" placeholder="Age" value={age} onChange={(e) => setAge(e.target.value)} />
+            <input className="input" placeholder="Major" value={major} onChange={(e) => setMajor(e.target.value)} />
+
+            <div className="step-buttons">
+              <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
+              <button type="button" className="stepButtonNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4 */}
+        {step === 4 && (
+          <div className="form-step">
+            <h2>Review</h2>
+
+            <div className="review-item">
+              <span className="review-label">Name</span>
+              <span className="review-value">{firstName} {lastName}</span>
+            </div>
+
+            <div className="review-item">
+              <span className="review-label">Email</span>
+              <span className="review-value">{email}</span>
+            </div>
+
+            <div className="review-item">
+              <span className="review-label">Age</span>
+              <span className="review-value">{age}</span>
+            </div>
+
+            <div className="review-item">
+              <span className="review-label">Major</span>
+              <span className="review-value">{major}</span>
+            </div>
+
+            <div className="step-buttons">
+              <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
+              <button className="createAccountButton" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create Account"}
+              </button>
+            </div>
+          </div>
+        )}
 
       </form>
+
+      <div className="authenticateText">
+        <p className="auth-switch">
+          Already have an account?{" "}
+          <span onClick={() => navigate("/login")}>Login here</span>
+        </p>
+      </div>
     </div>
   </div>
-);}
+
+  );
+}

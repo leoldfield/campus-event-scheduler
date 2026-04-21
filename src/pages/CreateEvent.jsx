@@ -5,15 +5,54 @@ import { ensureUserSession, getDataConnectClient } from "../firebase";
 import "../css/CreateEvent.css";
 
 export default function CreateEvent() {
-  const navigate = useNavigate();
+  
+  // STEP STATE
+  const [step, setStep] = useState(1);
+
+  // FORM STATE
   const [eventName, setEventName] = useState("");
   const [location, setLocation] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  const nextStep = () => {
+    setError("");
+
+    // Step validation
+    if (step === 1) {
+      if (!eventName.trim() || !eventDescription.trim()) {
+        setError("Please fill out all fields.");
+        return;
+      }
+    }
+
+    if (step === 2) {
+      if (!location.trim() || !startTime || !endTime) {
+        setError("Please complete all fields.");
+        return;
+      }
+
+      const startDate = new Date(startTime);
+      const endDate = new Date(endTime);
+
+      if (endDate <= startDate) {
+        setError("End time must be later than start time.");
+        return;
+      }
+    }
+
+    setStep((prev) => prev + 1);
+  };
+
+  const prevStep = () => {
+    setError("");
+    setStep((prev) => prev - 1);
+  };
 
   const uuidPattern =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -41,15 +80,11 @@ export default function CreateEvent() {
     );
   };
 
+  // FINAL SUBMIT (Step 3 only)
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setSuccessMessage("");
-
-    if (!eventName.trim() || !location.trim() || !eventDescription.trim() || !startTime || !endTime) {
-      setError("Please fill out all event fields.");
-      return;
-    }
 
     const coordinatorId = normalizeUuid(localStorage.getItem("loggedInUserId"));
     if (!uuidPattern.test(coordinatorId)) {
@@ -59,15 +94,6 @@ export default function CreateEvent() {
 
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
-    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
-      setError("Please enter valid start and end times.");
-      return;
-    }
-
-    if (endDate <= startDate) {
-      setError("End time must be later than start time.");
-      return;
-    }
 
     setIsSubmitting(true);
 
@@ -99,93 +125,171 @@ export default function CreateEvent() {
         }
       }
 
-      if (lastError) {
-        throw lastError;
-      }
+      if (lastError) throw lastError;
 
       setSuccessMessage("Event created successfully. Redirecting...");
-      setEventName("");
-      setLocation("");
-      setEventDescription("");
-      setStartTime("");
-      setEndTime("");
       setTimeout(() => navigate("/"), 700);
     } catch (createError) {
       console.error("Create event failed", createError);
-      if (createError?.code === "auth/admin-restricted-operation") {
-        setError("Firebase anonymous sign-in is disabled for this project. Enable Anonymous in Firebase Authentication > Sign-in method.");
-      } else if (isUnauthenticatedError(createError)) {
-        setError("Your session is not authenticated. Please log in again and retry.");
-      } else {
-        setError(createError?.message || "Failed to create event.");
-      }
+      setError(createError?.message || "Failed to create event.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const mapSrc = location
+    ? `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`
+    : null;
+
+  const formatDate = (value) => {
+    if (!value) return "";
+
+    const date = new Date(value);
+
+    return date.toLocaleString("en-US", {
+      dateStyle: "long",
+      timeStyle: "short",
+    });
+  };
+
   return (
     <div className="create-event-wrapper">
       <div className="create-event-card">
-        <h1>Event Registration</h1>
-        <p>Create a new event and add it to the event list.</p>
+
+        <h1>Create Event</h1>
+
+        {/* Progress Bar */}
+        <div className="progress-bar">
+          <div
+            className="progress-fill"
+            style={{ width: `${(step / 3) * 100}%` }}
+          />
+        </div>
+
+        <p>Step {step} of 3</p>
+
+        <div className='form-report'>
+          {error && <p style={{ color: "#b00020" }}>{error}</p>}
+          {successMessage && <p style={{ color: "#0b6b2f" }}>{successMessage}</p>}
+        </div>
 
         <form onSubmit={handleSubmit} className="create-event-form">
 
-          <label htmlFor="eventName">Title</label>
-          <input 
-            id="eventName"
-            className="input"
-            placeholder="Event title"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-          />
+          {/* STEP 1 */}
+          {step === 1 && (
+            <div className="form-step">
+              <h2>Basic Info</h2>
 
-          <label htmlFor="location">Location</label>
-          <input
-            id="location"
-            className="input"
-            placeholder="Event location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
+              <input
+                className="input"
+                placeholder="Event title"
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+              />
 
-          <label htmlFor="startTime">Start Time</label>
-          <input
-            id="startTime"
-            className="input"
-            type="datetime-local"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-          />
+              <textarea
+                className="input"
+                placeholder="Event description"
+                value={eventDescription}
+                onChange={(e) => setEventDescription(e.target.value)}
+                rows={5}
+              />
 
-          <label htmlFor="endTime">End Time</label>
-          <input
-            id="endTime"
-            className="input"
-            type="datetime-local"
-            value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-          />
+              <button type="button" className="stepButtonNext" onClick={nextStep}>
+                Next
+              </button>
+            </div>
+          )}
 
-          <label htmlFor="eventDescription">Description</label>
-          <textarea
-            id="eventDescription"
-            className="input"
-            placeholder="Event description"
-            value={eventDescription}
-            onChange={(e) => setEventDescription(e.target.value)}
-            rows={5}
-          />
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div className="form-step">
+              <h2>Time & Location</h2>
 
-          {error && <p style={{ color: "#b00020" }}>{error}</p>}
-          {successMessage && <p style={{ color: "#0b6b2f" }}>{successMessage}</p>}
+              <input
+                className="input"
+                type="datetime-local"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+              />
 
-          <button className="button" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create Event"}
-          </button>
+              <input
+                className="input"
+                type="datetime-local"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+              />
+
+              <input
+                className="input" placeholder="Address"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+              />
+
+              {mapSrc && (
+                  <iframe
+                    src={mapSrc}
+                    style={{
+                      border: 0,
+                      width: "100%",
+                      height: "200px",
+                      borderRadius: "8px",
+                    }}
+                    loading="lazy"
+                    title="Event Location Map"
+                  />
+              )}
+
+              <div className="step-buttons">
+                <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
+                <button type="button" className="stepButtonNext" onClick={nextStep}>
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div className="form-step">
+              <h2>Review</h2>
+
+              <div className="review-item">
+                <span className="review-label">Name</span>
+                <span className="review-value">{eventName}</span>
+              </div>
+
+              <div className="review-item">
+                <span className="review-label">Description</span>
+                <span className="review-value">{eventDescription}</span>
+              </div>
+
+              <div className="review-item">
+                <span className="review-label">Start</span>
+                <span className="review-value">{formatDate(startTime)}</span>
+              </div>
+
+              <div className="review-item">
+                <span className="review-label">End</span>
+                <span className="review-value">{formatDate(endTime)}</span>
+              </div>
+
+              <div className="review-item">
+                <span className="review-label">Location</span>
+                <span className="review-value">{location}</span>
+              </div>
+
+              <div className="step-buttons">
+                <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
+                <button className="button" type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Create Event"}
+                </button>
+              </div>
+            </div>
+          )}
 
         </form>
       </div>
     </div>
-  );}
+  );
+}
