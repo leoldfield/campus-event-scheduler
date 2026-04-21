@@ -83,7 +83,7 @@ export default function Events() {
           firebaseUid: currentUser.uid,
         });
         dbUser = userResult.data?.userLists?.[0];
-      } catch {}
+      } catch { }
 
       if (!dbUser && currentUser.email) {
         const emailResult = await findUserByEmail(getDataConnectClient(), {
@@ -108,7 +108,7 @@ export default function Events() {
           if (reg.data?.registration) {
             registeredIds.add(event.id);
           }
-        } catch {}
+        } catch { }
       }
 
       setRegisteredEventIds(registeredIds);
@@ -175,7 +175,7 @@ export default function Events() {
         await navigator.clipboard.writeText(url);
         alert("Link copied!");
       }
-    } catch {}
+    } catch { }
   };
 
   // ✅ Filters
@@ -187,21 +187,40 @@ export default function Events() {
     const now = new Date();
 
     return events.filter((event) => {
-      const eventStart = new Date(event.starttime);
+      const name = (event.eventname || "").toLowerCase();
+      const desc = (event.eventdesc || "").toLowerCase();
+      const location = (event.location || "").toLowerCase();
+      const query = searchTerm.trim().toLowerCase();
 
-      return (
-        (!searchTerm ||
-          event.eventname.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        (selectedLocation === "all" || event.location === selectedLocation) &&
-        (selectedStatus === "all" ||
-          (selectedStatus === "upcoming" && eventStart >= now) ||
-          (selectedStatus === "past" && eventStart < now)) &&
-        (selectedEventStatus === "all" ||
-          (selectedEventStatus === "ongoing" && event.eventstatus) ||
-          (selectedEventStatus === "cancelled" && !event.eventstatus))
-      );
+      const eventStart = new Date(event.starttime);
+      const isValidDate = !Number.isNaN(eventStart.getTime());
+
+      const matchesSearch =
+        !query ||
+        name.includes(query) ||
+        desc.includes(query) ||
+        location.includes(query);
+
+      const matchesLocation =
+        selectedLocation === "all" || (event.location || "") === selectedLocation;
+
+      let matchesStatus = true;
+      if (selectedStatus === "upcoming") {
+        matchesStatus = isValidDate ? eventStart >= now : false;
+      } else if (selectedStatus === "past") {
+        matchesStatus = isValidDate ? eventStart < now : false;
+      }
+
+      return matchesSearch && matchesLocation && matchesStatus;
     });
-  }, [events, searchTerm, selectedLocation, selectedStatus, selectedEventStatus]);
+  }, [events, searchTerm, selectedLocation, selectedStatus]);
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedLocation("all");
+    setSelectedStatus("all");
+    setSelectedEventStatus("all");
+  };
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "24px" }}>
@@ -209,6 +228,102 @@ export default function Events() {
 
       {loadingEvents && <p>Loading...</p>}
       {eventsError && <p style={{ color: "red" }}>{eventsError}</p>}
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "16px",
+          marginBottom: "24px",
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <label htmlFor="event-search" style={{ display: "block", marginBottom: "6px" }}>
+            Search events
+          </label>
+          <input
+            id="event-search"
+            type="text"
+            placeholder="Search by name, description, or location"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <label htmlFor="location-filter" style={{ display: "block", marginBottom: "6px" }}>
+            Filter by location
+          </label>
+          <select
+            id="location-filter"
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              boxSizing: "border-box",
+            }}
+          >
+            <option value="all">All locations</option>
+            {uniqueLocations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <label htmlFor="status-filter" style={{ display: "block", marginBottom: "6px" }}>
+            Filter by status
+          </label>
+          <select
+            id="status-filter"
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              boxSizing: "border-box",
+            }}
+          >
+            <option value="all">All events</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="past">Past</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "end", minWidth: 0 }}>
+          <button
+            onClick={clearFilters}
+            style={{
+              width: "100%",
+              padding: "10px 14px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              boxSizing: "border-box",
+            }}
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+
+      {!loadingEvents && !eventsError && filteredEvents.length === 0 && events.length > 0 ? (
+        <p>No events match your current search or filters.</p>
+      ) : null}
 
       {filteredEvents.map((event) => {
         const isRegistered = registeredEventIds.has(event.id);
