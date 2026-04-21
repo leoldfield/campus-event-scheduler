@@ -42,7 +42,6 @@ export default function Events() {
       if (!user || user.isAnonymous) {
         setFirstName("");
         setDbUserId("");
-        setRegisteredEventIds(new Set());
         setNameError("");
         setLoadingName(false);
         return;
