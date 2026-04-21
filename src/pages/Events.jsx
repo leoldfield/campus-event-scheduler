@@ -35,8 +35,6 @@ export default function Events() {
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [eventsError, setEventsError] = useState("");
 
-  const [registeredEventIds, setRegisteredEventIds] = useState(new Set());
-
   const [registerLoadingId, setRegisterLoadingId] = useState(null);
   const [registerMessage, setRegisterMessage] = useState("");
   const [registerError, setRegisterError] = useState("");
@@ -55,6 +53,8 @@ export default function Events() {
       if (newUserId !== prevUserId) {
         setRegisteredEventIds(new Set());
         setPrevUserId(newUserId);
+      }
+
       if (!user || user.isAnonymous) {
         setFirstName("");
         setDbUserId("");
@@ -82,262 +82,262 @@ export default function Events() {
 
         if (currentUser && !currentUser.isAnonymous) {
           let dbUser = null;
-      const loadUserInfo = async () => {
-        try {
-          let matchedUser = null;
+          const loadUserInfo = async () => {
+            try {
+              let matchedUser = null;
 
-          try {
-            const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
-              firebaseUid: currentUser.uid,
-            });
-            dbUser = userResult.data?.userLists?.[0];
-          } catch { }
-
-          if (!dbUser && currentUser.email) {
-            const emailResult = await findUserByEmail(getDataConnectClient(), {
-              email: currentUser.email.toLowerCase(),
-            });
-            dbUser = emailResult.data?.userLists?.[0];
-          }
-
-          if (dbUser?.id) {
-            for (const event of eventList) {
               try {
-                const reg = await getRegistration(getDataConnectClient(), {
-                  eventId: event.id,
-                  userId: dbUser.id,
+                const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
+                  firebaseUid: currentUser.uid,
                 });
-
-                if (reg.data?.registration) {
-                  registeredIds.add(event.id);
-                }
+                dbUser = userResult.data?.userLists?.[0];
               } catch { }
+
+              if (!dbUser && currentUser.email) {
+                const emailResult = await findUserByEmail(getDataConnectClient(), {
+                  email: currentUser.email.toLowerCase(),
+                });
+                dbUser = emailResult.data?.userLists?.[0];
+              }
+
+              if (dbUser?.id) {
+                for (const event of eventList) {
+                  try {
+                    const reg = await getRegistration(getDataConnectClient(), {
+                      eventId: event.id,
+                      userId: dbUser.id,
+                    });
+
+                    if (reg.data?.registration) {
+                      registeredIds.add(event.id);
+                    }
+                  } catch { }
+                }
+              }
+              if (matchedUser?.firstname) {
+                setFirstName(matchedUser.firstname);
+              } else {
+                setFirstName(user.displayName || "");
+              }
+
+              setDbUserId(matchedUser?.id || "");
+              setNameError("");
+            } catch (error) {
+              console.error("Failed to load user name", error);
+              setNameError(error?.message || "Failed to load user name.");
+              setFirstName(user.displayName || "");
+              setDbUserId("");
+            } finally {
+              setLoadingName(false);
             }
-          }
-          if (matchedUser?.firstname) {
-            setFirstName(matchedUser.firstname);
-          } else {
-            setFirstName(user.displayName || "");
-          }
 
-          setDbUserId(matchedUser?.id || "");
-          setNameError("");
-        } catch (error) {
-          console.error("Failed to load user name", error);
-          setNameError(error?.message || "Failed to load user name.");
-          setFirstName(user.displayName || "");
-          setDbUserId("");
-        } finally {
-          setLoadingName(false);
-        }
+            setRegisteredEventIds((prev) => {
+              const merged = new Set(prev);
+              registeredIds.forEach(id => merged.add(id));
+              return merged;
+            });
+          } catch (error) {
+            try {
+              await signInAnonymously(auth);
+              const { data } = await listEvents(getDataConnectClient());
+              setEvents(data?.eventLists || []);
+            } catch (err) {
+              setEventsError(err.message);
+              loadUserInfo();
+            });
 
-        setRegisteredEventIds((prev) => {
-          const merged = new Set(prev);
-          registeredIds.forEach(id => merged.add(id));
-          return merged;
-        });
-      } catch (error) {
+  return () => unsubscribe();
+}, []);
+
+useEffect(() => {
+  const loadEvents = async () => {
+    try {
+      await auth.authStateReady();
+      const { data } = await listEvents(getDataConnectClient());
+      setEvents(data?.eventLists || []);
+      setEventsError("");
+    } catch (error) {
+      const errorMessage = String(error?.message || "");
+      const isUnauthenticated = /unauthenticated|requires a signed-in user/i.test(errorMessage);
+
+      if (isUnauthenticated) {
         try {
-          await signInAnonymously(auth);
+          const credential = await signInAnonymously(auth);
+          await credential.user.getIdToken(true);
           const { data } = await listEvents(getDataConnectClient());
           setEvents(data?.eventLists || []);
-        } catch (err) {
-          setEventsError(err.message);
-      loadUserInfo();
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const loadEvents = async () => {
-      try {
-        await auth.authStateReady();
-        const { data } = await listEvents(getDataConnectClient());
-        setEvents(data?.eventLists || []);
-        setEventsError("");
-      } catch (error) {
-        const errorMessage = String(error?.message || "");
-        const isUnauthenticated = /unauthenticated|requires a signed-in user/i.test(errorMessage);
-
-        if (isUnauthenticated) {
-          try {
-            const credential = await signInAnonymously(auth);
-            await credential.user.getIdToken(true);
-            const { data } = await listEvents(getDataConnectClient());
-            setEvents(data?.eventLists || []);
-            setEventsError("");
-            return;
-          } catch (retryError) {
-            console.error("Failed to load events after guest sign-in", retryError);
-            setEventsError(retryError?.message || "Failed to load events.");
-            return;
-          }
+          setEventsError("");
+          return;
+        } catch (retryError) {
+          console.error("Failed to load events after guest sign-in", retryError);
+          setEventsError(retryError?.message || "Failed to load events.");
+          return;
         }
-      } finally {
-        setLoadingEvents(false);
       }
-    };
-
-    loadEvents();
-  }, [currentUser]);
-  }, []);
-
-  useEffect(() => {
-    const loadUserRegistrations = async () => {
-      if (!isSignedInUser || !dbUserId || events.length === 0) {
-        setRegisteredEventIds(new Set());
-        return;
-      }
-
-      try {
-        const registrationChecks = await Promise.all(
-          events.map(async (event) => {
-            const result = await getRegistration(getDataConnectClient(), {
-              eventId: event.id,
-              userId: dbUserId,
-            });
-
-            return result.data?.registration ? event.id : null;
-          })
-        );
-
-        setRegisteredEventIds(new Set(registrationChecks.filter(Boolean)));
-      } catch (error) {
-        console.error("Failed to load registrations", error);
-      }
-    };
-
-    loadUserRegistrations();
-  }, [isSignedInUser, dbUserId, events]);
-
-  const formatEventDate = (timestamp) => {
-    const eventDate = new Date(timestamp);
-
-    if (Number.isNaN(eventDate.getTime())) {
-      return "Invalid date";
+    } finally {
+      setLoadingEvents(false);
     }
-
-    return eventDate.toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
   };
 
-  const handleRegister = async (eventId) => {
-    if (!isSignedInUser || !currentUser) return;
+  loadEvents();
+}, [currentUser]);
+  }, []);
 
-    setRegisterLoadingId(eventId);
+useEffect(() => {
+  const loadUserRegistrations = async () => {
+    if (!isSignedInUser || !dbUserId || events.length === 0) {
+      setRegisteredEventIds(new Set());
+      return;
+    }
 
     try {
-      let resolvedUserId = dbUserId;
-      let dbUser = null;
+      const registrationChecks = await Promise.all(
+        events.map(async (event) => {
+          const result = await getRegistration(getDataConnectClient(), {
+            eventId: event.id,
+            userId: dbUserId,
+          });
 
-      const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
-        firebaseUid: currentUser.uid,
+          return result.data?.registration ? event.id : null;
+        })
+      );
+
+      setRegisteredEventIds(new Set(registrationChecks.filter(Boolean)));
+    } catch (error) {
+      console.error("Failed to load registrations", error);
+    }
+  };
+
+  loadUserRegistrations();
+}, [isSignedInUser, dbUserId, events]);
+
+const formatEventDate = (timestamp) => {
+  const eventDate = new Date(timestamp);
+
+  if (Number.isNaN(eventDate.getTime())) {
+    return "Invalid date";
+  }
+
+  return eventDate.toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+};
+
+const handleRegister = async (eventId) => {
+  if (!isSignedInUser || !currentUser) return;
+
+  setRegisterLoadingId(eventId);
+
+  try {
+    let resolvedUserId = dbUserId;
+    let dbUser = null;
+
+    const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
+      firebaseUid: currentUser.uid,
+    });
+
+    dbUser = userResult.data?.userLists?.[0];
+
+    if (!dbUser && currentUser.email) {
+      const emailResult = await findUserByEmail(getDataConnectClient(), {
+        email: currentUser.email.toLowerCase(),
       });
+      dbUser = emailResult.data?.userLists?.[0];
+    }
 
-      dbUser = userResult.data?.userLists?.[0];
+    if (!dbUser?.id) throw new Error("User not found");
+    if (!resolvedUserId) {
+      try {
+        const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
+          firebaseUid: currentUser.uid,
+        });
+        dbUser = userResult.data?.userLists?.[0] || null;
+      } catch (uidError) {
+        console.warn("User not found by firebase uid, trying email fallback", uidError);
+      }
 
-      if (!dbUser && currentUser.email) {
+      if (!dbUser?.id && currentUser.email) {
         const emailResult = await findUserByEmail(getDataConnectClient(), {
           email: currentUser.email.toLowerCase(),
         });
-        dbUser = emailResult.data?.userLists?.[0];
+        dbUser = emailResult.data?.userLists?.[0] || null;
       }
 
-      if (!dbUser?.id) throw new Error("User not found");
-      if (!resolvedUserId) {
-        try {
-          const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
-            firebaseUid: currentUser.uid,
-          });
-          dbUser = userResult.data?.userLists?.[0] || null;
-        } catch (uidError) {
-          console.warn("User not found by firebase uid, trying email fallback", uidError);
-        }
+      resolvedUserId = dbUser?.id || "";
+      setDbUserId(resolvedUserId);
+    }
 
-        if (!dbUser?.id && currentUser.email) {
-          const emailResult = await findUserByEmail(getDataConnectClient(), {
-            email: currentUser.email.toLowerCase(),
-          });
-          dbUser = emailResult.data?.userLists?.[0] || null;
-        }
+    if (!resolvedUserId) {
+      throw new Error("Could not find the current user in the database.");
+    }
 
-        resolvedUserId = dbUser?.id || "";
-        setDbUserId(resolvedUserId);
-      }
+    const existingRegistration = await getRegistration(getDataConnectClient(), {
+      eventId,
+      userId: resolvedUserId,
+    });
 
-      if (!resolvedUserId) {
-        throw new Error("Could not find the current user in the database.");
-      }
-
-      const existingRegistration = await getRegistration(getDataConnectClient(), {
-        eventId,
-        userId: resolvedUserId,
-      });
-
-      if (existingRegistration.data?.registration) {
-        setRegisterMessage("You are already registered for this event.");
-        setRegisteredEventIds((prev) => {
-          const updated = new Set(prev);
-          updated.add(eventId);
-          return updated;
-        });
-        return;
-      }
-
-      await createRegistration(getDataConnectClient(), {
-        eventId,
-        userId: resolvedUserId,
-        notif: false,
-      });
-
+    if (existingRegistration.data?.registration) {
+      setRegisterMessage("You are already registered for this event.");
       setRegisteredEventIds((prev) => {
         const updated = new Set(prev);
         updated.add(eventId);
         return updated;
       });
-
-      setRegisterMessage("Registered!");
-    } catch (err) {
-      setRegisterError(err.message);
-
-      setRegisterMessage("Registration successful.");
-      setRegisterError("");
-    } catch (error) {
-      const errorMessage = String(error?.message || "");
-
-      if (/already exists|duplicate|unique/i.test(errorMessage)) {
-        setRegisteredEventIds((prev) => {
-          const updated = new Set(prev);
-          updated.add(eventId);
-          return updated;
-        });
-        setRegisterMessage("You are already registered for this event.");
-        setRegisterError("");
-      } else {
-        console.error("Failed to register for event", error);
-        setRegisterError(error?.message || "Failed to register for the event.");
-      }
-    } finally {
-      setRegisterLoadingId(null);
+      return;
     }
-  };
 
-  const handleShare = async (event) => {
-    const url = `${window.location.origin}/event/${event.id}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: event.eventname,
-          url,
-        });
-      } else {
-        await navigator.clipboard.writeText(url);
-        alert("Link copied!");
-      }
-    } catch { }
+    await createRegistration(getDataConnectClient(), {
+      eventId,
+      userId: resolvedUserId,
+      notif: false,
+    });
+
+    setRegisteredEventIds((prev) => {
+      const updated = new Set(prev);
+      updated.add(eventId);
+      return updated;
+    });
+
+    setRegisterMessage("Registered!");
+  } catch (err) {
+    setRegisterError(err.message);
+
+    setRegisterMessage("Registration successful.");
+    setRegisterError("");
+  } catch (error) {
+    const errorMessage = String(error?.message || "");
+
+    if (/already exists|duplicate|unique/i.test(errorMessage)) {
+      setRegisteredEventIds((prev) => {
+        const updated = new Set(prev);
+        updated.add(eventId);
+        return updated;
+      });
+      setRegisterMessage("You are already registered for this event.");
+      setRegisterError("");
+    } else {
+      console.error("Failed to register for event", error);
+      setRegisterError(error?.message || "Failed to register for the event.");
+    }
+  } finally {
+    setRegisterLoadingId(null);
+  }
+};
+
+const handleShare = async (event) => {
+  const url = `${window.location.origin}/event/${event.id}`;
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: event.eventname,
+        url,
+      });
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert("Link copied!");
+    }
+  } catch { }
   const handleUnregister = async (eventId) => {
     setRegisterMessage("");
     setRegisterError("");
@@ -501,23 +501,23 @@ export default function Events() {
               </option>
             ))}
           </select>
-      {isSignedInUser && (
-        <h2>
-          Welcome {loadingName ? "..." : ""}
-          {!loadingName && firstName ? `, ${firstName}` : ""}
-        </h2>
-      )}
+          {isSignedInUser && (
+            <h2>
+              Welcome {loadingName ? "..." : ""}
+              {!loadingName && firstName ? `, ${firstName}` : ""}
+            </h2>
+          )}
 
-      <p>Find upcoming University of Arkansas at Little Rock events and register easily.</p>
+          <p>Find upcoming University of Arkansas at Little Rock events and register easily.</p>
 
-      {loadingEvents ? <p>Loading events...</p> : null}
-      {eventsError ? <p style={{ color: "red" }}>{eventsError}</p> : null}
-      {registerError ? <p style={{ color: "red" }}>{registerError}</p> : null}
-      {registerMessage ? <p style={{ color: "green" }}>{registerMessage}</p> : null}
-      {!isSignedInUser ? <p>Please log in to register for events.</p> : null}
-      {nameError && !firstName ? <p>Could not load user name.</p> : null}
+          {loadingEvents ? <p>Loading events...</p> : null}
+          {eventsError ? <p style={{ color: "red" }}>{eventsError}</p> : null}
+          {registerError ? <p style={{ color: "red" }}>{registerError}</p> : null}
+          {registerMessage ? <p style={{ color: "green" }}>{registerMessage}</p> : null}
+          {!isSignedInUser ? <p>Please log in to register for events.</p> : null}
+          {nameError && !firstName ? <p>Could not load user name.</p> : null}
 
-      {!loadingEvents && !eventsError && events.length > 0 && (
+          {!loadingEvents && !eventsError && events.length > 0 && (
         <div
           style={{
             display: "grid",
@@ -684,75 +684,75 @@ export default function Events() {
           </button>
         </div>
       </div>
-      {filteredEvents.map((event) => (
-        <EventCard
-          key={event.id}
-          event={event}
-          isRegistered={registeredEventIds.has(event.id)}
-          loading={registerLoadingId === event.id}
+        {filteredEvents.map((event) => (
+          <EventCard
+            key={event.id}
+            event={event}
+            isRegistered={registeredEventIds.has(event.id)}
+            loading={registerLoadingId === event.id}
+            onRegister={handleRegister}
+            onShare={handleShare}
+            onOpen={setSelectedEvent}
+          />
+        ))}
+        {filteredEvents.map((event) => {
+          const isRegistered = registeredEventIds.has(event.id);
+          const isBusy = registerLoadingId === event.id;
+
+          return (
+            <div
+              key={event.id}
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                padding: "18px",
+                marginBottom: "16px",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+              }}
+            >
+              <h2 style={{ marginTop: 0 }}>{event.eventname}</h2>
+              <p><strong>Start:</strong> {formatEventDate(event.starttime)}</p>
+              <p><strong>End:</strong> {formatEventDate(event.endtime)}</p>
+              <p><strong>Location:</strong> {event.location || "TBD"}</p>
+              <p>{event.eventdesc}</p>
+
+              {isSignedInUser ? (
+                <button
+                  onClick={() =>
+                    isRegistered ? handleUnregister(event.id) : handleRegister(event.id)
+                  }
+                  disabled={isBusy}
+                  style={{
+                    padding: "10px 16px",
+                    borderRadius: "8px",
+                    border: "none",
+                    cursor: isBusy ? "not-allowed" : "pointer",
+                    backgroundColor: isRegistered ? "#666" : "#b30000",
+                    color: "white",
+                    fontWeight: "600",
+                  }}
+                >
+                  {isBusy
+                    ? isRegistered
+                      ? "Unregistering..."
+                      : "Registering..."
+                    : isRegistered
+                      ? "Unregister"
+                      : "Register"}
+                </button>
+              ) : null}
+            </div>
+          );
+        })}
+
+        <EventModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
           onRegister={handleRegister}
           onShare={handleShare}
-          onOpen={setSelectedEvent}
+          isRegistered={selectedEvent && registeredEventIds.has(selectedEvent.id)}
+          loading={registerLoadingId === selectedEvent?.id}
         />
-      ))}
-      {filteredEvents.map((event) => {
-        const isRegistered = registeredEventIds.has(event.id);
-        const isBusy = registerLoadingId === event.id;
-
-        return (
-          <div
-            key={event.id}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: "12px",
-              padding: "18px",
-              marginBottom: "16px",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
-            }}
-          >
-            <h2 style={{ marginTop: 0 }}>{event.eventname}</h2>
-            <p><strong>Start:</strong> {formatEventDate(event.starttime)}</p>
-            <p><strong>End:</strong> {formatEventDate(event.endtime)}</p>
-            <p><strong>Location:</strong> {event.location || "TBD"}</p>
-            <p>{event.eventdesc}</p>
-
-            {isSignedInUser ? (
-              <button
-                onClick={() =>
-                  isRegistered ? handleUnregister(event.id) : handleRegister(event.id)
-                }
-                disabled={isBusy}
-                style={{
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  border: "none",
-                  cursor: isBusy ? "not-allowed" : "pointer",
-                  backgroundColor: isRegistered ? "#666" : "#b30000",
-                  color: "white",
-                  fontWeight: "600",
-                }}
-              >
-                {isBusy
-                  ? isRegistered
-                    ? "Unregistering..."
-                    : "Registering..."
-                  : isRegistered
-                  ? "Unregister"
-                  : "Register"}
-              </button>
-            ) : null}
-          </div>
-        );
-      })}
-
-      <EventModal
-        event={selectedEvent}
-        onClose={() => setSelectedEvent(null)}
-        onRegister={handleRegister}
-        onShare={handleShare}
-        isRegistered={selectedEvent && registeredEventIds.has(selectedEvent.id)}
-        loading={registerLoadingId === selectedEvent?.id}
-      />
-    </div>
-  );
+      </div>
+      );
 }
