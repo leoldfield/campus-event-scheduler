@@ -1,7 +1,7 @@
 # Generated TypeScript README
 This README will guide you through the process of using the generated JavaScript SDK package for the connector `example`. It will also provide examples on how to use your generated SDK to call your Data Connect queries and mutations.
 
-**If you're looking for the `React README`, you can find it at [`dataconnect-generated/react/README.md`](./react/README.md)**
+**If you're looking for the `React README`, you can find it at [`..\..\src\dataconnect-generated/react/README.md`](./react/README.md)**
 
 ***NOTE:** This README is generated alongside the generated SDK. If you make changes to this file, they will be overwritten when the SDK is regenerated.*
 
@@ -73,7 +73,7 @@ The following is true for both the action shortcut function and the `QueryRef` f
 Below are examples of how to use the `example` connector's generated functions to execute each query. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-queries).
 
 ## ListEvents
-You can execute the `ListEvents` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `ListEvents` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 listEvents(options?: ExecuteQueryOptions): QueryPromise<ListEventsData, undefined>;
 
@@ -106,7 +106,7 @@ The `ListEvents` query has no variables.
 ### Return Type
 Recall that executing the `ListEvents` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `ListEventsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `ListEventsData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface ListEventsData {
   eventLists: ({
@@ -173,7 +173,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## ListUsers
-You can execute the `ListUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `ListUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 listUsers(options?: ExecuteQueryOptions): QueryPromise<ListUsersData, undefined>;
 
@@ -206,7 +206,7 @@ The `ListUsers` query has no variables.
 ### Return Type
 Recall that executing the `ListUsers` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `ListUsersData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `ListUsersData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface ListUsersData {
   userLists: ({
@@ -272,7 +272,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## GetEventByID
-You can execute the `GetEventByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `GetEventByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 getEventById(vars: GetEventByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetEventByIdData, GetEventByIdVariables>;
 
@@ -301,7 +301,7 @@ console.log(name);
 ```
 
 ### Variables
-The `GetEventByID` query requires an argument of type `GetEventByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `GetEventByID` query requires an argument of type `GetEventByIdVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface GetEventByIdVariables {
@@ -311,7 +311,7 @@ export interface GetEventByIdVariables {
 ### Return Type
 Recall that executing the `GetEventByID` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `GetEventByIdData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `GetEventByIdData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface GetEventByIdData {
   eventList?: {
@@ -389,7 +389,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## GetFirstNameByID
-You can execute the `GetFirstNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `GetFirstNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 getFirstNameById(vars: GetFirstNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetFirstNameByIdData, GetFirstNameByIdVariables>;
 
@@ -418,7 +418,7 @@ console.log(name);
 ```
 
 ### Variables
-The `GetFirstNameByID` query requires an argument of type `GetFirstNameByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `GetFirstNameByID` query requires an argument of type `GetFirstNameByIdVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface GetFirstNameByIdVariables {
@@ -428,7 +428,7 @@ export interface GetFirstNameByIdVariables {
 ### Return Type
 Recall that executing the `GetFirstNameByID` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `GetFirstNameByIdData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `GetFirstNameByIdData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface GetFirstNameByIdData {
   userList?: {
@@ -500,7 +500,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## GetNameByID
-You can execute the `GetNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `GetNameByID` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 getNameById(vars: GetNameByIdVariables, options?: ExecuteQueryOptions): QueryPromise<GetNameByIdData, GetNameByIdVariables>;
 
@@ -529,7 +529,7 @@ console.log(name);
 ```
 
 ### Variables
-The `GetNameByID` query requires an argument of type `GetNameByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `GetNameByID` query requires an argument of type `GetNameByIdVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface GetNameByIdVariables {
@@ -539,7 +539,7 @@ export interface GetNameByIdVariables {
 ### Return Type
 Recall that executing the `GetNameByID` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `GetNameByIdData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `GetNameByIdData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface GetNameByIdData {
   userList?: {
@@ -612,7 +612,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## ValidateUserCredentials
-You can execute the `ValidateUserCredentials` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `ValidateUserCredentials` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 validateUserCredentials(vars: ValidateUserCredentialsVariables, options?: ExecuteQueryOptions): QueryPromise<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
 
@@ -641,7 +641,7 @@ console.log(name);
 ```
 
 ### Variables
-The `ValidateUserCredentials` query requires an argument of type `ValidateUserCredentialsVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `ValidateUserCredentials` query requires an argument of type `ValidateUserCredentialsVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface ValidateUserCredentialsVariables {
@@ -652,7 +652,7 @@ export interface ValidateUserCredentialsVariables {
 ### Return Type
 Recall that executing the `ValidateUserCredentials` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `ValidateUserCredentialsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `ValidateUserCredentialsData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface ValidateUserCredentialsData {
   userLists: ({
@@ -729,7 +729,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## ListRegistrations
-You can execute the `ListRegistrations` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `ListRegistrations` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 listRegistrations(options?: ExecuteQueryOptions): QueryPromise<ListRegistrationsData, undefined>;
 
@@ -762,7 +762,7 @@ The `ListRegistrations` query has no variables.
 ### Return Type
 Recall that executing the `ListRegistrations` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `ListRegistrationsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `ListRegistrationsData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface ListRegistrationsData {
   registrations: ({
@@ -824,7 +824,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## GetRegistration
-You can execute the `GetRegistration` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `GetRegistration` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 getRegistration(vars: GetRegistrationVariables, options?: ExecuteQueryOptions): QueryPromise<GetRegistrationData, GetRegistrationVariables>;
 
@@ -853,7 +853,7 @@ console.log(name);
 ```
 
 ### Variables
-The `GetRegistration` query requires an argument of type `GetRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `GetRegistration` query requires an argument of type `GetRegistrationVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface GetRegistrationVariables {
@@ -864,7 +864,7 @@ export interface GetRegistrationVariables {
 ### Return Type
 Recall that executing the `GetRegistration` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `GetRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `GetRegistrationData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface GetRegistrationData {
   registration?: {
@@ -940,7 +940,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## FindUserByEmail
-You can execute the `FindUserByEmail` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `FindUserByEmail` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 findUserByEmail(vars: FindUserByEmailVariables, options?: ExecuteQueryOptions): QueryPromise<FindUserByEmailData, FindUserByEmailVariables>;
 
@@ -969,7 +969,7 @@ console.log(name);
 ```
 
 ### Variables
-The `FindUserByEmail` query requires an argument of type `FindUserByEmailVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `FindUserByEmail` query requires an argument of type `FindUserByEmailVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface FindUserByEmailVariables {
@@ -979,7 +979,7 @@ export interface FindUserByEmailVariables {
 ### Return Type
 Recall that executing the `FindUserByEmail` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `FindUserByEmailData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `FindUserByEmailData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface FindUserByEmailData {
   userLists: ({
@@ -1055,7 +1055,7 @@ executeQuery(ref).then((response) => {
 ```
 
 ## GetUserByFirebaseUid
-You can execute the `GetUserByFirebaseUid` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `GetUserByFirebaseUid` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 getUserByFirebaseUid(vars: GetUserByFirebaseUidVariables, options?: ExecuteQueryOptions): QueryPromise<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
 
@@ -1084,7 +1084,7 @@ console.log(name);
 ```
 
 ### Variables
-The `GetUserByFirebaseUid` query requires an argument of type `GetUserByFirebaseUidVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `GetUserByFirebaseUid` query requires an argument of type `GetUserByFirebaseUidVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface GetUserByFirebaseUidVariables {
@@ -1094,7 +1094,7 @@ export interface GetUserByFirebaseUidVariables {
 ### Return Type
 Recall that executing the `GetUserByFirebaseUid` query returns a `QueryPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `GetUserByFirebaseUidData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `GetUserByFirebaseUidData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface GetUserByFirebaseUidData {
   userLists: ({
@@ -1187,7 +1187,7 @@ The following is true for both the action shortcut function and the `MutationRef
 Below are examples of how to use the `example` connector's generated functions to execute each mutation. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#using-mutations).
 
 ## CreateEvent
-You can execute the `CreateEvent` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `CreateEvent` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 createEvent(vars: CreateEventVariables): MutationPromise<CreateEventData, CreateEventVariables>;
 
@@ -1216,7 +1216,7 @@ console.log(name);
 ```
 
 ### Variables
-The `CreateEvent` mutation requires an argument of type `CreateEventVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `CreateEvent` mutation requires an argument of type `CreateEventVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface CreateEventVariables {
@@ -1232,7 +1232,7 @@ export interface CreateEventVariables {
 ### Return Type
 Recall that executing the `CreateEvent` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `CreateEventData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `CreateEventData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface CreateEventData {
   eventList_insert: EventList_Key;
@@ -1314,7 +1314,7 @@ executeMutation(ref).then((response) => {
 ```
 
 ## CreateRegistration
-You can execute the `CreateRegistration` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `CreateRegistration` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 createRegistration(vars: CreateRegistrationVariables): MutationPromise<CreateRegistrationData, CreateRegistrationVariables>;
 
@@ -1343,7 +1343,7 @@ console.log(name);
 ```
 
 ### Variables
-The `CreateRegistration` mutation requires an argument of type `CreateRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `CreateRegistration` mutation requires an argument of type `CreateRegistrationVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface CreateRegistrationVariables {
@@ -1355,7 +1355,7 @@ export interface CreateRegistrationVariables {
 ### Return Type
 Recall that executing the `CreateRegistration` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `CreateRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `CreateRegistrationData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface CreateRegistrationData {
   registration_insert: Registration_Key;
@@ -1429,7 +1429,7 @@ executeMutation(ref).then((response) => {
 ```
 
 ## DeleteRegistration
-You can execute the `DeleteRegistration` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `DeleteRegistration` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 deleteRegistration(vars: DeleteRegistrationVariables): MutationPromise<DeleteRegistrationData, DeleteRegistrationVariables>;
 
@@ -1458,7 +1458,7 @@ console.log(name);
 ```
 
 ### Variables
-The `DeleteRegistration` mutation requires an argument of type `DeleteRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `DeleteRegistration` mutation requires an argument of type `DeleteRegistrationVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface DeleteRegistrationVariables {
@@ -1469,7 +1469,7 @@ export interface DeleteRegistrationVariables {
 ### Return Type
 Recall that executing the `DeleteRegistration` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `DeleteRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `DeleteRegistrationData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface DeleteRegistrationData {
   registration_delete?: Registration_Key | null;
@@ -1541,7 +1541,7 @@ executeMutation(ref).then((response) => {
 ```
 
 ## CreateUser
-You can execute the `CreateUser` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `CreateUser` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 createUser(vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
 
@@ -1570,7 +1570,7 @@ console.log(name);
 ```
 
 ### Variables
-The `CreateUser` mutation requires an argument of type `CreateUserVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `CreateUser` mutation requires an argument of type `CreateUserVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface CreateUserVariables {
@@ -1587,7 +1587,7 @@ export interface CreateUserVariables {
 ### Return Type
 Recall that executing the `CreateUser` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `CreateUserData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `CreateUserData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface CreateUserData {
   userList_insert: UserList_Key;
@@ -1671,7 +1671,7 @@ executeMutation(ref).then((response) => {
 ```
 
 ## UpdateUserProfile
-You can execute the `UpdateUserProfile` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+You can execute the `UpdateUserProfile` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
 updateUserProfile(vars: UpdateUserProfileVariables): MutationPromise<UpdateUserProfileData, UpdateUserProfileVariables>;
 
@@ -1700,7 +1700,7 @@ console.log(name);
 ```
 
 ### Variables
-The `UpdateUserProfile` mutation requires an argument of type `UpdateUserProfileVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `UpdateUserProfile` mutation requires an argument of type `UpdateUserProfileVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 
 ```typescript
 export interface UpdateUserProfileVariables {
@@ -1714,7 +1714,7 @@ export interface UpdateUserProfileVariables {
 ### Return Type
 Recall that executing the `UpdateUserProfile` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
 
-The `data` property is an object of type `UpdateUserProfileData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+The `data` property is an object of type `UpdateUserProfileData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
 ```typescript
 export interface UpdateUserProfileData {
   userList_update?: UserList_Key | null;

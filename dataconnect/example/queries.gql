@@ -39,17 +39,27 @@ query GetEventByID($id: UUID!) @auth(level: USER) {
 }
 
 # Create an event
-mutation CreateEvent($id: UUID!, $eventcoord: UUID!, $eventname: String!, $location: String!, $eventdesc: String!, $starttime: Timestamp!, $endtime: Timestamp!) @auth(level: USER) {
-  eventList_insert(data: {
-    id: $id
-    eventcoord: $eventcoord
-    eventname: $eventname
-    location: $location
-    eventdesc: $eventdesc
-    starttime: $starttime
-    endtime: $endtime
-    eventstatus: true
-  })
+mutation CreateEvent(
+  $id: UUID!
+  $eventcoord: UUID!
+  $eventname: String!
+  $location: String!
+  $eventdesc: String!
+  $starttime: Timestamp!
+  $endtime: Timestamp!
+) @auth(level: USER) {
+  eventList_insert(
+    data: {
+      id: $id
+      eventcoord: $eventcoord
+      eventname: $eventname
+      location: $location
+      eventdesc: $eventdesc
+      starttime: $starttime
+      endtime: $endtime
+      eventstatus: true
+    }
+  )
 }
 
 # Get user first name by id
@@ -66,7 +76,8 @@ query GetNameByID($id: UUID!) @auth(level: PUBLIC) {
   }
 }
 
-query ValidateUserCredentials($email: String!, $password: String!) @auth(level: PUBLIC, insecureReason: "Used for MVP login prototype while auth is not yet integrated.") {
+query ValidateUserCredentials($email: String!, $password: String!)
+@auth(level: PUBLIC, insecureReason: "Used for MVP login prototype while auth is not yet integrated.") {
   userLists(where: { email: { eq: $email }, password: { eq: $password } }, limit: 1) {
     id
     firstname
@@ -91,12 +102,14 @@ query GetRegistration($eventId: UUID!, $userId: UUID!) @auth(level: USER) {
   }
 }
 
-mutation CreateRegistration($eventId: UUID!, $userId: UUID!, $notif: Boolean) @auth(level: USER) {
-  registration_insert(data: {
-    eventId: $eventId
-    userId: $userId
-    notif: $notif
-  })
+mutation CreateRegistration($eventId: UUID!, $userId: UUID!, $notif: Boolean)
+@auth(level: USER) {
+  registration_insert(data: { eventId: $eventId, userId: $userId, notif: $notif })
+}
+
+mutation DeleteRegistration($eventId: UUID!, $userId: UUID!)
+@auth(level: USER) {
+  registration_delete(key: { eventId: $eventId, userId: $userId })
 }
 
 mutation CreateUser(
@@ -109,19 +122,22 @@ mutation CreateUser(
   $age: Int!
   $major: String!
 ) @auth(level: PUBLIC, insecureReason: "Used for MVP signup flow before Firebase Auth integration.") {
-  userList_insert(data: {
-    id: $id
-    firebaseUid: $firebaseUid
-    firstname: $firstname
-    lastname: $lastname
-    email: $email
-    password: $password
-    age: $age
-    major: $major
-  })
+  userList_insert(
+    data: {
+      id: $id
+      firebaseUid: $firebaseUid
+      firstname: $firstname
+      lastname: $lastname
+      email: $email
+      password: $password
+      age: $age
+      major: $major
+    }
+  )
 }
 
-query FindUserByEmail($email: String!) @auth(level: PUBLIC, insecureReason: "Used for duplicate email prevention in signup flow before Firebase Auth integration.") {
+query FindUserByEmail($email: String!)
+@auth(level: PUBLIC, insecureReason: "Used for duplicate email prevention in signup flow before Firebase Auth integration.") {
   userLists(where: { email: { eq: $email } }, limit: 1) {
     id
     firebaseUid

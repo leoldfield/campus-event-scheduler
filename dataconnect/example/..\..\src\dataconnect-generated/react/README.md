@@ -1,7 +1,7 @@
 # Generated React README
 This README will guide you through the process of using the generated React SDK package for the connector `example`. It will also provide examples on how to use your generated SDK to call your Data Connect queries and mutations.
 
-**If you're looking for the `JavaScript README`, you can find it at [`dataconnect-generated/README.md`](../README.md)**
+**If you're looking for the `JavaScript README`, you can find it at [`..\..\src\dataconnect-generated/README.md`](../README.md)**
 
 ***NOTE:** This README is generated alongside the generated SDK. If you make changes to this file, they will be overwritten when the SDK is regenerated.*
 
@@ -125,7 +125,7 @@ Here's a general overview of how to use the generated Query hooks in your code:
 Below are examples of how to use the `example` connector's generated Query hook functions to execute each Query. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#operations-react-angular).
 
 ## ListEvents
-You can execute the `ListEvents` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `ListEvents` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useListEvents(dc: DataConnect, options?: useDataConnectQueryOptions<ListEventsData>): UseDataConnectQueryResult<ListEventsData, undefined>;
@@ -142,7 +142,7 @@ Recall that calling the `ListEvents` Query hook function returns a `UseQueryResu
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListEvents` Query is of type `ListEventsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListEvents` Query is of type `ListEventsData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface ListEventsData {
   eventLists: ({
@@ -203,7 +203,7 @@ export default function ListEventsComponent() {
 ```
 
 ## ListUsers
-You can execute the `ListUsers` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `ListUsers` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useListUsers(dc: DataConnect, options?: useDataConnectQueryOptions<ListUsersData>): UseDataConnectQueryResult<ListUsersData, undefined>;
@@ -220,7 +220,7 @@ Recall that calling the `ListUsers` Query hook function returns a `UseQueryResul
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListUsers` Query is of type `ListUsersData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListUsers` Query is of type `ListUsersData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface ListUsersData {
   userLists: ({
@@ -280,7 +280,7 @@ export default function ListUsersComponent() {
 ```
 
 ## GetEventByID
-You can execute the `GetEventByID` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `GetEventByID` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useGetEventById(dc: DataConnect, vars: GetEventByIdVariables, options?: useDataConnectQueryOptions<GetEventByIdData>): UseDataConnectQueryResult<GetEventByIdData, GetEventByIdVariables>;
@@ -291,7 +291,7 @@ useGetEventById(vars: GetEventByIdVariables, options?: useDataConnectQueryOption
 ```
 
 ### Variables
-The `GetEventByID` Query requires an argument of type `GetEventByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `GetEventByID` Query requires an argument of type `GetEventByIdVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface GetEventByIdVariables {
@@ -303,7 +303,7 @@ Recall that calling the `GetEventByID` Query hook function returns a `UseQueryRe
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetEventByID` Query is of type `GetEventByIdData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetEventByID` Query is of type `GetEventByIdData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface GetEventByIdData {
   eventList?: {
@@ -370,7 +370,7 @@ export default function GetEventByIdComponent() {
 ```
 
 ## GetFirstNameByID
-You can execute the `GetFirstNameByID` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `GetFirstNameByID` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useGetFirstNameById(dc: DataConnect, vars: GetFirstNameByIdVariables, options?: useDataConnectQueryOptions<GetFirstNameByIdData>): UseDataConnectQueryResult<GetFirstNameByIdData, GetFirstNameByIdVariables>;
@@ -381,7 +381,7 @@ useGetFirstNameById(vars: GetFirstNameByIdVariables, options?: useDataConnectQue
 ```
 
 ### Variables
-The `GetFirstNameByID` Query requires an argument of type `GetFirstNameByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `GetFirstNameByID` Query requires an argument of type `GetFirstNameByIdVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface GetFirstNameByIdVariables {
@@ -393,7 +393,7 @@ Recall that calling the `GetFirstNameByID` Query hook function returns a `UseQue
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetFirstNameByID` Query is of type `GetFirstNameByIdData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetFirstNameByID` Query is of type `GetFirstNameByIdData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface GetFirstNameByIdData {
   userList?: {
@@ -454,7 +454,7 @@ export default function GetFirstNameByIdComponent() {
 ```
 
 ## GetNameByID
-You can execute the `GetNameByID` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `GetNameByID` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useGetNameById(dc: DataConnect, vars: GetNameByIdVariables, options?: useDataConnectQueryOptions<GetNameByIdData>): UseDataConnectQueryResult<GetNameByIdData, GetNameByIdVariables>;
@@ -465,7 +465,7 @@ useGetNameById(vars: GetNameByIdVariables, options?: useDataConnectQueryOptions<
 ```
 
 ### Variables
-The `GetNameByID` Query requires an argument of type `GetNameByIdVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `GetNameByID` Query requires an argument of type `GetNameByIdVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface GetNameByIdVariables {
@@ -477,7 +477,7 @@ Recall that calling the `GetNameByID` Query hook function returns a `UseQueryRes
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetNameByID` Query is of type `GetNameByIdData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetNameByID` Query is of type `GetNameByIdData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface GetNameByIdData {
   userList?: {
@@ -539,7 +539,7 @@ export default function GetNameByIdComponent() {
 ```
 
 ## ValidateUserCredentials
-You can execute the `ValidateUserCredentials` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `ValidateUserCredentials` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useValidateUserCredentials(dc: DataConnect, vars: ValidateUserCredentialsVariables, options?: useDataConnectQueryOptions<ValidateUserCredentialsData>): UseDataConnectQueryResult<ValidateUserCredentialsData, ValidateUserCredentialsVariables>;
@@ -550,7 +550,7 @@ useValidateUserCredentials(vars: ValidateUserCredentialsVariables, options?: use
 ```
 
 ### Variables
-The `ValidateUserCredentials` Query requires an argument of type `ValidateUserCredentialsVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `ValidateUserCredentials` Query requires an argument of type `ValidateUserCredentialsVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface ValidateUserCredentialsVariables {
@@ -563,7 +563,7 @@ Recall that calling the `ValidateUserCredentials` Query hook function returns a 
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ValidateUserCredentials` Query is of type `ValidateUserCredentialsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ValidateUserCredentials` Query is of type `ValidateUserCredentialsData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface ValidateUserCredentialsData {
   userLists: ({
@@ -628,7 +628,7 @@ export default function ValidateUserCredentialsComponent() {
 ```
 
 ## ListRegistrations
-You can execute the `ListRegistrations` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `ListRegistrations` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useListRegistrations(dc: DataConnect, options?: useDataConnectQueryOptions<ListRegistrationsData>): UseDataConnectQueryResult<ListRegistrationsData, undefined>;
@@ -645,7 +645,7 @@ Recall that calling the `ListRegistrations` Query hook function returns a `UseQu
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListRegistrations` Query is of type `ListRegistrationsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListRegistrations` Query is of type `ListRegistrationsData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface ListRegistrationsData {
   registrations: ({
@@ -701,7 +701,7 @@ export default function ListRegistrationsComponent() {
 ```
 
 ## GetRegistration
-You can execute the `GetRegistration` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `GetRegistration` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useGetRegistration(dc: DataConnect, vars: GetRegistrationVariables, options?: useDataConnectQueryOptions<GetRegistrationData>): UseDataConnectQueryResult<GetRegistrationData, GetRegistrationVariables>;
@@ -712,7 +712,7 @@ useGetRegistration(vars: GetRegistrationVariables, options?: useDataConnectQuery
 ```
 
 ### Variables
-The `GetRegistration` Query requires an argument of type `GetRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `GetRegistration` Query requires an argument of type `GetRegistrationVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface GetRegistrationVariables {
@@ -725,7 +725,7 @@ Recall that calling the `GetRegistration` Query hook function returns a `UseQuer
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetRegistration` Query is of type `GetRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetRegistration` Query is of type `GetRegistrationData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface GetRegistrationData {
   registration?: {
@@ -789,7 +789,7 @@ export default function GetRegistrationComponent() {
 ```
 
 ## FindUserByEmail
-You can execute the `FindUserByEmail` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `FindUserByEmail` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useFindUserByEmail(dc: DataConnect, vars: FindUserByEmailVariables, options?: useDataConnectQueryOptions<FindUserByEmailData>): UseDataConnectQueryResult<FindUserByEmailData, FindUserByEmailVariables>;
@@ -800,7 +800,7 @@ useFindUserByEmail(vars: FindUserByEmailVariables, options?: useDataConnectQuery
 ```
 
 ### Variables
-The `FindUserByEmail` Query requires an argument of type `FindUserByEmailVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `FindUserByEmail` Query requires an argument of type `FindUserByEmailVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface FindUserByEmailVariables {
@@ -812,7 +812,7 @@ Recall that calling the `FindUserByEmail` Query hook function returns a `UseQuer
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `FindUserByEmail` Query is of type `FindUserByEmailData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `FindUserByEmail` Query is of type `FindUserByEmailData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface FindUserByEmailData {
   userLists: ({
@@ -877,7 +877,7 @@ export default function FindUserByEmailComponent() {
 ```
 
 ## GetUserByFirebaseUid
-You can execute the `GetUserByFirebaseUid` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+You can execute the `GetUserByFirebaseUid` Query using the following Query hook function, which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts):
 
 ```javascript
 useGetUserByFirebaseUid(dc: DataConnect, vars: GetUserByFirebaseUidVariables, options?: useDataConnectQueryOptions<GetUserByFirebaseUidData>): UseDataConnectQueryResult<GetUserByFirebaseUidData, GetUserByFirebaseUidVariables>;
@@ -888,7 +888,7 @@ useGetUserByFirebaseUid(vars: GetUserByFirebaseUidVariables, options?: useDataCo
 ```
 
 ### Variables
-The `GetUserByFirebaseUid` Query requires an argument of type `GetUserByFirebaseUidVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `GetUserByFirebaseUid` Query requires an argument of type `GetUserByFirebaseUidVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface GetUserByFirebaseUidVariables {
@@ -900,7 +900,7 @@ Recall that calling the `GetUserByFirebaseUid` Query hook function returns a `Us
 
 To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
 
-To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetUserByFirebaseUid` Query is of type `GetUserByFirebaseUidData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `GetUserByFirebaseUid` Query is of type `GetUserByFirebaseUidData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface GetUserByFirebaseUidData {
   userLists: ({
@@ -992,7 +992,7 @@ Here's a general overview of how to use the generated Mutation hooks in your cod
 Below are examples of how to use the `example` connector's generated Mutation hook functions to execute each Mutation. You can also follow the examples from the [Data Connect documentation](https://firebase.google.com/docs/data-connect/web-sdk#operations-react-angular).
 
 ## CreateEvent
-You can execute the `CreateEvent` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+You can execute the `CreateEvent` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
 useCreateEvent(options?: useDataConnectMutationOptions<CreateEventData, FirebaseError, CreateEventVariables>): UseDataConnectMutationResult<CreateEventData, CreateEventVariables>;
 ```
@@ -1002,7 +1002,7 @@ useCreateEvent(dc: DataConnect, options?: useDataConnectMutationOptions<CreateEv
 ```
 
 ### Variables
-The `CreateEvent` Mutation requires an argument of type `CreateEventVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `CreateEvent` Mutation requires an argument of type `CreateEventVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface CreateEventVariables {
@@ -1022,7 +1022,7 @@ To check the status of a Mutation, use the `UseMutationResult.status` field. You
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `CreateEvent` Mutation is of type `CreateEventData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `CreateEvent` Mutation is of type `CreateEventData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface CreateEventData {
   eventList_insert: EventList_Key;
@@ -1098,7 +1098,7 @@ export default function CreateEventComponent() {
 ```
 
 ## CreateRegistration
-You can execute the `CreateRegistration` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+You can execute the `CreateRegistration` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
 useCreateRegistration(options?: useDataConnectMutationOptions<CreateRegistrationData, FirebaseError, CreateRegistrationVariables>): UseDataConnectMutationResult<CreateRegistrationData, CreateRegistrationVariables>;
 ```
@@ -1108,7 +1108,7 @@ useCreateRegistration(dc: DataConnect, options?: useDataConnectMutationOptions<C
 ```
 
 ### Variables
-The `CreateRegistration` Mutation requires an argument of type `CreateRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `CreateRegistration` Mutation requires an argument of type `CreateRegistrationVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface CreateRegistrationVariables {
@@ -1124,7 +1124,7 @@ To check the status of a Mutation, use the `UseMutationResult.status` field. You
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `CreateRegistration` Mutation is of type `CreateRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `CreateRegistration` Mutation is of type `CreateRegistrationData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface CreateRegistrationData {
   registration_insert: Registration_Key;
@@ -1196,7 +1196,7 @@ export default function CreateRegistrationComponent() {
 ```
 
 ## DeleteRegistration
-You can execute the `DeleteRegistration` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+You can execute the `DeleteRegistration` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
 useDeleteRegistration(options?: useDataConnectMutationOptions<DeleteRegistrationData, FirebaseError, DeleteRegistrationVariables>): UseDataConnectMutationResult<DeleteRegistrationData, DeleteRegistrationVariables>;
 ```
@@ -1206,7 +1206,7 @@ useDeleteRegistration(dc: DataConnect, options?: useDataConnectMutationOptions<D
 ```
 
 ### Variables
-The `DeleteRegistration` Mutation requires an argument of type `DeleteRegistrationVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `DeleteRegistration` Mutation requires an argument of type `DeleteRegistrationVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface DeleteRegistrationVariables {
@@ -1221,7 +1221,7 @@ To check the status of a Mutation, use the `UseMutationResult.status` field. You
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `DeleteRegistration` Mutation is of type `DeleteRegistrationData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `DeleteRegistration` Mutation is of type `DeleteRegistrationData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface DeleteRegistrationData {
   registration_delete?: Registration_Key | null;
@@ -1292,7 +1292,7 @@ export default function DeleteRegistrationComponent() {
 ```
 
 ## CreateUser
-You can execute the `CreateUser` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+You can execute the `CreateUser` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
 useCreateUser(options?: useDataConnectMutationOptions<CreateUserData, FirebaseError, CreateUserVariables>): UseDataConnectMutationResult<CreateUserData, CreateUserVariables>;
 ```
@@ -1302,7 +1302,7 @@ useCreateUser(dc: DataConnect, options?: useDataConnectMutationOptions<CreateUse
 ```
 
 ### Variables
-The `CreateUser` Mutation requires an argument of type `CreateUserVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `CreateUser` Mutation requires an argument of type `CreateUserVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface CreateUserVariables {
@@ -1323,7 +1323,7 @@ To check the status of a Mutation, use the `UseMutationResult.status` field. You
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `CreateUser` Mutation is of type `CreateUserData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `CreateUser` Mutation is of type `CreateUserData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface CreateUserData {
   userList_insert: UserList_Key;
@@ -1400,7 +1400,7 @@ export default function CreateUserComponent() {
 ```
 
 ## UpdateUserProfile
-You can execute the `UpdateUserProfile` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+You can execute the `UpdateUserProfile` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [..\..\src\dataconnect-generated/react/index.d.ts](./index.d.ts)):
 ```javascript
 useUpdateUserProfile(options?: useDataConnectMutationOptions<UpdateUserProfileData, FirebaseError, UpdateUserProfileVariables>): UseDataConnectMutationResult<UpdateUserProfileData, UpdateUserProfileVariables>;
 ```
@@ -1410,7 +1410,7 @@ useUpdateUserProfile(dc: DataConnect, options?: useDataConnectMutationOptions<Up
 ```
 
 ### Variables
-The `UpdateUserProfile` Mutation requires an argument of type `UpdateUserProfileVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+The `UpdateUserProfile` Mutation requires an argument of type `UpdateUserProfileVariables`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 
 ```javascript
 export interface UpdateUserProfileVariables {
@@ -1428,7 +1428,7 @@ To check the status of a Mutation, use the `UseMutationResult.status` field. You
 
 To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
 
-To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `UpdateUserProfile` Mutation is of type `UpdateUserProfileData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `UpdateUserProfile` Mutation is of type `UpdateUserProfileData`, which is defined in [..\..\src\dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
 ```javascript
 export interface UpdateUserProfileData {
   userList_update?: UserList_Key | null;
