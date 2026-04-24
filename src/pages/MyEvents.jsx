@@ -35,7 +35,7 @@ export default function MyEvents() {
     setUnregisterLoading(eventId);
 
     try {
-      await unregisterFromEvent(eventId);
+      await unregisterFromEvent(eventId, allEvents);
       setSelectedEvent(null);
     } catch (err) {
       alert(err.message);

@@ -72,3 +72,61 @@
 .notification-card.reminder {
   border-color: #ffc107;
 }
+
+/* =========================
+   NOTIFICATION ACTION BAR
+   ========================= */
+.notification-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   BASE BUTTON STYLE
+   ========================= */
+.notif-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+/* =========================
+   MARK AS READ BUTTON
+   ========================= */
+.notif-btn.read {
+  background: #2e7d32; /* green */
+  color: white;
+  border: 1px solid #2e7d32;
+}
+
+.notif-btn.read:hover {
+  background: #256428;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   CLEAR BUTTON (DANGER STYLE)
+   ========================= */
+.notif-btn.clear {
+  background: #a3080c; /* UA red */
+  color: white;
+  border: 1px solid #a3080c;
+}
+
+.notif-btn.clear:hover {
+  background: #870609;
+  transform: translateY(-1px);
+}
+
+/* Optional: disabled state */
+.notif-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}

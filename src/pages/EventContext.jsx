@@ -11,11 +11,105 @@ import { getDataConnectClient, auth } from "../firebase";
 
 const EventContext = createContext();
 
+// =========================================================
+// LOCAL STORAGE HELPERS
+// =========================================================
+const getStoredNotifications = () => {
+  try {
+    return JSON.parse(localStorage.getItem("notifications")) || [];
+  } catch {
+    return [];
+  }
+};
+
+const saveStoredNotifications = (list) => {
+  localStorage.setItem("notifications", JSON.stringify(list));
+};
+
 export function EventProvider({ children }) {
   const [registeredEventIds, setRegisteredEventIds] = useState(new Set());
   const [dbUserId, setDbUserId] = useState(null);
 
-  // 🔥 Resolve DB user (UUID) from Firebase user
+  // =========================================================
+  // NOTIFICATIONS STATE
+  // =========================================================
+  const [notifications, setNotifications] = useState(getStoredNotifications);
+
+  // =========================================================
+  // ADD NOTIFICATION (always unread)
+  // =========================================================
+  const addNotification = (notification) => {
+    const newNotification = {
+      id: Date.now(),
+      seen: false,
+      ...notification,
+      time: new Date().toLocaleString([], {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+
+    const stored = getStoredNotifications();
+    const updated = [newNotification, ...stored];
+
+    saveStoredNotifications(updated);
+
+    // ONLY update UI history
+    setNotifications(updated);
+
+    // 🔥 NEW: emit toast event without affecting history
+    window.dispatchEvent(
+      new CustomEvent("toast", { detail: newNotification })
+    );
+  };
+
+  // =========================================================
+  // MARK SINGLE NOTIFICATION AS READ
+  // =========================================================
+  const markNotificationRead = (id) => {
+    const stored = getStoredNotifications();
+
+    const updated = stored.map((n) =>
+      n.id === id ? { ...n, seen: true } : n
+    );
+
+    saveStoredNotifications(updated);
+    setNotifications(updated);
+  };
+
+  // =========================================================
+  // MARK ALL AS READ
+  // =========================================================
+  const markAllNotificationsRead = () => {
+    const stored = getStoredNotifications();
+
+    const hasUnread = stored.some((n) => !n.seen);
+    if (!hasUnread) return;
+
+    const updated = stored.map((n) => ({
+      ...n,
+      seen: true,
+    }));
+
+    saveStoredNotifications(updated);
+    setNotifications(updated);
+  };
+
+  // =========================================================
+  // CLEAR NOTIFICATIONS
+  // =========================================================
+
+  const clearNotifications = () => {
+    localStorage.removeItem("notifications");
+    setNotifications([]);
+  };
+
+  // =========================================================
+  // USER RESOLUTION
+  // =========================================================
   const resolveDbUserId = async (user) => {
     let dbUser = null;
 
@@ -24,7 +118,7 @@ export function EventProvider({ children }) {
         firebaseUid: user.uid,
       });
       dbUser = uidResult.data?.userLists?.[0];
-    } catch {}
+    } catch { }
 
     if (!dbUser && user.email) {
       try {
@@ -32,13 +126,15 @@ export function EventProvider({ children }) {
           email: user.email.toLowerCase(),
         });
         dbUser = emailResult.data?.userLists?.[0];
-      } catch {}
+      } catch { }
     }
 
     return dbUser?.id || null;
   };
 
-  // 🔥 Load registrations once
+  // =========================================================
+  // LOAD REGISTRATIONS
+  // =========================================================
   const loadRegistrations = async (userId) => {
     if (!userId) return;
 
@@ -58,16 +154,18 @@ export function EventProvider({ children }) {
           if (reg.data?.registration) {
             ids.add(event.id);
           }
-        } catch {}
+        } catch { }
       }
 
       setRegisteredEventIds(ids);
     } catch (err) {
-      console.error("Failed to load registrations:", err);
+      console.error(err);
     }
   };
 
-  // 🔥 Auth init
+  // =========================================================
+  // AUTH LISTENER
+  // =========================================================
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (!user || user.isAnonymous) {
@@ -76,25 +174,26 @@ export function EventProvider({ children }) {
         return;
       }
 
-      const resolvedId = await resolveDbUserId(user);
+      const id = await resolveDbUserId(user);
+      if (!id) return;
 
-      if (!resolvedId) return;
-
-      setDbUserId(resolvedId);
-      loadRegistrations(resolvedId);
+      setDbUserId(id);
+      loadRegistrations(id);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // ✅ REGISTER
-  const registerForEvent = async (eventId) => {
+  // =========================================================
+  // REGISTER
+  // =========================================================
+  const registerForEvent = async (eventId, events = []) => {
     if (!dbUserId) return;
 
     await createRegistration(getDataConnectClient(), {
       eventId,
-      userId: dbUserId, // 🔥 UUID ONLY
-      notif: false,
+      userId: dbUserId,
+      notif: true,
     });
 
     setRegisteredEventIds((prev) => {
@@ -102,15 +201,25 @@ export function EventProvider({ children }) {
       next.add(eventId);
       return next;
     });
+
+    const event = events.find((e) => e.id === eventId);
+
+    addNotification({
+      type: "success",
+      title: "Registered",
+      message: `You registered for ${event?.eventname || "an event"}`,
+    });
   };
 
-  // ✅ UNREGISTER
-  const unregisterFromEvent = async (eventId) => {
+  // =========================================================
+  // UNREGISTER
+  // =========================================================
+  const unregisterFromEvent = async (eventId, events = []) => {
     if (!dbUserId) return;
 
     await deleteRegistration(getDataConnectClient(), {
       eventId,
-      userId: dbUserId, // 🔥 UUID ONLY
+      userId: dbUserId,
     });
 
     setRegisteredEventIds((prev) => {
@@ -118,14 +227,32 @@ export function EventProvider({ children }) {
       next.delete(eventId);
       return next;
     });
+
+    const event = events.find((e) => e.id === eventId);
+
+    addNotification({
+      type: "info",
+      title: "Unregistered",
+      message: `You left ${event?.eventname || "an event"}`,
+    });
   };
 
+  // =========================================================
+  // PROVIDER
+  // =========================================================
   return (
     <EventContext.Provider
       value={{
         registeredEventIds,
+        notifications,
+
+        addNotification,
         registerForEvent,
         unregisterFromEvent,
+
+        markNotificationRead,
+        markAllNotificationsRead,
+        clearNotifications,
       }}
     >
       {children}

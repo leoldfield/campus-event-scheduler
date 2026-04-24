@@ -54,7 +54,7 @@ export default function EventModal({
             <div className="modal-actions">
               {onRegister && (
                 <button
-                  className={`button ${isRegistered ? "registered" : ""}`}
+                  className={`register-button ${isRegistered ? "registered" : ""}`}
                   onClick={() => onRegister(event.id)}
                   disabled={loading}
                   onMouseEnter={() => setIsHoveringButton(true)}
