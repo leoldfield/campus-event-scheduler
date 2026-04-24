@@ -9,6 +9,7 @@ import {
   listEvents,
 } from "../dataconnect-generated";
 import { getDataConnectClient, auth } from "../firebase";
+import { useEventContext } from "./EventContext";
 
 export default function Events() {
   const [firstName, setFirstName] = useState("");
@@ -32,6 +33,8 @@ export default function Events() {
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedEventStatus, setSelectedEventStatus] = useState("all");
+
+  const { addNotification } = useEventContext();
 
   const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
 
@@ -157,6 +160,31 @@ export default function Events() {
     loadUserRegistrations();
   }, [isSignedInUser, dbUserId, events]);
 
+  useEffect(() => {
+    if (!isSignedInUser || events.length === 0 || registeredEventIds.size === 0) return;
+
+    const remindedEvents = new Set(JSON.parse(localStorage.getItem('remindedEvents') || '[]'));
+    const now = new Date();
+    const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    registeredEventIds.forEach(eventId => {
+      const event = events.find(e => e.id === eventId);
+      if (!event) return;
+
+      const eventStart = new Date(event.starttime);
+      if (eventStart >= now && eventStart <= twentyFourHoursLater && !remindedEvents.has(eventId)) {
+        addNotification({
+          type: 'reminder',
+          title: 'Event Reminder',
+          message: `Reminder: ${event.eventname} starts in less than 24 hours.`
+        });
+        remindedEvents.add(eventId);
+      }
+    });
+
+    localStorage.setItem('remindedEvents', JSON.stringify([...remindedEvents]));
+  }, [isSignedInUser, events, registeredEventIds, addNotification]);
+
   const formatEventDate = (timestamp) => {
     const eventDate = new Date(timestamp);
 
@@ -228,7 +256,7 @@ export default function Events() {
       await createRegistration(getDataConnectClient(), {
         eventId,
         userId: resolvedUserId,
-        notif: false,
+        notif: true,
       });
 
       setRegisteredEventIds((prev) => {
@@ -239,6 +267,13 @@ export default function Events() {
 
       setRegisterMessage("Registration successful.");
       setRegisterError("");
+
+      const event = events.find(e => e.id === eventId);
+      addNotification({
+        type: 'success',
+        title: 'Registration Confirmed',
+        message: `You have successfully registered for ${event?.eventname || 'the event'}.`
+      });
     } catch (error) {
       const errorMessage = String(error?.message || "");
 
@@ -289,6 +324,13 @@ export default function Events() {
 
       setRegisterMessage("You have been unregistered from the event.");
       setRegisterError("");
+
+      const event = events.find(e => e.id === eventId);
+      addNotification({
+        type: 'info',
+        title: 'Unregistration Confirmed',
+        message: `You have been unregistered from ${event?.eventname || 'the event'}.`
+      });
     } catch (error) {
       console.error("Failed to unregister from event", error);
       setRegisterError(error?.message || "Failed to unregister from the event.");

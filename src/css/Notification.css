@@ -61,7 +61,7 @@
 }
 
 /* Types (left border colors) */
-.notification-card.success {
+.notification-card.success, .notification-card.info {
   border-color: #28a745;
 }
 
