@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { signInAnonymously } from "firebase/auth";
 import {
   createRegistration,
@@ -12,6 +13,7 @@ import { getDataConnectClient, auth } from "../firebase";
 import { useEventContext } from "./EventContext";
 
 export default function Events() {
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [loadingName, setLoadingName] = useState(true);
   const [nameError, setNameError] = useState("");
@@ -163,26 +165,26 @@ export default function Events() {
   useEffect(() => {
     if (!isSignedInUser || events.length === 0 || registeredEventIds.size === 0) return;
 
-    const remindedEvents = new Set(JSON.parse(localStorage.getItem('remindedEvents') || '[]'));
+    const remindedEvents = new Set(JSON.parse(localStorage.getItem("remindedEvents") || "[]"));
     const now = new Date();
     const twentyFourHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-    registeredEventIds.forEach(eventId => {
-      const event = events.find(e => e.id === eventId);
+    registeredEventIds.forEach((eventId) => {
+      const event = events.find((e) => e.id === eventId);
       if (!event) return;
 
       const eventStart = new Date(event.starttime);
       if (eventStart >= now && eventStart <= twentyFourHoursLater && !remindedEvents.has(eventId)) {
         addNotification({
-          type: 'reminder',
-          title: 'Event Reminder',
-          message: `Reminder: ${event.eventname} starts in less than 24 hours.`
+          type: "reminder",
+          title: "Event Reminder",
+          message: `Reminder: ${event.eventname} starts in less than 24 hours.`,
         });
         remindedEvents.add(eventId);
       }
     });
 
-    localStorage.setItem('remindedEvents', JSON.stringify([...remindedEvents]));
+    localStorage.setItem("remindedEvents", JSON.stringify([...remindedEvents]));
   }, [isSignedInUser, events, registeredEventIds, addNotification]);
 
   const formatEventDate = (timestamp) => {
@@ -268,11 +270,11 @@ export default function Events() {
       setRegisterMessage("Registration successful.");
       setRegisterError("");
 
-      const event = events.find(e => e.id === eventId);
+      const event = events.find((e) => e.id === eventId);
       addNotification({
-        type: 'success',
-        title: 'Registration Confirmed',
-        message: `You have successfully registered for ${event?.eventname || 'the event'}.`
+        type: "success",
+        title: "Registration Confirmed",
+        message: `You have successfully registered for ${event?.eventname || "the event"}.`,
       });
     } catch (error) {
       const errorMessage = String(error?.message || "");
@@ -325,11 +327,11 @@ export default function Events() {
       setRegisterMessage("You have been unregistered from the event.");
       setRegisterError("");
 
-      const event = events.find(e => e.id === eventId);
+      const event = events.find((e) => e.id === eventId);
       addNotification({
-        type: 'info',
-        title: 'Unregistration Confirmed',
-        message: `You have been unregistered from ${event?.eventname || 'the event'}.`
+        type: "info",
+        title: "Unregistration Confirmed",
+        message: `You have been unregistered from ${event?.eventname || "the event"}.`,
       });
     } catch (error) {
       console.error("Failed to unregister from event", error);
@@ -337,6 +339,10 @@ export default function Events() {
     } finally {
       setRegisterLoadingId(null);
     }
+  };
+
+  const handleEdit = (event) => {
+    navigate("/create-event", { state: { event } });
   };
 
   const uniqueLocations = useMemo(() => {
@@ -570,6 +576,24 @@ export default function Events() {
                   : "Register"}
               </button>
             ) : null}
+
+            {isSignedInUser && event.coordinator === dbUserId && (
+              <button
+                onClick={() => handleEdit(event)}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: "8px",
+                  border: "none",
+                  cursor: "pointer",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  fontWeight: "600",
+                  marginLeft: "10px",
+                }}
+              >
+                Edit
+              </button>
+            )}
           </div>
         );
       })}
@@ -579,4 +603,4 @@ export default function Events() {
       ) : null}
     </div>
   );
-}
+}  

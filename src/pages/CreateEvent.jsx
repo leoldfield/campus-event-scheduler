@@ -1,20 +1,35 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { createEvent } from "../dataconnect-generated";
 import { ensureUserSession, getDataConnectClient } from "../firebase";
 import "../css/CreateEvent.css";
 
 export default function CreateEvent() {
-  
+  const navigate = useNavigate();
+  const locationState = useLocation();
+  const editingEvent = locationState.state?.event || null;
+
+  const formatForDateTimeInput = (value) => {
+    if (!value) return "";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    return date.toISOString().slice(0, 16);
+  };
+
   // STEP STATE
   const [step, setStep] = useState(1);
 
   // FORM STATE
-  const [eventName, setEventName] = useState("");
-  const [location, setLocation] = useState("");
-  const [eventDescription, setEventDescription] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [eventName, setEventName] = useState(editingEvent?.eventname || "");
+  const [location, setLocation] = useState(editingEvent?.location || "");
+  const [eventDescription, setEventDescription] = useState(editingEvent?.eventdesc || "");
+  const [startTime, setStartTime] = useState(formatForDateTimeInput(editingEvent?.starttime));
+  const [endTime, setEndTime] = useState(formatForDateTimeInput(editingEvent?.endtime));
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -127,7 +142,12 @@ export default function CreateEvent() {
 
       if (lastError) throw lastError;
 
-      setSuccessMessage("Event created successfully. Redirecting...");
+      setSuccessMessage(
+        editingEvent
+          ? "Event form loaded for editing. Update function still needs backend connection."
+          : "Event created successfully. Redirecting..."
+      );
+
       setTimeout(() => navigate("/"), 700);
     } catch (createError) {
       console.error("Create event failed", createError);
@@ -156,7 +176,7 @@ export default function CreateEvent() {
     <div className="create-event-wrapper">
       <div className="create-event-card">
 
-        <h1>Create Event</h1>
+        <h1>{editingEvent ? "Edit Event" : "Create Event"}</h1>
 
         {/* Progress Bar */}
         <div className="progress-bar">
@@ -221,7 +241,8 @@ export default function CreateEvent() {
               />
 
               <input
-                className="input" placeholder="Address"
+                className="input"
+                placeholder="Address"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
@@ -282,7 +303,13 @@ export default function CreateEvent() {
               <div className="step-buttons">
                 <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
                 <button className="button" type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Creating..." : "Create Event"}
+                  {isSubmitting
+                    ? editingEvent
+                      ? "Updating..."
+                      : "Creating..."
+                    : editingEvent
+                    ? "Update Event"
+                    : "Create Event"}
                 </button>
               </div>
             </div>
