@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "20": "^1.0.0",
     "@dataconnect/generated": "file:src/dataconnect-generated",
     "argon2-browser": "^1.18.0",
     "express": "^5.2.1",

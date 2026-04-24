@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function EventModal({
   event,
@@ -8,6 +8,8 @@ export default function EventModal({
   isRegistered,
   loading,
 }) {
+  const [isHoveringButton, setIsHoveringButton] = useState(false);
+
   if (!event) return null;
 
   const mapSrc = event?.location
@@ -54,9 +56,13 @@ export default function EventModal({
                 <button
                   className={`button ${isRegistered ? "registered" : ""}`}
                   onClick={() => onRegister(event.id)}
-                  disabled={loading || isRegistered}
+                  disabled={loading}
+                  onMouseEnter={() => setIsHoveringButton(true)}
+                  onMouseLeave={() => setIsHoveringButton(false)}
                 >
-                  {isRegistered
+                  {isRegistered && isHoveringButton
+                    ? "Unregister"
+                    : isRegistered
                     ? "Registered"
                     : loading
                       ? "Registering..."

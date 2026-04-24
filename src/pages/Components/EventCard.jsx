@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import "../../css/Events.css";
 
 export default function EventCard({
   event,
@@ -9,66 +10,88 @@ export default function EventCard({
   loading,
   showRegister = true,
 }) {
+  const [isHoveringButton, setIsHoveringButton] = useState(false);
 
-const handleCardClick = () => {
+  const handleCardClick = () => {
     if (onOpen) onOpen(event);
   };
 
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString(undefined, {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const formatTime = (date) => {
+    return new Date(date).toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
   return (
-    <div
-      onClick={handleCardClick}
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: "12px",
-        padding: "18px",
-        marginBottom: "16px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-        cursor: "pointer",
-      }}
-    >
-      <h2>{event.eventname}</h2>
+    <div className="event-card" onClick={handleCardClick}>
+      {/* IMAGE */}
+      <div className="event-card-image">
+        <img
+          src={event.image || "/src/assets/test-image-600x300.png"}
+          alt={event.eventname}
+        />
+      </div>
 
-      <p>
-        <strong>Start:</strong>{" "}
-        {new Date(event.starttime).toLocaleString()}
-      </p>
-      <p>
-        <strong>End:</strong>{" "}
-        {new Date(event.endtime).toLocaleString()}
-      </p>
-      <p>
-        <strong>Location:</strong> {event.location || "TBD"}
-      </p>
+      {/* CONTENT */}
+      <div className="event-card-content">
+        {/* DATE PILLS */}
+        <div className="event-card-date">
+          <span className="pill">{formatDate(event.starttime)}</span>
+          <span className="pill">{formatTime(event.starttime)}</span>
+        </div>
 
-      <p>{event.eventdesc}</p>
+        {/* TAGLINE (optional) */}
+        <p className="event-tagline">EVENT</p>
 
-      <div className="regEventButton">
-        {showRegister && (
+        {/* TITLE */}
+        <h2 className="event-title">{event.eventname}</h2>
+
+        {/* DESCRIPTION */}
+        <p className="event-desc">{event.eventdesc}</p>
+
+        {/* BUTTONS */}
+        <div className="event-actions">
+          {showRegister && (
+            <button
+              className={`register-button ${isRegistered ? "registered" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onRegister) onRegister(event.id);
+              }}
+              disabled={loading}
+              onMouseEnter={() => setIsHoveringButton(true)}
+              onMouseLeave={() => setIsHoveringButton(false)}
+            >
+              {isRegistered && isHoveringButton
+                ? "Unregister"
+                : isRegistered
+                ? "Registered"
+                : loading
+                ? "Registering..."
+                : "Register"}
+            </button>
+          )}
+
           <button
-            className={`button ${isRegistered ? "registered" : ""}`}
+            className="share-button"
             onClick={(e) => {
               e.stopPropagation();
-              if (onRegister) onRegister(event.id);
+              onShare(event);
             }}
-            disabled={loading || isRegistered}
           >
-            {isRegistered
-              ? "Registered"
-              : loading
-              ? "Registering..."
-              : "Register"}
+            Share Event
           </button>
-        )}
-
-        <button
-          className="share-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onShare(event);
-          }}
-        >
-          Share Event
-        </button>
+        </div>
       </div>
     </div>
   );

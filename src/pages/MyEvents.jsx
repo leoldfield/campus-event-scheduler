@@ -1,107 +1,48 @@
-import React, { useEffect, useState } from "react";
-import {
-  listEvents,
-  getRegistration,
-  getUserByFirebaseUid,
-  findUserByEmail,
-  deleteRegistration,
-} from "../dataconnect-generated";
-import { getDataConnectClient, auth } from "../firebase";
+import React, { useEffect, useMemo, useState } from "react";
+import { listEvents } from "../dataconnect-generated";
+import { getDataConnectClient } from "../firebase";
 import { useEventContext } from "./EventContext.jsx";
-import EventCard from "./Components/EventCard";
-import EventModal from "./Components/EventModal";
+
+import EventCard from "./Components/EventCard.jsx";
+import EventModal from "./Components/EventModal.jsx";
 import "../css/MyEvents.css";
 
 export default function MyEvents() {
-  const { setRegisteredEventIds } = useEventContext();
+  const { registeredEventIds, unregisterFromEvent } = useEventContext();
 
-  const [currentUser, setCurrentUser] = useState(null);
-  const [dbUserId, setDbUserId] = useState("");
-  const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [unregisterLoading, setUnregisterLoading] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const loadMyEvents = async () => {
-      if (!currentUser || currentUser.isAnonymous) {
-        setDbUserId("");
-        setRegisteredEvents([]);
-        setRegisteredEventIds(new Set());
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        let dbUser = null;
-
-        try {
-          const userResult = await getUserByFirebaseUid(getDataConnectClient(), {
-            firebaseUid: currentUser.uid,
-          });
-          dbUser = userResult.data?.userLists?.[0] || null;
-        } catch {}
-
-        if (!dbUser && currentUser.email) {
-          const emailResult = await findUserByEmail(getDataConnectClient(), {
-            email: currentUser.email.toLowerCase(),
-          });
-          dbUser = emailResult.data?.userLists?.[0] || null;
-        }
-
-        if (!dbUser?.id) {
-          setDbUserId("");
-          setRegisteredEvents([]);
-          setRegisteredEventIds(new Set());
-          setLoading(false);
-          return;
-        }
-
-        setDbUserId(dbUser.id);
-
-        const { data } = await listEvents(getDataConnectClient());
-        const allEvents = data?.eventLists || [];
-
-        const myEvents = [];
-        const registeredIds = new Set();
-
-        for (const event of allEvents) {
-          try {
-            const reg = await getRegistration(getDataConnectClient(), {
-              eventId: event.id,
-              userId: dbUser.id,
-            });
-
-            if (reg.data?.registration) {
-              myEvents.push(event);
-              registeredIds.add(event.id);
-            }
-          } catch {}
-        }
-
-        setRegisteredEvents(myEvents);
-        setRegisteredEventIds(registeredIds);
-      } catch (err) {
-        console.error("Failed to load My Events:", err);
-        setRegisteredEvents([]);
-        setRegisteredEventIds(new Set());
-      } finally {
-        setLoading(false);
-      }
+    const load = async () => {
+      const { data } = await listEvents(getDataConnectClient());
+      setAllEvents(data?.eventLists || []);
+      setLoading(false);
     };
 
-    loadMyEvents();
-  }, [currentUser, setRegisteredEventIds]);
+    load();
+  }, []);
+
+  const registeredEvents = useMemo(() => {
+    return allEvents.filter((e) =>
+      registeredEventIds.has(e.id)
+    );
+  }, [allEvents, registeredEventIds]);
+
+  const handleUnregister = async (eventId) => {
+    setUnregisterLoading(eventId);
+
+    try {
+      await unregisterFromEvent(eventId);
+      setSelectedEvent(null);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setUnregisterLoading(null);
+    }
+  };
 
   const handleShare = async (event) => {
     const url = `${window.location.origin}/event/${event.id}`;
@@ -116,70 +57,43 @@ export default function MyEvents() {
         await navigator.clipboard.writeText(url);
         alert("Link copied!");
       }
-    } catch {}
-  };
-
-  const handleUnregister = async (eventId) => {
-    if (!dbUserId) return;
-
-    setUnregisterLoading(eventId);
-
-    try {
-      await deleteRegistration(getDataConnectClient(), {
-        eventId,
-        userId: dbUserId,
-      });
-
-      setRegisteredEvents((prev) => prev.filter((event) => event.id !== eventId));
-
-      setRegisteredEventIds((prev) => {
-        const updated = new Set(prev);
-        updated.delete(eventId);
-        return updated;
-      });
-
-      if (selectedEvent?.id === eventId) {
-        setSelectedEvent(null);
-      }
     } catch (err) {
-      console.error("Error unregistering:", err.message);
-      alert("Failed to unregister: " + err.message);
-    } finally {
-      setUnregisterLoading(null);
+      console.error("Share failed:", err);
     }
   };
 
   return (
-    <div className="my-events-page">
+    <div className="my-events-container">
       <h1>My Events</h1>
 
       {loading ? (
-        <p>Loading your events...</p>
+        <p>Loading...</p>
       ) : registeredEvents.length === 0 ? (
         <p>No registered events.</p>
       ) : (
-        registeredEvents.map((event) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            onClick={() => setSelectedEvent(event)}
+        <>
+          <div className="events-grid">
+            {registeredEvents.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                isRegistered={true}
+                loading={unregisterLoading === event.id}
+                onRegister={handleUnregister}
+                onShare={handleShare}
+                onOpen={setSelectedEvent}
+              />
+            ))}
+          </div>
+          <EventModal
+            event={selectedEvent}
+            onClose={() => setSelectedEvent(null)}
             onRegister={handleUnregister}
-            onShare={handleShare}
             isRegistered={true}
-            loading={unregisterLoading === event.id}
+            onShare={handleShare}
+            loading={unregisterLoading === selectedEvent?.id}
           />
-        ))
-      )}
-
-      {selectedEvent && (
-        <EventModal
-          event={selectedEvent}
-          onClose={() => setSelectedEvent(null)}
-          onRegister={handleUnregister}
-          onShare={handleShare}
-          isRegistered={true}
-          loading={unregisterLoading === selectedEvent?.id}
-        />
+        </>
       )}
     </div>
   );
