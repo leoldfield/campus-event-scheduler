@@ -11,6 +11,10 @@ import {
 } from "../dataconnect-generated";
 import { getDataConnectClient, auth } from "../firebase";
 import { useEventContext } from "./EventContext";
+import {
+  createGoogleCalendarEvent,
+  deleteGoogleCalendarEvent,
+} from "../googleCalendar";
 
 export default function Events() {
   const navigate = useNavigate();
@@ -261,6 +265,21 @@ export default function Events() {
         notif: true,
       });
 
+      const event = events.find((e) => e.id === eventId);
+      if (event && currentUser?.email) {
+        try {
+          await createGoogleCalendarEvent(event, currentUser);
+        } catch (calendarError) {
+          console.warn("Google Calendar sync failed", calendarError);
+          addNotification({
+            type: "warning",
+            title: "Calendar Sync Failed",
+            message:
+              "Event registration succeeded, but Google Calendar could not be updated.",
+          });
+        }
+      }
+
       setRegisteredEventIds((prev) => {
         const updated = new Set(prev);
         updated.add(eventId);
@@ -270,7 +289,6 @@ export default function Events() {
       setRegisterMessage("Registration successful.");
       setRegisterError("");
 
-      const event = events.find((e) => e.id === eventId);
       addNotification({
         type: "success",
         title: "Registration Confirmed",
@@ -313,10 +331,26 @@ export default function Events() {
     setRegisterLoadingId(eventId);
 
     try {
+      const event = events.find((e) => e.id === eventId);
+
       await deleteRegistration(getDataConnectClient(), {
         eventId,
         userId: dbUserId,
       });
+
+      if (event && currentUser?.email) {
+        try {
+          await deleteGoogleCalendarEvent(event, currentUser);
+        } catch (calendarError) {
+          console.warn("Google Calendar deletion failed", calendarError);
+          addNotification({
+            type: "warning",
+            title: "Calendar Cleanup Failed",
+            message:
+              "Event unregistration succeeded, but the Google Calendar entry could not be removed.",
+          });
+        }
+      }
 
       setRegisteredEventIds((prev) => {
         const updated = new Set(prev);
@@ -327,7 +361,6 @@ export default function Events() {
       setRegisterMessage("You have been unregistered from the event.");
       setRegisterError("");
 
-      const event = events.find((e) => e.id === eventId);
       addNotification({
         type: "info",
         title: "Unregistration Confirmed",

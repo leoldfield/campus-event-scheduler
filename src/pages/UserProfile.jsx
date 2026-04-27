@@ -5,6 +5,7 @@ import {
   updateUserProfile,
 } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
+import { requestGoogleCalendarAccess } from "../googleCalendar";
 
 export default function UserProfile() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -19,6 +20,9 @@ export default function UserProfile() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [authorizingCalendar, setAuthorizingCalendar] = useState(false);
+  const [calendarMessage, setCalendarMessage] = useState("");
+  const [calendarError, setCalendarError] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -93,6 +97,30 @@ export default function UserProfile() {
     }));
   };
 
+  const handleAuthorizeCalendar = async () => {
+    setCalendarError("");
+    setCalendarMessage("");
+
+    if (!currentUser || currentUser.isAnonymous) {
+      setCalendarError("Please log in to enable Google Calendar access.");
+      return;
+    }
+
+    setAuthorizingCalendar(true);
+
+    try {
+      await requestGoogleCalendarAccess();
+      setCalendarMessage("Google Calendar access granted. Your event registrations can now sync.");
+    } catch (authError) {
+      console.error("Calendar authorization failed", authError);
+      setCalendarError(
+        authError?.message || "Google Calendar authorization failed. Please try again."
+      );
+    } finally {
+      setAuthorizingCalendar(false);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -162,6 +190,38 @@ export default function UserProfile() {
     <div style={{ maxWidth: "700px", margin: "0 auto", padding: "24px" }}>
       <h1>User Profile</h1>
       <p>View and update your account information below.</p>
+
+      <div
+        style={{
+          marginTop: "16px",
+          padding: "18px",
+          borderRadius: "12px",
+          background: "#f9fafb",
+          border: "1px solid #e5e7eb",
+        }}
+      >
+        <p style={{ margin: 0, marginBottom: "12px" }}>
+          If you skipped Google Calendar consent during registration, authorize it now so your registered events can sync to your calendar.
+        </p>
+        {calendarError ? <p style={{ color: "crimson" }}>{calendarError}</p> : null}
+        {calendarMessage ? <p style={{ color: "green" }}>{calendarMessage}</p> : null}
+        <button
+          type="button"
+          onClick={handleAuthorizeCalendar}
+          disabled={authorizingCalendar}
+          style={{
+            padding: "12px 16px",
+            borderRadius: "8px",
+            border: "none",
+            backgroundColor: "#1a73e8",
+            color: "white",
+            fontWeight: "600",
+            cursor: authorizingCalendar ? "not-allowed" : "pointer",
+          }}
+        >
+          {authorizingCalendar ? "Authorizing..." : "Authorize Calendar Access"}
+        </button>
+      </div>
 
       {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
       {successMessage ? <p style={{ color: "green" }}>{successMessage}</p> : null}

@@ -10,6 +10,9 @@ import { getDataConnectClient, auth } from "../firebase";
 import { useEventContext } from "./EventContext.jsx";
 import EventCard from "./Components/EventCard";
 import EventModal from "./Components/EventModal";
+import {
+  deleteGoogleCalendarEvent,
+} from "../googleCalendar";
 import "../css/MyEvents.css";
 
 export default function MyEvents() {
@@ -125,10 +128,23 @@ export default function MyEvents() {
     setUnregisterLoading(eventId);
 
     try {
+      const event = registeredEvents.find((e) => e.id === eventId);
+
       await deleteRegistration(getDataConnectClient(), {
         eventId,
         userId: dbUserId,
       });
+
+      if (event && currentUser?.email) {
+        try {
+          await deleteGoogleCalendarEvent(event, currentUser);
+        } catch (calendarError) {
+          console.warn("Google Calendar deletion failed", calendarError);
+          alert(
+            "Unregistered from the event, but the Google Calendar entry could not be removed."
+          );
+        }
+      }
 
       setRegisteredEvents((prev) => prev.filter((event) => event.id !== eventId));
 
