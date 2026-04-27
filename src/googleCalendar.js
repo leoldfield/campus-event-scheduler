@@ -67,16 +67,28 @@ const ensureTokenClient = async () => {
   return tokenClient;
 };
 
+
+export function hasValidToken() {
+  return !!googleAccessToken && Date.now() < tokenExpiresAt;
+}
+
+
 const requestAccessToken = async ({ prompt = "consent" } = {}) => {
   ensureGoogleClientId();
   const client = await ensureTokenClient();
 
-  if (googleAccessToken && Date.now() < tokenExpiresAt) {
+  if (hasValidToken()) {
     return googleAccessToken;
   }
 
   return new Promise((resolve, reject) => {
+    //Google Auth timeout
+    const timeout = setTimeout(() => {
+      reject(new Error("Google Authorization timed out. Please check if popups are blocked."));
+    }, 60000);  
+
     client.callback = (tokenResponse) => {
+      clearTimeout(timeout);
       if (tokenResponse.error) {
         reject(new Error(tokenResponse.error_description || tokenResponse.error));
         return;
@@ -87,7 +99,12 @@ const requestAccessToken = async ({ prompt = "consent" } = {}) => {
       resolve(googleAccessToken);
     };
 
-    client.requestAccessToken({ prompt });
+    try {
+      client.requestAccessToken({ prompt });
+    } catch (err) {
+      clearTimeout(timeout);
+      reject(new Error("Failed to open Google Authorization window."));
+    }
   });
 };
 
@@ -123,7 +140,7 @@ export async function requestGoogleCalendarAccess() {
 
 
 export async function createGoogleCalendarEvent(event, user) {
-  const accessToken = await requestAccessToken({ prompt: "consent" });
+  const accessToken = await requestAccessToken({ prompt: "" });
   
   const eventId = buildCalendarEventId(normalizeCalendarId(event.id), normalizeCalendarId(user.uid || user.email || "unknown"));
   
