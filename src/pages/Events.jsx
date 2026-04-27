@@ -216,6 +216,15 @@ export default function Events() {
     setRegisterLoadingId(eventId);
 
     try {
+      if (!hasValidToken()) {
+        await createGoogleCalendarEvent(events.find(e => e.id === eventId), currentUser);
+      }
+      } catch (err) {
+        console.warn("Initial Google popup blocked or declined:", err.message);
+      }
+
+
+    try {
       let resolvedUserId = dbUserId;
       let dbUser = null;
 
@@ -267,18 +276,20 @@ export default function Events() {
 
       const event = events.find((e) => e.id === eventId);
       if (event && currentUser?.email) {
-        try {
-          await createGoogleCalendarEvent(event, currentUser);
-        } catch (calendarError) {
-          console.warn("Google Calendar sync failed", calendarError);
+      // Trigger the sync, but catch errors locally
+      createGoogleCalendarEvent(event, currentUser)
+        .then(() => {
+          console.log("Calendar synced successfully");
+        })
+        .catch((calendarError) => {
+          console.warn("Calendar sync skipped/failed:", calendarError.message);
           addNotification({
-            type: "warning",
-            title: "Calendar Sync Failed",
-            message:
-              "Event registration succeeded, but Google Calendar could not be updated.",
+            type: "info",
+            title: "Registered!",
+            message: "You're signed up! (We couldn't sync the calendar, but you're all set).",
           });
-        }
-      }
+        });
+    }
 
       setRegisteredEventIds((prev) => {
         const updated = new Set(prev);
