@@ -144,7 +144,7 @@ export default function Events() {
   // EDIT
   // =========================
   const handleEdit = (event) => {
-    navigate("/create-event", { state: { event } });
+    navigate("/create", { state: { event } });
   };
 
   // =========================
