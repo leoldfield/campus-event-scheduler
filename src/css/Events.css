@@ -1,4 +1,6 @@
-/* ===== TEXT SECTION ===== */
+/* =========================
+   PAGE TEXT
+========================= */
 .introText {
   text-align: center;
   margin-bottom: 30px;
@@ -17,119 +19,214 @@
   margin: 5px 0;
 }
 
-/* ===== GRID ===== */
-.grid {
+/* =========================
+   GRID
+========================= */
+.events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 410px));
+  gap: 24px;
+  align-items: stretch;
 }
 
-@media (min-width: 1400px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
+/* =========================
+   EVENT CARD (CORE FIX HERE)
+========================= */
+.event-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  cursor: pointer;
 
-/* ===== CARD CONTENT ===== */
-.card {
-  text-align: left;
-  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card h2 {
-  margin-top: 0;
+.event-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 35px rgba(0,0,0,0.15);
 }
 
-.card p {
-  margin: 8px 0;
+/* =========================
+   IMAGE
+========================= */
+.event-card-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
 }
 
-.card p2 {
-  margin-bottom: 25px;
+/* =========================
+   CONTENT (THIS PUSHES ACTIONS DOWN)
+========================= */
+.event-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+/* TEXT */
+.event-tagline {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #6b7280;
+  margin-bottom: 6px;
 }
 
-.button.registered {
-  align-self: flex-start;
+.event-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 6px 0;
+}
+
+.event-desc {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+/* DATE PILLS */
+.event-card-date {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pill {
+  background: #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================
+   ACTION BUTTON AREA (FIXED)
+========================= */
+.event-actions {
+  margin-top: auto; /* KEY LINE — pushes to bottom */
+  display: flex;
+  gap: 50px;
+  padding: 12px 10px 10px 10px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.register-button {
+  flex: 1;
+  background: linear-gradient(135deg, #b22222, #8b0000);
   color: white;
   border: none;
-  padding: 10px 14px;
-  border-radius: 6px;
-  cursor: not-allowed;
-  background: #2e7d32;
-  opacity: 0.7;
-}
-
-.button.registered:hover {
-  background: #215c25;
-  cursor: not-allowed;
-}
-
-/* ===== MODAL OVERLAY ===== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-/* ===== MODAL CONTENT ===== */
-.modal-content {
-  background: white;
-  width: 90%;
-  max-width: 600px;
-  border-radius: 14px;
-  padding: 24px;
-  position: relative;
-  animation: modalFade 0.25s ease;
-}
-
-/* ===== CLOSE BUTTON ===== */
-.modal-close {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  background: none;
-  border: none;
-  font-size: 18px;
+  padding: 10px;
+  margin-top: auto;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-/* ===== ANIMATION ===== */
-@keyframes modalFade {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.register-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
+  background: #720015;
+}
+
+.register-button.registered {
+  background: #338a37;
+  margin-top: auto;
+}
+
+.register-button.registered:hover {
+  background: #8b0000;
 }
 
 .share-button {
-  margin-top: 10px;
-  margin-left: 20px;
+  flex: 1;
   background: transparent;
   border: 1px solid #8b0000;
   color: #8b0000;
   padding: 10px;
+  margin-top: auto;
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .share-button:hover {
   background: #8b0000;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
   color: white;
+}
+
+/* =========================
+   FILTER BAR
+========================= */
+.ua-filter-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.ua-filter-input,
+.ua-filter-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.ua-filter-input:focus,
+.ua-filter-select:focus {
+  outline: none;
+  border-color: #a3080c;
+  box-shadow: 0 0 0 2px rgba(163, 8, 12, 0.1);
+}
+
+.ua-filter-clear {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background-color: #f3f4f6;
+  cursor: pointer;
+}
+
+.ua-filter-clear:hover {
+  background-color: #e5e7eb;
+}
+
+.event-card-date-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Pencil button */
+.edit-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.edit-icon-button:hover {
+  background: #f3f3f3;
+  transform: scale(1.1);
+}
+
+.edit-icon-button:active {
+  transform: scale(0.95);
 }

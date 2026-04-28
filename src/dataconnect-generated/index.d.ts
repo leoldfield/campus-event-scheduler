@@ -182,6 +182,19 @@ export interface Registration_Key {
   __typename?: 'Registration_Key';
 }
 
+export interface UpdateEventData {
+  eventList_update?: EventList_Key | null;
+}
+
+export interface UpdateEventVariables {
+  id: UUIDString;
+  eventname: string;
+  location: string;
+  eventdesc: string;
+  starttime: TimestampString;
+  endtime: TimestampString;
+}
+
 export interface UpdateUserProfileData {
   userList_update?: UserList_Key | null;
 }
@@ -392,4 +405,16 @@ export const updateUserProfileRef: UpdateUserProfileRef;
 
 export function updateUserProfile(vars: UpdateUserProfileVariables): MutationPromise<UpdateUserProfileData, UpdateUserProfileVariables>;
 export function updateUserProfile(dc: DataConnect, vars: UpdateUserProfileVariables): MutationPromise<UpdateUserProfileData, UpdateUserProfileVariables>;
+
+interface UpdateEventRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateEventVariables): MutationRef<UpdateEventData, UpdateEventVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: UpdateEventVariables): MutationRef<UpdateEventData, UpdateEventVariables>;
+  operationName: string;
+}
+export const updateEventRef: UpdateEventRef;
+
+export function updateEvent(vars: UpdateEventVariables): MutationPromise<UpdateEventData, UpdateEventVariables>;
+export function updateEvent(dc: DataConnect, vars: UpdateEventVariables): MutationPromise<UpdateEventData, UpdateEventVariables>;
 

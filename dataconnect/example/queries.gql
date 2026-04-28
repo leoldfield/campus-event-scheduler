@@ -1,6 +1,6 @@
 # List all events
 query ListEvents @auth(level: PUBLIC) {
-  eventLists(orderBy: { starttime: ASC }, limit: 10) {
+  eventLists(orderBy: { starttime: ASC }, limit: 15) {
     id
     eventcoord
     eventname
@@ -173,6 +173,28 @@ mutation UpdateUserProfile(
       lastname: $lastname
       age: $age
       major: $major
+    }
+  )
+}
+
+
+mutation UpdateEvent(
+  $id: UUID!
+  $eventname: String!
+  $location: String!
+  $eventdesc: String!
+  $starttime: Timestamp!
+  $endtime: Timestamp!
+) @auth(level: USER) {
+
+  eventList_update(
+    id: $id
+    data: {
+      eventname: $eventname
+      location: $location
+      eventdesc: $eventdesc
+      starttime: $starttime
+      endtime: $endtime
     }
   )
 }

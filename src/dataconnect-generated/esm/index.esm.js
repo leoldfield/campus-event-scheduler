@@ -195,3 +195,15 @@ export function updateUserProfile(dcOrVars, vars) {
   return executeMutation(updateUserProfileRef(dcInstance, inputVars));
 }
 
+export const updateEventRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'UpdateEvent', inputVars);
+}
+updateEventRef.operationName = 'UpdateEvent';
+
+export function updateEvent(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(updateEventRef(dcInstance, inputVars));
+}
+

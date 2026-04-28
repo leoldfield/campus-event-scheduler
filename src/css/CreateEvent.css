@@ -139,6 +139,25 @@ textarea.input {
   cursor: not-allowed;
 }
 
+
+.submitButton {
+  margin-top: 8px;
+  background: linear-gradient(135deg, #b22222, #8b0000);
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submitButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
+}
+
 /* ===== STEP BUTTONS LAYOUT ===== */
 .step-buttons {
   display: flex;
