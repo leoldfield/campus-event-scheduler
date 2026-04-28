@@ -6,6 +6,9 @@ import EventCard from "./Components/EventCard";
 import EventModal from "./Components/EventModal";
 import "../css/MyEvents.css";
 
+import pencil from "../assets/edit-pencil.png";
+import testimage from "../assets/test-image-600x300.png";
+
 import { deleteGoogleCalendarEvent } from "../googleCalendar";
 import { auth } from "../firebase";
 

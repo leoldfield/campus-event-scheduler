@@ -8,6 +8,9 @@ import EventModal from "./Components/EventModal";
 import "../css/Events.css";
 import "../css/EventModal.css";
 
+import pencil from "../assets/edit-pencil.png";
+import testimage from "../assets/test-image-600x300.png";
+
 import {
   getUserByFirebaseUid,
   findUserByEmail,
