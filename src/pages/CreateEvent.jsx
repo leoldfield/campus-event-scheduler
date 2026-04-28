@@ -111,7 +111,6 @@ export default function CreateEvent() {
 
       const payload = {
         id: editingEvent?.id || crypto.randomUUID(),
-        eventcoord: crypto.randomUUID(), 
         eventname: eventName.trim(),
         location: location.trim(),
         eventdesc: eventDescription.trim(),

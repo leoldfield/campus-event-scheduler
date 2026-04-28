@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../../css/Events.css";
+import "../../assets/edit-pencil.png";
+import "../../assets/test-image-600x300.png";
 
 export default function EventCard({
   event,
