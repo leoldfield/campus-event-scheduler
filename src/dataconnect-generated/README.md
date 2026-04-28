@@ -26,6 +26,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*DeleteRegistration*](#deleteregistration)
   - [*CreateUser*](#createuser)
   - [*UpdateUserProfile*](#updateuserprofile)
+  - [*UpdateEvent*](#updateevent)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -1788,6 +1789,130 @@ console.log(data.userList_update);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.userList_update);
+});
+```
+
+## UpdateEvent
+You can execute the `UpdateEvent` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+updateEvent(vars: UpdateEventVariables): MutationPromise<UpdateEventData, UpdateEventVariables>;
+
+interface UpdateEventRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: UpdateEventVariables): MutationRef<UpdateEventData, UpdateEventVariables>;
+}
+export const updateEventRef: UpdateEventRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+updateEvent(dc: DataConnect, vars: UpdateEventVariables): MutationPromise<UpdateEventData, UpdateEventVariables>;
+
+interface UpdateEventRef {
+  ...
+  (dc: DataConnect, vars: UpdateEventVariables): MutationRef<UpdateEventData, UpdateEventVariables>;
+}
+export const updateEventRef: UpdateEventRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the updateEventRef:
+```typescript
+const name = updateEventRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `UpdateEvent` mutation requires an argument of type `UpdateEventVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface UpdateEventVariables {
+  id: UUIDString;
+  eventname: string;
+  location: string;
+  eventdesc: string;
+  starttime: TimestampString;
+  endtime: TimestampString;
+}
+```
+### Return Type
+Recall that executing the `UpdateEvent` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `UpdateEventData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface UpdateEventData {
+  eventList_update?: EventList_Key | null;
+}
+```
+### Using `UpdateEvent`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, updateEvent, UpdateEventVariables } from '@dataconnect/generated';
+
+// The `UpdateEvent` mutation requires an argument of type `UpdateEventVariables`:
+const updateEventVars: UpdateEventVariables = {
+  id: ..., 
+  eventname: ..., 
+  location: ..., 
+  eventdesc: ..., 
+  starttime: ..., 
+  endtime: ..., 
+};
+
+// Call the `updateEvent()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await updateEvent(updateEventVars);
+// Variables can be defined inline as well.
+const { data } = await updateEvent({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await updateEvent(dataConnect, updateEventVars);
+
+console.log(data.eventList_update);
+
+// Or, you can use the `Promise` API.
+updateEvent(updateEventVars).then((response) => {
+  const data = response.data;
+  console.log(data.eventList_update);
+});
+```
+
+### Using `UpdateEvent`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, updateEventRef, UpdateEventVariables } from '@dataconnect/generated';
+
+// The `UpdateEvent` mutation requires an argument of type `UpdateEventVariables`:
+const updateEventVars: UpdateEventVariables = {
+  id: ..., 
+  eventname: ..., 
+  location: ..., 
+  eventdesc: ..., 
+  starttime: ..., 
+  endtime: ..., 
+};
+
+// Call the `updateEventRef()` function to get a reference to the mutation.
+const ref = updateEventRef(updateEventVars);
+// Variables can be defined inline as well.
+const ref = updateEventRef({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = updateEventRef(dataConnect, updateEventVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.eventList_update);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.eventList_update);
 });
 ```
 

@@ -5,7 +5,7 @@
 }
 
 .my-events-container h1 {
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 /* ===== GRID ===== */
@@ -30,36 +30,4 @@
 .my-events-text {
   padding: 40px;
   text-align: center;
-}
-
-/* ===== Button ===== */
-
-.regButtonMyEvents {
-  align-self: flex-start;
-  color: rgb(255, 255, 255);
-  border: none;
-  padding: 10px 14px;
-  border-radius: 6px;
-  cursor: not-allowed;
-  background: #2e7d32;
-  opacity: 0.7;
-}
-
-.regButtonMyEvents:hover {
-  background: #215c25;
-  cursor: not-allowed;
-}
-
-.cancelButton {
-  background: #b00020;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.cancelButton:hover {
-  background: #8b0000;
 }

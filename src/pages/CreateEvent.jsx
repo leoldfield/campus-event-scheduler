@@ -1,44 +1,63 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { createEvent } from "../dataconnect-generated";
-import { ensureUserSession, getDataConnectClient } from "../firebase";
+import { useNavigate, useLocation } from "react-router-dom";
+import { createEvent, updateEvent } from "../dataconnect-generated";
+import { auth, ensureUserSession, getDataConnectClient } from "../firebase";
 import "../css/CreateEvent.css";
+import { useEventContext } from "./EventContext.jsx";
 
 export default function CreateEvent() {
   const navigate = useNavigate();
   const locationState = useLocation();
   const editingEvent = locationState.state?.event || null;
 
+  const eventContext = useEventContext();
+  const refreshEvents = eventContext?.refreshEvents;
+
+  // =========================
+  // HELPERS
+  // =========================
   const formatForDateTimeInput = (value) => {
     if (!value) return "";
-
     const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) {
-      return "";
-    }
-
+    if (Number.isNaN(date.getTime())) return "";
     return date.toISOString().slice(0, 16);
   };
 
-  // STEP STATE
+  const formatDate = (value) => {
+    if (!value) return "";
+    return new Date(value).toLocaleString("en-US", {
+      dateStyle: "long",
+      timeStyle: "short",
+    });
+  };
+
+  // =========================
+  // STATE
+  // =========================
   const [step, setStep] = useState(1);
 
-  // FORM STATE
   const [eventName, setEventName] = useState(editingEvent?.eventname || "");
   const [location, setLocation] = useState(editingEvent?.location || "");
-  const [eventDescription, setEventDescription] = useState(editingEvent?.eventdesc || "");
-  const [startTime, setStartTime] = useState(formatForDateTimeInput(editingEvent?.starttime));
-  const [endTime, setEndTime] = useState(formatForDateTimeInput(editingEvent?.endtime));
+  const [eventDescription, setEventDescription] = useState(
+    editingEvent?.eventdesc || ""
+  );
+  const [startTime, setStartTime] = useState(
+    formatForDateTimeInput(editingEvent?.starttime)
+  );
+  const [endTime, setEndTime] = useState(
+    formatForDateTimeInput(editingEvent?.endtime)
+  );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // =========================
+  // STEP NAVIGATION
+  // =========================
   const nextStep = () => {
     setError("");
 
-    // Step validation
     if (step === 1) {
       if (!eventName.trim() || !eventDescription.trim()) {
         setError("Please fill out all fields.");
@@ -69,41 +88,16 @@ export default function CreateEvent() {
     setStep((prev) => prev - 1);
   };
 
-  const uuidPattern =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-  const normalizeUuid = (value) => {
-    const compactHex = String(value || "").replace(/-/g, "").toLowerCase();
-    if (/^[0-9a-f]{32}$/.test(compactHex)) {
-      return `${compactHex.slice(0, 8)}-${compactHex.slice(8, 12)}-${compactHex.slice(12, 16)}-${compactHex.slice(16, 20)}-${compactHex.slice(20)}`;
-    }
-
-    if (uuidPattern.test(String(value || ""))) {
-      return String(value).toLowerCase();
-    }
-
-    return "";
-  };
-
-  const isUnauthenticatedError = (value) => {
-    const message = String(value?.message || "").toUpperCase();
-    return (
-      value?.status === "UNAUTHENTICATED" ||
-      value?.code === "UNAUTHENTICATED" ||
-      message.includes("UNAUTHENTICATED") ||
-      message.includes("@AUTH REJECTED")
-    );
-  };
-
-  // FINAL SUBMIT (Step 3 only)
+  // =========================
+  // SUBMIT
+  // =========================
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setSuccessMessage("");
 
-    const coordinatorId = normalizeUuid(localStorage.getItem("loggedInUserId"));
-    if (!uuidPattern.test(coordinatorId)) {
-      setError("You must be logged in to create an event.");
+    if (!auth.currentUser) {
+      setError("You must be logged in.");
       return;
     }
 
@@ -113,9 +107,11 @@ export default function CreateEvent() {
     setIsSubmitting(true);
 
     try {
-      const mutationPayload = {
-        id: crypto.randomUUID(),
-        eventcoord: coordinatorId,
+      await ensureUserSession();
+
+      const payload = {
+        id: editingEvent?.id || crypto.randomUUID(),
+        eventcoord: crypto.randomUUID(), 
         eventname: eventName.trim(),
         location: location.trim(),
         eventdesc: eventDescription.trim(),
@@ -123,62 +119,47 @@ export default function CreateEvent() {
         endtime: endDate.toISOString(),
       };
 
-      let lastError;
-      for (let attempt = 0; attempt < 2; attempt += 1) {
-        try {
-          await ensureUserSession();
-          await createEvent(getDataConnectClient(), mutationPayload);
-          lastError = null;
-          break;
-        } catch (attemptError) {
-          lastError = attemptError;
-          if (attempt === 0 && isUnauthenticatedError(attemptError)) {
-            await new Promise((resolve) => setTimeout(resolve, 250));
-            continue;
-          }
-          throw attemptError;
-        }
+      if (editingEvent) {
+        // ✅ OPTIMISTIC UPDATE
+        eventContext?.updateEventLocal?.(payload);
+
+        await updateEvent(getDataConnectClient(), payload);
+
+        setSuccessMessage("Event updated successfully.");
+      } else {
+        // ✅ CREATE PATH (you were missing this)
+        await createEvent(getDataConnectClient(), payload);
+
+        setSuccessMessage("Event created successfully.");
       }
 
-      if (lastError) throw lastError;
+      // ✅ CENTRALIZED SYNC
+      await refreshEvents?.();
 
-      setSuccessMessage(
-        editingEvent
-          ? "Event form loaded for editing. Update function still needs backend connection."
-          : "Event created successfully. Redirecting..."
-      );
-
-      setTimeout(() => navigate("/"), 700);
-    } catch (createError) {
-      console.error("Create event failed", createError);
-      setError(createError?.message || "Failed to create event.");
+      setTimeout(() => navigate("/"), 500);
+    } catch (err) {
+      console.error("Submit failed", err);
+      setError(err?.message || "Something went wrong.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // =========================
+  // MAP
+  // =========================
   const mapSrc = location
     ? `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`
     : null;
 
-  const formatDate = (value) => {
-    if (!value) return "";
-
-    const date = new Date(value);
-
-    return date.toLocaleString("en-US", {
-      dateStyle: "long",
-      timeStyle: "short",
-    });
-  };
-
+  // =========================
+  // UI
+  // =========================
   return (
     <div className="create-event-wrapper">
       <div className="create-event-card">
-
         <h1>{editingEvent ? "Edit Event" : "Create Event"}</h1>
 
-        {/* Progress Bar */}
         <div className="progress-bar">
           <div
             className="progress-fill"
@@ -188,13 +169,14 @@ export default function CreateEvent() {
 
         <p>Step {step} of 3</p>
 
-        <div className='form-report'>
+        <div className="form-report">
           {error && <p style={{ color: "#b00020" }}>{error}</p>}
-          {successMessage && <p style={{ color: "#0b6b2f" }}>{successMessage}</p>}
+          {successMessage && (
+            <p style={{ color: "#0b6b2f" }}>{successMessage}</p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="create-event-form">
-
           {/* STEP 1 */}
           {step === 1 && (
             <div className="form-step">
@@ -215,7 +197,11 @@ export default function CreateEvent() {
                 rows={5}
               />
 
-              <button type="button" className="stepButtonNext" onClick={nextStep}>
+              <button
+                type="button"
+                className="stepButtonNext"
+                onClick={nextStep}
+              >
                 Next
               </button>
             </div>
@@ -248,22 +234,32 @@ export default function CreateEvent() {
               />
 
               {mapSrc && (
-                  <iframe
-                    src={mapSrc}
-                    style={{
-                      border: 0,
-                      width: "100%",
-                      height: "200px",
-                      borderRadius: "8px",
-                    }}
-                    loading="lazy"
-                    title="Event Location Map"
-                  />
+                <iframe
+                  src={mapSrc}
+                  style={{
+                    border: 0,
+                    width: "100%",
+                    height: "200px",
+                    borderRadius: "8px",
+                  }}
+                  loading="lazy"
+                  title="Event Location Map"
+                />
               )}
 
               <div className="step-buttons">
-                <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
-                <button type="button" className="stepButtonNext" onClick={nextStep}>
+                <button
+                  type="button"
+                  className="stepButtonBack"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="stepButtonNext"
+                  onClick={nextStep}
+                >
                   Next
                 </button>
               </div>
@@ -287,7 +283,9 @@ export default function CreateEvent() {
 
               <div className="review-item">
                 <span className="review-label">Start</span>
-                <span className="review-value">{formatDate(startTime)}</span>
+                <span className="review-value">
+                  {formatDate(startTime)}
+                </span>
               </div>
 
               <div className="review-item">
@@ -301,8 +299,18 @@ export default function CreateEvent() {
               </div>
 
               <div className="step-buttons">
-                <button type="button" className="stepButtonBack" onClick={prevStep}>Back</button>
-                <button className="button" type="submit" disabled={isSubmitting}>
+                <button
+                  type="button"
+                  className="stepButtonBack"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+                <button
+                  className="button"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting
                     ? editingEvent
                       ? "Updating..."
@@ -314,7 +322,6 @@ export default function CreateEvent() {
               </div>
             </div>
           )}
-
         </form>
       </div>
     </div>
