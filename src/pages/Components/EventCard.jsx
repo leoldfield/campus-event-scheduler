@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../../css/Events.css";
-import "../../assets/edit-pencil.png";
-import "../../assets/test-image-600x300.png";
+import pencil from "../../assets/edit-pencil.png";
+import testimage from "../../assets/test-image-600x300.png";
 
 export default function EventCard({
   event,
@@ -41,7 +41,7 @@ export default function EventCard({
       {/* IMAGE */}
       <div className="event-card-image">
         <img
-          src={event.image || "/src/assets/test-image-600x300.png"}
+          src={event.image || testimage}
           alt={event.eventname}
         />
       </div>
@@ -65,7 +65,7 @@ export default function EventCard({
               title="Edit Event"
             >
               <img
-                src="/src/assets/edit-pencil.png"
+                src={pencil}
                 alt="Edit"
                 className="edit-pencil"
                 height="25"
