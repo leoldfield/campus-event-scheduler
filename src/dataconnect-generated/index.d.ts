@@ -22,6 +22,8 @@ export interface CreateEventVariables {
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 export interface CreateRegistrationData {
@@ -86,6 +88,8 @@ export interface GetEventByIdData {
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
+    lat?: number | null;
+    lng?: number | null;
   } & EventList_Key;
 }
 
@@ -153,6 +157,8 @@ export interface ListEventsData {
     starttime: TimestampString;
     endtime: TimestampString;
     eventstatus: boolean;
+    lat?: number | null;
+    lng?: number | null;
   } & EventList_Key)[];
 }
 
@@ -193,6 +199,8 @@ export interface UpdateEventVariables {
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 export interface UpdateUserProfileData {

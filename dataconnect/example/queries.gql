@@ -9,6 +9,8 @@ query ListEvents @auth(level: PUBLIC) {
     starttime
     endtime
     eventstatus
+    lat
+    lng
   }
 }
 
@@ -35,6 +37,8 @@ query GetEventByID($id: UUID!) @auth(level: USER) {
     eventdesc
     starttime
     endtime
+    lat
+    lng
   }
 }
 
@@ -47,6 +51,8 @@ mutation CreateEvent(
   $eventdesc: String!
   $starttime: Timestamp!
   $endtime: Timestamp!
+  $lat: Float
+  $lng: Float
 ) @auth(level: USER) {
   eventList_insert(
     data: {
@@ -58,6 +64,8 @@ mutation CreateEvent(
       starttime: $starttime
       endtime: $endtime
       eventstatus: true
+      lat: $lat
+      lng: $lng
     }
   )
 }
@@ -185,6 +193,8 @@ mutation UpdateEvent(
   $eventdesc: String!
   $starttime: Timestamp!
   $endtime: Timestamp!
+  $lat: Float
+  $lng: Float
 ) @auth(level: USER) {
 
   eventList_update(
@@ -195,6 +205,8 @@ mutation UpdateEvent(
       eventdesc: $eventdesc
       starttime: $starttime
       endtime: $endtime
+      lat: $lat
+      lng: $lng
     }
   )
 }

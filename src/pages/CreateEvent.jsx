@@ -31,21 +31,52 @@ export default function CreateEvent() {
     });
   };
 
-  const geocodeLocation = async (location) => {
-    const query = `${location}, University of Arkansas at Little Rock, Little Rock, AR`;
+  // A simple geocoder that returns { lat, lng } or null
+  // A smarter geocoder that returns { lat, lng } or null
+  // =========================
+  // LOCAL GEOJSON GEOCODER
+  // =========================
+  // =========================
+  // GOOGLE GEOCODER
+  // =========================
+  const getCoordinates = async (locationString) => {
+    if (!locationString) return null;
 
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`
-    );
+    // Pull the API key from your environment variables
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY; 
+    
+    if (!apiKey) {
+      console.error("Google Maps API key is missing from .env file!");
+      return null;
+    }
 
-    const data = await res.json();
+    // We append the city/state to give Google a hint, 
+    // but Google is incredibly smart at fuzzy matching.
+    const query = `${locationString}, Little Rock, AR`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}&key=${apiKey}`;
 
-    if (!data?.[0]) return null;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
 
-    return {
-      lat: parseFloat(data[0].lat),
-      lng: parseFloat(data[0].lon),
-    };
+      // Google returns "OK" if it successfully found a match
+      if (data.status === "OK" && data.results.length > 0) {
+        const exactLocation = data.results[0].geometry.location;
+        return {
+          lat: exactLocation.lat,
+          lng: exactLocation.lng
+        };
+      } 
+      
+      // Fallback: If Google somehow can't find it, default to the center of campus
+      console.warn(`Google could not find "${locationString}". Status: ${data.status}`);
+      return { lat: 34.722, lng: -92.339 }; 
+
+    } catch (err) {
+      console.error("Google Geocoding failed:", err);
+      // Fallback to campus center on network error
+      return { lat: 34.722, lng: -92.339 };
+    }
   };
 
   // =========================
@@ -108,6 +139,9 @@ export default function CreateEvent() {
   // =========================
   // SUBMIT
   // =========================
+  // =========================
+  // SUBMIT
+  // =========================
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -126,6 +160,11 @@ export default function CreateEvent() {
     try {
       await ensureUserSession();
 
+      // 1. Fetch coordinates using the 'location' state directly
+      const coords = await getCoordinates(location);
+      console.log("Found coordinates:", coords); // <--- ADD THIS LINE
+
+      // 2. Build the payload
       const payload = {
         id: editingEvent?.id || crypto.randomUUID(),
         eventcoord: crypto.randomUUID(),
@@ -134,25 +173,24 @@ export default function CreateEvent() {
         eventdesc: eventDescription.trim(),
         starttime: startDate.toISOString(),
         endtime: endDate.toISOString(),
+        lat: coords ? coords.lat : null,
+        lng: coords ? coords.lng : null,
       };
 
       if (editingEvent) {
         // ✅ OPTIMISTIC UPDATE
         eventContext?.updateEventLocal?.(payload);
-
         await updateEvent(getDataConnectClient(), payload);
 
         setSuccessMessage("Event updated successfully.");
       } else {
-        // ✅ CREATE PATH (you were missing this)
+        // ✅ CREATE PATH
         await createEvent(getDataConnectClient(), payload);
-
         setSuccessMessage("Event created successfully.");
       }
 
       // ✅ CENTRALIZED SYNC
       await refreshEvents?.();
-
       setTimeout(() => navigate("/"), 500);
     } catch (err) {
       console.error("Submit failed", err);

@@ -7,6 +7,8 @@ type EventList @table {
   starttime: Timestamp!
   endtime: Timestamp!
   eventstatus: Boolean! @default(value: true)
+  lat: Float
+  lng: Float
 }
 
 type UserList @table {

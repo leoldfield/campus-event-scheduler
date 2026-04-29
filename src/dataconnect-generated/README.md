@@ -119,6 +119,8 @@ export interface ListEventsData {
     starttime: TimestampString;
     endtime: TimestampString;
     eventstatus: boolean;
+    lat?: number | null;
+    lng?: number | null;
   } & EventList_Key)[];
 }
 ```
@@ -323,6 +325,8 @@ export interface GetEventByIdData {
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
+    lat?: number | null;
+    lng?: number | null;
   } & EventList_Key;
 }
 ```
@@ -1228,6 +1232,8 @@ export interface CreateEventVariables {
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
+  lat?: number | null;
+  lng?: number | null;
 }
 ```
 ### Return Type
@@ -1254,13 +1260,15 @@ const createEventVars: CreateEventVariables = {
   eventdesc: ..., 
   starttime: ..., 
   endtime: ..., 
+  lat: ..., // optional
+  lng: ..., // optional
 };
 
 // Call the `createEvent()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createEvent(createEventVars);
 // Variables can be defined inline as well.
-const { data } = await createEvent({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+const { data } = await createEvent({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1290,12 +1298,14 @@ const createEventVars: CreateEventVariables = {
   eventdesc: ..., 
   starttime: ..., 
   endtime: ..., 
+  lat: ..., // optional
+  lng: ..., // optional
 };
 
 // Call the `createEventRef()` function to get a reference to the mutation.
 const ref = createEventRef(createEventVars);
 // Variables can be defined inline as well.
-const ref = createEventRef({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+const ref = createEventRef({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1832,6 +1842,8 @@ export interface UpdateEventVariables {
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
+  lat?: number | null;
+  lng?: number | null;
 }
 ```
 ### Return Type
@@ -1857,13 +1869,15 @@ const updateEventVars: UpdateEventVariables = {
   eventdesc: ..., 
   starttime: ..., 
   endtime: ..., 
+  lat: ..., // optional
+  lng: ..., // optional
 };
 
 // Call the `updateEvent()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await updateEvent(updateEventVars);
 // Variables can be defined inline as well.
-const { data } = await updateEvent({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+const { data } = await updateEvent({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1892,12 +1906,14 @@ const updateEventVars: UpdateEventVariables = {
   eventdesc: ..., 
   starttime: ..., 
   endtime: ..., 
+  lat: ..., // optional
+  lng: ..., // optional
 };
 
 // Call the `updateEventRef()` function to get a reference to the mutation.
 const ref = updateEventRef(updateEventVars);
 // Variables can be defined inline as well.
-const ref = updateEventRef({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+const ref = updateEventRef({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

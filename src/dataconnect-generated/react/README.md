@@ -155,6 +155,8 @@ export interface ListEventsData {
     starttime: TimestampString;
     endtime: TimestampString;
     eventstatus: boolean;
+    lat?: number | null;
+    lng?: number | null;
   } & EventList_Key)[];
 }
 ```
@@ -315,6 +317,8 @@ export interface GetEventByIdData {
     eventdesc: string;
     starttime: TimestampString;
     endtime: TimestampString;
+    lat?: number | null;
+    lng?: number | null;
   } & EventList_Key;
 }
 ```
@@ -1014,6 +1018,8 @@ export interface CreateEventVariables {
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
+  lat?: number | null;
+  lng?: number | null;
 }
 ```
 ### Return Type
@@ -1070,10 +1076,12 @@ export default function CreateEventComponent() {
     eventdesc: ..., 
     starttime: ..., 
     endtime: ..., 
+    lat: ..., // optional
+    lng: ..., // optional
   };
   mutation.mutate(createEventVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+  mutation.mutate({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -1523,6 +1531,8 @@ export interface UpdateEventVariables {
   eventdesc: string;
   starttime: TimestampString;
   endtime: TimestampString;
+  lat?: number | null;
+  lng?: number | null;
 }
 ```
 ### Return Type
@@ -1578,10 +1588,12 @@ export default function UpdateEventComponent() {
     eventdesc: ..., 
     starttime: ..., 
     endtime: ..., 
+    lat: ..., // optional
+    lng: ..., // optional
   };
   mutation.mutate(updateEventVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., });
+  mutation.mutate({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
