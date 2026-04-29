@@ -13,6 +13,7 @@ import Events from "./pages/Events";
 import CreateEvent from "./pages/CreateEvent";
 import UserProfile from "./pages/UserProfile.jsx";
 import Notification from "./pages/Notification.jsx";
+import Map from "./pages/Map.jsx";
 
 import notiBell from "./assets/notificationBell.png";
 import profilePicture from "./assets/johndoe.png";
@@ -104,6 +105,7 @@ export default function App() {
               <Link to="/">Events</Link>
               <Link to="/MyEvents">My Events</Link>
               <Link to="/create">Create Event</Link>
+              <Link to="/map">Map</Link>
 
               <Link to="/Notification" style={{ position: "relative" }}>
                 <img src={notiBell} style={{ height: 28 }} />
@@ -180,6 +182,7 @@ export default function App() {
             <Route path="/create" element={<PageWrapper><CreateEvent /></PageWrapper>} />
             <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
             <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
+            <Route path="/map" element={<PageWrapper><Map /></PageWrapper>} />
             <Route path="/Notification" element={<PageWrapper><Notification /></PageWrapper>} />
             <Route path="/UserProfile" element={<PageWrapper><UserProfile /></PageWrapper>} />
           </Routes>

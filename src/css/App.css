@@ -225,3 +225,15 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.leaflet-interactive:focus {
+    outline: none !important;
+}
+
+.leaflet-interactive {
+    outline: none !important;
+}
+
+.building-label {
+    pointer-events: none !important;
+}

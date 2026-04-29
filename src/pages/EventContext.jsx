@@ -186,6 +186,7 @@ export function EventProvider({ children }) {
 
       for (const event of allEvents) {
         try {
+          
           const reg = await getRegistration(getDataConnectClient(), {
             eventId: event.id,
             userId,

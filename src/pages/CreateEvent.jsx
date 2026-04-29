@@ -31,6 +31,23 @@ export default function CreateEvent() {
     });
   };
 
+  const geocodeLocation = async (location) => {
+    const query = `${location}, University of Arkansas at Little Rock, Little Rock, AR`;
+
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`
+    );
+
+    const data = await res.json();
+
+    if (!data?.[0]) return null;
+
+    return {
+      lat: parseFloat(data[0].lat),
+      lng: parseFloat(data[0].lon),
+    };
+  };
+
   // =========================
   // STATE
   // =========================
@@ -111,6 +128,7 @@ export default function CreateEvent() {
 
       const payload = {
         id: editingEvent?.id || crypto.randomUUID(),
+        eventcoord: crypto.randomUUID(),
         eventname: eventName.trim(),
         location: location.trim(),
         eventdesc: eventDescription.trim(),
@@ -315,8 +333,8 @@ export default function CreateEvent() {
                       ? "Updating..."
                       : "Creating..."
                     : editingEvent
-                    ? "Update Event"
-                    : "Create Event"}
+                      ? "Update Event"
+                      : "Create Event"}
                 </button>
               </div>
             </div>
