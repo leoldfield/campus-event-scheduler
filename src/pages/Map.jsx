@@ -26,9 +26,12 @@ L.Icon.Default.mergeOptions({
 });
 
 const pinIcon = new L.Icon({
-    iconUrl: markerIcon,
-    iconRetinaUrl: markerIcon2x,
-    shadowUrl: markerShadow,
+    iconUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+    iconRetinaUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+    shadowUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
 });
@@ -165,19 +168,24 @@ export default function MapView() {
     const geocode = async (location) => {
         if (!location) return null;
 
-        if (cache.current.has(location)) return cache.current.get(location);
+        if (cache.current.has(location)) {
+            return cache.current.get(location);
+        }
 
-        const proxy = (url) =>
-            `https://corsproxy.io/?${encodeURIComponent(url)}`;
-
-        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(
-            location
-        )}`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(location)}`;
 
         try {
             await sleep(250);
 
-            const res = await fetch(proxy(url));
+            const res = await fetch(url, {
+                headers: {
+                    "Accept": "application/json",
+                    "User-Agent": "campus-event-map" // helps reduce blocking
+                }
+            });
+
+            if (!res.ok) return null;
+
             const data = await res.json();
 
             if (!data?.[0]) return null;
@@ -189,7 +197,8 @@ export default function MapView() {
 
             cache.current.set(location, coords);
             return coords;
-        } catch {
+        } catch (err) {
+            console.warn("Geocode failed:", location, err);
             return null;
         }
     };
@@ -222,7 +231,10 @@ export default function MapView() {
                 }
 
                 const coords = await geocode(event.location);
-                if (!coords) continue;
+                if (!coords) {
+                    console.warn("Failed to geocode:", event.location);
+                    continue;
+                }
 
                 results.push({ ...event, ...coords });
             }
