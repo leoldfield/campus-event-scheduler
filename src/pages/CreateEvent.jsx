@@ -12,6 +12,7 @@ export default function CreateEvent() {
 
   const eventContext = useEventContext();
   const refreshEvents = eventContext?.refreshEvents;
+  const addEventLocal = eventContext?.addEventLocal;
 
   // =========================
   // HELPERS
@@ -142,6 +143,9 @@ export default function CreateEvent() {
   // =========================
   // SUBMIT
   // =========================
+  // =========================
+  // SUBMIT
+  // =========================
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -162,30 +166,43 @@ export default function CreateEvent() {
 
       // 1. Fetch coordinates using the 'location' state directly
       const coords = await getCoordinates(location);
-      console.log("Found coordinates:", coords); // <--- ADD THIS LINE
-
-      // 2. Build the payload
-      const payload = {
-        id: editingEvent?.id || crypto.randomUUID(),
-        eventcoord: crypto.randomUUID(),
-        eventname: eventName.trim(),
-        location: location.trim(),
-        eventdesc: eventDescription.trim(),
-        starttime: startDate.toISOString(),
-        endtime: endDate.toISOString(),
-        lat: coords ? coords.lat : null,
-        lng: coords ? coords.lng : null,
-      };
+      console.log("Found coordinates:", coords);
 
       if (editingEvent) {
-        // ✅ OPTIMISTIC UPDATE
-        eventContext?.updateEventLocal?.(payload);
-        await updateEvent(getDataConnectClient(), payload);
+        // ✅ UPDATE PAYLOAD (Does NOT include eventcoord)
+        const updatePayload = {
+          id: editingEvent.id || crypto.randomUUID,
+          eventname: eventName.trim(),
+          location: location.trim(),
+          eventdesc: eventDescription.trim(),
+          starttime: startDate.toISOString(),
+          endtime: endDate.toISOString(),
+          lat: coords ? coords.lat : null,
+          lng: coords ? coords.lng : null,
+        };
+
+        // Optimistic UI update & Database update
+        eventContext?.updateEventLocal?.(updatePayload);
+        await updateEvent(getDataConnectClient(), updatePayload);
 
         setSuccessMessage("Event updated successfully.");
       } else {
-        // ✅ CREATE PATH
-        await createEvent(getDataConnectClient(), payload);
+        // ✅ CREATE PAYLOAD (Includes eventcoord)
+        const createPayload = {
+          id: crypto.randomUUID(),
+          eventcoord: crypto.randomUUID(), // Only needed for new events
+          eventname: eventName.trim(),
+          location: location.trim(),
+          eventdesc: eventDescription.trim(),
+          starttime: startDate.toISOString(),
+          endtime: endDate.toISOString(),
+          lat: coords ? coords.lat : null,
+          lng: coords ? coords.lng : null,
+        };
+
+        addEventLocal?.(createPayload);
+
+        await createEvent(getDataConnectClient(), createPayload);
         setSuccessMessage("Event created successfully.");
       }
 

@@ -204,7 +204,7 @@ export function EventProvider({ children }) {
     }
   };
 
-  // =========================
+ // =========================
   // OPTIMISTIC UPDATE
   // =========================
   const updateEventLocal = (updatedEvent) => {
@@ -215,6 +215,11 @@ export function EventProvider({ children }) {
     );
   };
 
+  // ⭐ NEW: Optimistically add a newly created event instantly
+  const addEventLocal = (newEvent) => {
+    setEvents((prev) => [...prev, newEvent]);
+  };
+  
   // =========================
   // AUTH LISTENER
   // =========================
@@ -342,6 +347,7 @@ export function EventProvider({ children }) {
 
         refreshEvents,
         updateEventLocal,
+        addEventLocal,
       }}
     >
       {children}
