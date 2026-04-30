@@ -5,6 +5,9 @@ let tokenClient = null;
 let googleAccessToken = null;
 let tokenExpiresAt = 0;
 
+// Queue for handling multiple token requests sequentially
+let tokenRequestQueue = [];
+
 const ensureGoogleClientId = () => {
   if (!GOOGLE_CLIENT_ID) {
     throw new Error(
@@ -50,18 +53,26 @@ const ensureTokenClient = async () => {
   ensureGoogleClientId();
   await loadGsiScript();
 
+  const handleTokenResponse = (tokenResponse) => {
+    const request = tokenRequestQueue.shift();
+    if (!request) return;
+
+    if (tokenResponse.error) {
+      const error = new Error(tokenResponse.error_description || tokenResponse.error);
+      error.code = tokenResponse.error;
+      request.reject(error);
+      return;
+    }
+
+    googleAccessToken = tokenResponse.access_token;
+    tokenExpiresAt = Date.now() + (Number(tokenResponse.expires_in || 3600) * 1000) - 10_000;
+    request.resolve(googleAccessToken);
+  };
+
   tokenClient = window.google.accounts.oauth2.initTokenClient({
     client_id: GOOGLE_CLIENT_ID,
     scope: GOOGLE_SCOPE,
-    callback: (tokenResponse) => {
-      if (tokenResponse.error) {
-        console.warn("Google token request failed", tokenResponse);
-        return;
-      }
-
-      googleAccessToken = tokenResponse.access_token;
-      tokenExpiresAt = Date.now() + (Number(tokenResponse.expires_in || 3600) * 1000) - 10_000;
-    },
+    callback: handleTokenResponse,
   });
 
   return tokenClient;
@@ -74,36 +85,28 @@ export function hasValidToken() {
 
 
 const requestAccessToken = async ({ prompt = "consent" } = {}) => {
-  ensureGoogleClientId();
   const client = await ensureTokenClient();
 
-  if (hasValidToken()) {
+  if (hasValidToken() && tokenRequestQueue.length === 0) {
     return googleAccessToken;
   }
 
   return new Promise((resolve, reject) => {
-    //Google Auth timeout
-    const timeout = setTimeout(() => {
-      reject(new Error("Google Authorization timed out. Please check if popups are blocked."));
-    }, 60000);  
+    tokenRequestQueue.push({ resolve, reject });
 
-    client.callback = (tokenResponse) => {
-      clearTimeout(timeout);
-      if (tokenResponse.error) {
-        reject(new Error(tokenResponse.error_description || tokenResponse.error));
-        return;
-      }
-
-      googleAccessToken = tokenResponse.access_token;
-      tokenExpiresAt = Date.now() + (Number(tokenResponse.expires_in || 3600) * 1000) - 10_000;
-      resolve(googleAccessToken);
-    };
-
-    try {
+    if (tokenRequestQueue.length === 1) {
       client.requestAccessToken({ prompt });
-    } catch (err) {
-      clearTimeout(timeout);
-      reject(new Error("Failed to open Google Authorization window."));
+    }
+  }).catch(async (err) => {
+    if (
+      prompt === "none" &&
+      (err.code === "interaction_required" || err.code === "user_logged_out")
+    ) {
+      // Added small delay to account for race conditions
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return requestAccessToken({ prompt: "consent" });
+    } else {
+      throw err;
     }
   });
 };
@@ -152,31 +155,31 @@ export async function createGoogleCalendarEvent(event, user) {
     start: toCalendarDateTime(event.starttime),
     end: toCalendarDateTime(event.endtime),
     attendees: user.email ? [{ email: user.email }] : undefined,
-    // Explicitly set status to confirmed to "revive" it if it was cancelled
     status: "confirmed", 
   };
 
-  // 1. Attempt to create the event (POST)
-  let response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  // 2. If 409 Conflict, it means the ID exists (likely cancelled). Update it instead (PUT).
-  if (response.status === 409) {
-    const updateUrl = `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`;
-    response = await fetch(updateUrl, {
-      method: "PUT",
+  const insertUrl = `https://www.googleapis.com/calendar/v3/calendars/primary/events`;
+  let response;
+  try {
+    response = await fetch(insertUrl, {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     });
+
+    if (response.status === 409) {
+      const updateUrl = `${insertUrl}/${eventId}`;
+      response = await fetch(updateUrl, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    }
+  } catch (err) {
+    throw new Error(`Google Calendar API request failed: ${err.message}`);
   }
 
   if (!response.ok) {
