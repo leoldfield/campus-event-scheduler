@@ -117,9 +117,17 @@ export default function MyEvents() {
 
         {/* HERO SECTION FOR MY EVENTS */}
         <section className="hero-section" style={{ marginBottom: "40px", padding: "60px 20px" }}>
-          <div className="hero-content">
-            <h1>My Registered Events</h1>
-            <p>Manage your upcoming schedule, edit your events, and sync with your calendar.</p>
+            <div className="hero-content">
+              <div className="mobile-header-group-myevents" style={{ marginBottom: "24px" }}>
+              <h1>My Registered Events</h1>
+              <p>Manage your upcoming schedule, edit your events, and sync with your calendar.</p>
+              <button
+                className="filter-toggle-btn mobile-only-btn"
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+              >
+                {isFilterOpen ? "Close Filters" : "Filters"}
+              </button>
+            </div>
           </div>
         </section>
 
@@ -170,7 +178,7 @@ export default function MyEvents() {
                     </button>
                   </div>
                 ) : (
-                  <button className="open-filter-tab" onClick={() => setIsFilterOpen(true)}>
+                  < button className="open-filter-tab desktop-only-btn" onClick={() => setIsFilterOpen(true)}>
                     <span className="vertical-text">FILTERS</span>
                   </button>
                 )}

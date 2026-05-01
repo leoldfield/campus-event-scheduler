@@ -42,14 +42,13 @@ const PageWrapper = ({ children }) => (
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
-
   const { notifications } = useEventContext();
   const unreadCount = notifications.filter((n) => !n.seen).length;
 
   const navigate = useNavigate();
   const location = useLocation();
-
   const profileRef = useRef(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   /* ================================
      AUTH LISTENER
@@ -92,83 +91,100 @@ export default function App() {
     <>
       {/* ================= NAVBAR ================= */}
       <nav className="navbar">
+
+        {/* === 1. NAV LEFT: Logo & Title === */}
         <div className="nav-left">
-          <Link to="/">
-            <img src={logo} style={{ height: 40 }} />
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
+            <img src={logo} alt="UA Little Rock Logo" />
+            <h2 className="nav-title" style={{ margin: 0, color: "white" }}>UALR Campus Events</h2>
           </Link>
-          <div className="nav-title">UALR Events</div>
         </div>
 
-        <div className="nav-right">
-
-          {/* AUTH LINKS */}
+        {/* === 2. NAV MIDDLE: Links (Hidden on mobile unless opened) === */}
+        <div className={`nav-links ${isMobileMenuOpen ? "open" : ""}`}>
           {isSignedInUser ? (
             <>
-              <Link to="/">Events</Link>
-              <Link to="/MyEvents">My Events</Link>
-              <Link to="/create">Create Event</Link>
-              <Link to="/map">Map</Link>
+              <Link to="/" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Events</Link>
+              <Link to="/MyEvents" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>My Events</Link>
+              <Link to="/map" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Map</Link>
+              <Link to="/create" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Create Event</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+              <Link to="/register" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Register</Link>
+            </>
+          )}
+        </div>
 
+        {/* === 3. NAV RIGHT: Icons & Hamburger === */}
+        <div className="nav-icons">
+          {isSignedInUser && (
+            <>
+              {/* NOTIFICATION BELL */}
               <Link to="/Notification" style={{ position: "relative" }}>
-                <img src={notiBell} style={{ height: 28 }} />
+                <img src={notiBell} style={{ height: 28 }} alt="Notifications" />
                 {unreadCount > 0 && (
                   <div className="notif-badge">{unreadCount}</div>
                 )}
               </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/login">Login</Link>
-              <Link to="/register">Register</Link>
-            </>
-          )}
 
-          {/* PROFILE DROPDOWN */}
-          {isSignedInUser && (
-            <div
-              ref={profileRef}
-              className="profile-dropdown-wrapper"
-              style={{ position: "relative" }}
-            >
-              <img
-                src={profilePicture}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setProfileOpen((prev) => !prev);
-                }}
-                style={{
-                  height: 40,
-                  width: 40,
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  cursor: "pointer",
-                }}
-              />
+              {/* PROFILE DROPDOWN */}
+              <div
+                ref={profileRef}
+                className="profile-dropdown-wrapper"
+                style={{ position: "relative" }}
+              >
+                <img
+                  src={profilePicture}
+                  className="profilepic-mobile"
+                  alt="Profile"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setProfileOpen((prev) => !prev);
+                  }}
+                  style={{
+                    height: 40,
+                    width: 40,
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    cursor: "pointer",
+                  }}
+                />
 
-              <AnimatePresence>
-                {profileOpen && (
-                  <motion.div
-                    className="profile-dropdown"
-                    initial={{ opacity: 0, scale: 0.85, y: -10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.85, y: -10 }}
-                    transition={{ duration: 0.15 }}
-                  >
-                    <Link
-                      to="/UserProfile"
-                      onClick={() => setProfileOpen(false)}
+                <AnimatePresence>
+                  {profileOpen && (
+                    <motion.div
+                      className="profile-dropdown"
+                      initial={{ opacity: 0, scale: 0.85, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.85, y: -10 }}
+                      transition={{ duration: 0.15 }}
                     >
-                      Profile
-                    </Link>
+                      <Link
+                        to="/UserProfile"
+                        onClick={() => setProfileOpen(false)}
+                      >
+                        Profile
+                      </Link>
 
-                    <button onClick={handleLogout}>
-                      Logout
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                      <button onClick={handleLogout}>
+                        Logout
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </>
           )}
+
+          {/* HAMBURGER BUTTON (Always renders, hidden via CSS on desktop) */}
+          <button
+            className="hamburger-btn"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? "✕" : "☰"}
+          </button>
         </div>
       </nav>
 

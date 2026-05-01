@@ -692,3 +692,72 @@
   background-color: #ffedd5; /* Light Orange */
   color: #ea580c;            /* Dark Orange */
 }
+
+/* =========================================
+   MOBILE FIXES: HEADER & FILTERS
+========================================= */
+
+/* By default (on Desktop), hide the mobile toggle button */
+.mobile-only-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Put the Title and Button on the same line */
+  .mobile-header-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mobile-header-group-myevents {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0px;
+  }
+
+  .mobile-header-group-myevents .mobile-only-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: -20px;
+  }
+
+  .mobile-header-group h2 {
+    margin: 0; 
+    font-size: 22px; 
+  }
+
+  /* Show the mobile toggle button and style it */
+  .mobile-only-btn {
+    display: block; 
+    padding: 8px 16px;
+    background-color: #6E2639;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  /* Hide the vertical desktop tab on mobile */
+  .desktop-only-btn {
+    display: none !important; 
+  }
+
+  /* Make the filter menu take full width below the title */
+  .filters-sidebar.open {
+    width: 90%;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  /* Take up no blank space when closed on mobile */
+  .filters-sidebar.closed {
+    display: none; 
+  }
+}
