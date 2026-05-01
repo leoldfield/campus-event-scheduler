@@ -121,6 +121,8 @@ export interface ListEventsData {
     eventstatus: boolean;
     lat?: number | null;
     lng?: number | null;
+    imageUrl?: string | null;
+    category?: string | null;
   } & EventList_Key)[];
 }
 ```
@@ -327,6 +329,8 @@ export interface GetEventByIdData {
     endtime: TimestampString;
     lat?: number | null;
     lng?: number | null;
+    imageUrl?: string | null;
+    category?: string | null;
   } & EventList_Key;
 }
 ```
@@ -1234,6 +1238,8 @@ export interface CreateEventVariables {
   endtime: TimestampString;
   lat?: number | null;
   lng?: number | null;
+  imageUrl?: string | null;
+  category?: string | null;
 }
 ```
 ### Return Type
@@ -1262,13 +1268,15 @@ const createEventVars: CreateEventVariables = {
   endtime: ..., 
   lat: ..., // optional
   lng: ..., // optional
+  imageUrl: ..., // optional
+  category: ..., // optional
 };
 
 // Call the `createEvent()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await createEvent(createEventVars);
 // Variables can be defined inline as well.
-const { data } = await createEvent({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
+const { data } = await createEvent({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., imageUrl: ..., category: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1300,12 +1308,14 @@ const createEventVars: CreateEventVariables = {
   endtime: ..., 
   lat: ..., // optional
   lng: ..., // optional
+  imageUrl: ..., // optional
+  category: ..., // optional
 };
 
 // Call the `createEventRef()` function to get a reference to the mutation.
 const ref = createEventRef(createEventVars);
 // Variables can be defined inline as well.
-const ref = createEventRef({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
+const ref = createEventRef({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., imageUrl: ..., category: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1844,6 +1854,8 @@ export interface UpdateEventVariables {
   endtime: TimestampString;
   lat?: number | null;
   lng?: number | null;
+  imageUrl?: string | null;
+  category?: string | null;
 }
 ```
 ### Return Type
@@ -1871,13 +1883,15 @@ const updateEventVars: UpdateEventVariables = {
   endtime: ..., 
   lat: ..., // optional
   lng: ..., // optional
+  imageUrl: ..., // optional
+  category: ..., // optional
 };
 
 // Call the `updateEvent()` function to execute the mutation.
 // You can use the `await` keyword to wait for the promise to resolve.
 const { data } = await updateEvent(updateEventVars);
 // Variables can be defined inline as well.
-const { data } = await updateEvent({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
+const { data } = await updateEvent({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., imageUrl: ..., category: ..., });
 
 // You can also pass in a `DataConnect` instance to the action shortcut function.
 const dataConnect = getDataConnect(connectorConfig);
@@ -1908,12 +1922,14 @@ const updateEventVars: UpdateEventVariables = {
   endtime: ..., 
   lat: ..., // optional
   lng: ..., // optional
+  imageUrl: ..., // optional
+  category: ..., // optional
 };
 
 // Call the `updateEventRef()` function to get a reference to the mutation.
 const ref = updateEventRef(updateEventVars);
 // Variables can be defined inline as well.
-const ref = updateEventRef({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
+const ref = updateEventRef({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., imageUrl: ..., category: ..., });
 
 // You can also pass in a `DataConnect` instance to the `MutationRef` function.
 const dataConnect = getDataConnect(connectorConfig);

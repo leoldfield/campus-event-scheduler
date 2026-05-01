@@ -1,26 +1,69 @@
+/* =================================================================
+   REGISTER SPECIFIC STYLES
+   (Inherits layout & inputs from CreateEvent.css)
+================================================================= */
+
+/* ===== THE LOGIN FOOTER ===== */
 .authenticateText {
-  margin-bottom: 30px;
+  background: #f9fafb;
+  padding: 20px 30px;
+  border-top: 1px solid #f3f4f6;
+  text-align: center;
+  /* Pull the footer up slightly to counteract the form's bottom padding */
+  margin-top: -10px; 
 }
 
-.createAccountButton {
-  margin-top: 8px;
-  background: linear-gradient(135deg, #b22222, #8b0000);
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  color: white;
+.auth-switch {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.auth-switch span {
+  color: #6E2639; /* Your new Accent Color */
   font-weight: 600;
-  letter-spacing: 0.3px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  align-self: center;
+  transition: color 0.2s ease;
 }
 
+.auth-switch span:hover {
+  color: #521c2a;
+  text-decoration: underline;
+}
+
+/* ===== CREATE ACCOUNT BUTTON ===== */
+.createAccountButton {
+  flex: 1;
+  background: #6E2639; /* Replaces the old red gradient */
+  border: none;
+  border-radius: 8px; /* Squared off to match the other inputs */
+  padding: 14px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(110, 38, 57, 0.2);
+}
+
+.createAccountButton:hover {
+  background: #521c2a; /* Slightly darker on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(110, 38, 57, 0.3);
+}
+
+.createAccountButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ===== PASSWORD HINT ===== */
 .password-hint {
   font-size: 12px;
-  color: #777;
-  margin-top: -20px;
-  margin-bottom: 10px;
+  color: #9ca3af; /* Softer gray to match the new placeholders */
+  margin-top: -12px;
+  margin-bottom: 16px;
+  padding-left: 2px;
 }
-
-/*All other css elements shared with CreateEvent.css due to the nature of the form*/

@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { createEvent, updateEvent } from "../dataconnect-generated";
 import { auth, ensureUserSession, getDataConnectClient } from "../firebase";
 import "../css/CreateEvent.css";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import EventCard from "./Components/EventCard";
 import { useEventContext } from "./EventContext.jsx";
 
 export default function CreateEvent() {
@@ -14,9 +17,20 @@ export default function CreateEvent() {
   const refreshEvents = eventContext?.refreshEvents;
   const addEventLocal = eventContext?.addEventLocal;
 
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(editingEvent?.imageUrl || "");
+
   // =========================
   // HELPERS
   // =========================
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file)); // Creates a local preview URL
+    }
+  };
+
   const formatForDateTimeInput = (value) => {
     if (!value) return "";
     const date = new Date(value);
@@ -44,8 +58,8 @@ export default function CreateEvent() {
     if (!locationString) return null;
 
     // Pull the API key from your environment variables
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY; 
-    
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
     if (!apiKey) {
       console.error("Google Maps API key is missing from .env file!");
       return null;
@@ -67,11 +81,11 @@ export default function CreateEvent() {
           lat: exactLocation.lat,
           lng: exactLocation.lng
         };
-      } 
-      
+      }
+
       // Fallback: If Google somehow can't find it, default to the center of campus
       console.warn(`Google could not find "${locationString}". Status: ${data.status}`);
-      return { lat: 34.722, lng: -92.339 }; 
+      return { lat: 34.722, lng: -92.339 };
 
     } catch (err) {
       console.error("Google Geocoding failed:", err);
@@ -90,6 +104,7 @@ export default function CreateEvent() {
   const [eventDescription, setEventDescription] = useState(
     editingEvent?.eventdesc || ""
   );
+  const [imageUrl, setImageUrl] = useState(editingEvent?.imageUrl || "");
   const [startTime, setStartTime] = useState(
     formatForDateTimeInput(editingEvent?.starttime)
   );
@@ -100,6 +115,8 @@ export default function CreateEvent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [category, setCategory] = useState(editingEvent?.category || "social");
+  const CATEGORIES = ["academic", "social", "sports", "arts", "technology", "career"];
 
   // =========================
   // STEP NAVIGATION
@@ -140,12 +157,6 @@ export default function CreateEvent() {
   // =========================
   // SUBMIT
   // =========================
-  // =========================
-  // SUBMIT
-  // =========================
-  // =========================
-  // SUBMIT
-  // =========================
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -163,10 +174,17 @@ export default function CreateEvent() {
 
     try {
       await ensureUserSession();
+      let finalImageUrl = editingEvent?.imageUrl || "";
 
       // 1. Fetch coordinates using the 'location' state directly
+      if (imageFile) {
+        const storage = getStorage();
+        // Creates a unique filename
+        const storageRef = ref(storage, `event_banners/${crypto.randomUUID()}_${imageFile.name}`);
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        finalImageUrl = await getDownloadURL(snapshot.ref);
+      }
       const coords = await getCoordinates(location);
-      console.log("Found coordinates:", coords);
 
       if (editingEvent) {
         // ✅ UPDATE PAYLOAD (Does NOT include eventcoord)
@@ -179,6 +197,8 @@ export default function CreateEvent() {
           endtime: endDate.toISOString(),
           lat: coords ? coords.lat : null,
           lng: coords ? coords.lng : null,
+          imageUrl: finalImageUrl,
+          category: category,
         };
 
         // Optimistic UI update & Database update
@@ -198,6 +218,8 @@ export default function CreateEvent() {
           endtime: endDate.toISOString(),
           lat: coords ? coords.lat : null,
           lng: coords ? coords.lng : null,
+          imageUrl: finalImageUrl,
+          category: category,
         };
 
         addEventLocal?.(createPayload);
@@ -208,7 +230,9 @@ export default function CreateEvent() {
 
       // ✅ CENTRALIZED SYNC
       await refreshEvents?.();
-      setTimeout(() => navigate("/"), 500);
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 500)
     } catch (err) {
       console.error("Submit failed", err);
       setError(err?.message || "Something went wrong.");
@@ -224,27 +248,38 @@ export default function CreateEvent() {
     ? `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`
     : null;
 
+  const previewEvent = {
+    id: "preview",
+    eventname: eventName || "Your Event Title",
+    eventdesc: eventDescription || "Your event description will appear here.",
+    starttime: startTime || new Date().toISOString(),
+    endtime: endTime || new Date().toISOString(),
+    location: location || "Event Location",
+    imageUrl: imagePreview,
+    category: category,
+  };
+
   // =========================
   // UI
   // =========================
   return (
     <div className="create-event-wrapper">
-      <div className="create-event-card">
+      <div className={`create-event-card ${step === 3 ? "wide-card" : ""}`}>
         <h1>{editingEvent ? "Edit Event" : "Create Event"}</h1>
 
-        <div className="progress-bar">
-          <div
-            className="progress-fill"
-            style={{ width: `${(step / 3) * 100}%` }}
-          />
+        {/* PROGRESS BAR */}
+        <div className="progress-bar-container">
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${(step / 3) * 100}%` }} />
+          </div>
         </div>
+        <p style={{ marginTop: "12px" }}>Step {step} of 3</p>
 
-        <p>Step {step} of 3</p>
-
+        {/* MESSAGES */}
         <div className="form-report">
-          {error && <p style={{ color: "#b00020" }}>{error}</p>}
+          {error && <p style={{ color: "#b00020", marginTop: "10px" }}>{error}</p>}
           {successMessage && (
-            <p style={{ color: "#0b6b2f" }}>{successMessage}</p>
+            <p style={{ color: "#0b6b2f", marginTop: "10px" }}>{successMessage}</p>
           )}
         </div>
 
@@ -253,29 +288,44 @@ export default function CreateEvent() {
           {step === 1 && (
             <div className="form-step">
               <h2>Basic Info</h2>
+              <input className="input" placeholder="Event title" value={eventName} onChange={(e) => setEventName(e.target.value)} />
+              <textarea className="input" placeholder="Event description" value={eventDescription} onChange={(e) => setEventDescription(e.target.value)} />
+              <div className="category-selection-wrapper">
+                <label className="category-label">Event Category</label>
+                <div className="category-pills">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setCategory(cat)}
+                      // Dynamically apply the 'active' class if selected
+                      className={`category-pill-btn ${category === cat ? "active" : ""}`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="image-upload-wrapper">
+                <label className="image-upload-box">
+                  {imagePreview ? (
+                    <img src={imagePreview} alt="Preview" className="banner-preview" />
+                  ) : (
+                    <div className="upload-placeholder">
+                      <span style={{ fontSize: "30px", marginBottom: "8px" }}>📸</span>
+                      <p>Click to upload event banner</p>
+                    </div>
+                  )}
+                  {/* Hidden file input triggered by clicking the label */}
+                  <input type="file" accept="image/*" onChange={handleImageChange} hidden />
+                </label>
+              </div>
 
-              <input
-                className="input"
-                placeholder="Event title"
-                value={eventName}
-                onChange={(e) => setEventName(e.target.value)}
-              />
-
-              <textarea
-                className="input"
-                placeholder="Event description"
-                value={eventDescription}
-                onChange={(e) => setEventDescription(e.target.value)}
-                rows={5}
-              />
-
-              <button
-                type="button"
-                className="stepButtonNext"
-                onClick={nextStep}
-              >
-                Next
-              </button>
+              <div className="step-buttons" style={{ justifyContent: "flex-end" }}>
+                <button type="button" className="stepButtonNext" onClick={nextStep}>
+                  Next Step
+                </button>
+              </div>
             </div>
           )}
 
@@ -283,56 +333,20 @@ export default function CreateEvent() {
           {step === 2 && (
             <div className="form-step">
               <h2>Time & Location</h2>
-
-              <input
-                className="input"
-                type="datetime-local"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-
-              <input
-                className="input"
-                type="datetime-local"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              />
-
-              <input
-                className="input"
-                placeholder="Address"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
+              <input className="input" type="datetime-local" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+              <input className="input" type="datetime-local" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+              <input className="input" placeholder="Address (e.g., Donaghey Student Center)" value={location} onChange={(e) => setLocation(e.target.value)} />
 
               {mapSrc && (
-                <iframe
-                  src={mapSrc}
-                  style={{
-                    border: 0,
-                    width: "100%",
-                    height: "200px",
-                    borderRadius: "8px",
-                  }}
-                  loading="lazy"
-                  title="Event Location Map"
-                />
+                <iframe src={mapSrc} style={{ border: 0, width: "100%", height: "200px", borderRadius: "8px", marginTop: "8px" }} loading="lazy" title="Event Location Map" />
               )}
 
               <div className="step-buttons">
-                <button
-                  type="button"
-                  className="stepButtonBack"
-                  onClick={prevStep}
-                >
+                <button type="button" className="stepButtonBack" onClick={prevStep}>
                   Back
                 </button>
-                <button
-                  type="button"
-                  className="stepButtonNext"
-                  onClick={nextStep}
-                >
-                  Next
+                <button type="button" className="stepButtonNext" onClick={nextStep}>
+                  Next Step
                 </button>
               </div>
             </div>
@@ -340,58 +354,50 @@ export default function CreateEvent() {
 
           {/* STEP 3 */}
           {step === 3 && (
-            <div className="form-step">
-              <h2>Review</h2>
+            <div className="form-step review-step-container">
 
-              <div className="review-item">
-                <span className="review-label">Name</span>
-                <span className="review-value">{eventName}</span>
+              {/* LEFT SIDE: Review Details */}
+              <div className="review-details">
+                <h2>Review & Submit</h2>
+
+                <div className="review-item">
+                  <span className="review-label">Name</span>
+                  <span className="review-value">{eventName}</span>
+                </div>
+                <div className="review-item">
+                  <span className="review-label">Description</span>
+                  <span className="review-value">{eventDescription}</span>
+                </div>
+                <div className="review-item">
+                  <span className="review-label">Start Time</span>
+                  <span className="review-value">{formatDate(startTime)}</span>
+                </div>
+                <div className="review-item">
+                  <span className="review-label">End Time</span>
+                  <span className="review-value">{formatDate(endTime)}</span>
+                </div>
+                <div className="review-item">
+                  <span className="review-label">Location</span>
+                  <span className="review-value">{location}</span>
+                </div>
+
+                <div className="step-buttons">
+                  <button type="button" className="stepButtonBack" onClick={prevStep}>
+                    Back
+                  </button>
+                  <button className="submitButton" type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? (editingEvent ? "Updating..." : "Creating...") : (editingEvent ? "Update Event" : "Create Event")}
+                  </button>
+                </div>
               </div>
 
-              <div className="review-item">
-                <span className="review-label">Description</span>
-                <span className="review-value">{eventDescription}</span>
+              {/* RIGHT SIDE: Live Card Preview */}
+              <div className="review-preview">
+                <h2>Card Preview</h2>
+                {/* We pass showRegister={false} so the button doesn't confuse the user */}
+                <EventCard event={previewEvent} showRegister={true} />
               </div>
 
-              <div className="review-item">
-                <span className="review-label">Start</span>
-                <span className="review-value">
-                  {formatDate(startTime)}
-                </span>
-              </div>
-
-              <div className="review-item">
-                <span className="review-label">End</span>
-                <span className="review-value">{formatDate(endTime)}</span>
-              </div>
-
-              <div className="review-item">
-                <span className="review-label">Location</span>
-                <span className="review-value">{location}</span>
-              </div>
-
-              <div className="step-buttons">
-                <button
-                  type="button"
-                  className="stepButtonBack"
-                  onClick={prevStep}
-                >
-                  Back
-                </button>
-                <button
-                  className="button"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting
-                    ? editingEvent
-                      ? "Updating..."
-                      : "Creating..."
-                    : editingEvent
-                      ? "Update Event"
-                      : "Create Event"}
-                </button>
-              </div>
             </div>
           )}
         </form>

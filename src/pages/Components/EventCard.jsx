@@ -41,8 +41,9 @@ export default function EventCard({
       {/* IMAGE */}
       <div className="event-card-image">
         <img
-          src={event.image || testimage}
-          alt={event.eventname}
+          src={event.imageUrl || testimage}
+          alt={event.eventname || "Event Banner"}
+          className="event-card-img"
         />
       </div>
 
@@ -53,6 +54,11 @@ export default function EventCard({
           <div className="event-card-date">
             <span className="pill">{formatDate(event.starttime)}</span>
             <span className="pill">{formatTime(event.starttime)}</span>
+            {event.category && (
+              <span className={`event-category-pill cat-${event.category.toLowerCase()}`}>
+                {event.category}
+              </span>
+            )}
           </div>
 
           {showEdit && (
@@ -82,29 +88,29 @@ export default function EventCard({
         <h2 className="event-title">{event.eventname}</h2>
 
         {/* DESCRIPTION */}
-        <p className="event-desc">{event.eventdesc}</p>
-        
+        {/* <p className="event-desc">{event.eventdesc}</p> */}
+
         {/* ACTIONS */}
         <div className="event-actions">
           {showRegister && (
             <button
-                  className={`register-button ${isRegistered ? "registered" : ""}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (onRegister) onRegister(event.id);
-                  }}
-                  disabled={loading}
-                  onMouseEnter={() => setIsHoveringButton(true)}
-                  onMouseLeave={() => setIsHoveringButton(false)}
-                >
-                  {isRegistered && isHoveringButton
-                    ? "Unregister"
-                    : isRegistered
-                    ? "Registered"
-                    : loading
-                      ? "Registering..."
-                      : "Register"}
-                </button>
+              className={`register-button ${isRegistered ? "registered" : ""}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onRegister) onRegister(event.id);
+              }}
+              disabled={loading}
+              onMouseEnter={() => setIsHoveringButton(true)}
+              onMouseLeave={() => setIsHoveringButton(false)}
+            >
+              {isRegistered && isHoveringButton
+                ? "Unregister"
+                : isRegistered
+                  ? "Registered"
+                  : loading
+                    ? "Registering..."
+                    : "Register"}
+            </button>
           )}
 
           <button
