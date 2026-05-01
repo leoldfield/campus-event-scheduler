@@ -90,6 +90,7 @@ export default function CreateEvent() {
   const [eventDescription, setEventDescription] = useState(
     editingEvent?.eventdesc || ""
   );
+  const [imageUrl, setImageUrl] = useState(editingEvent?.imageUrl || "");
   const [startTime, setStartTime] = useState(
     formatForDateTimeInput(editingEvent?.starttime)
   );
@@ -259,7 +260,7 @@ export default function CreateEvent() {
                 placeholder="Event title"
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
-              />
+            
 
               <textarea
                 className="input"
@@ -268,7 +269,12 @@ export default function CreateEvent() {
                 onChange={(e) => setEventDescription(e.target.value)}
                 rows={5}
               />
-
+              <input
+                className="input"
+                placeholder="Event image URL"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+              />
               <button
                 type="button"
                 className="stepButtonNext"
