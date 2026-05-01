@@ -1,6 +1,6 @@
 # List all events
 query ListEvents @auth(level: PUBLIC) {
-  eventLists(orderBy: { starttime: ASC }) {
+  eventLists(orderBy: { starttime: ASC }, limit: 15) {
     id
     eventcoord
     eventname
@@ -85,7 +85,6 @@ query GetFirstNameByID($id: UUID!) @auth(level: PUBLIC) {
   }
 }
 
-#Get user full name by id
 query GetNameByID($id: UUID!) @auth(level: PUBLIC) {
   userList(id: $id) {
     firstname
@@ -93,7 +92,6 @@ query GetNameByID($id: UUID!) @auth(level: PUBLIC) {
   }
 }
 
-#Check user credentials for login
 query ValidateUserCredentials($email: String!, $password: String!)
 @auth(level: PUBLIC, insecureReason: "Used for MVP login prototype while auth is not yet integrated.") {
   userLists(where: { email: { eq: $email }, password: { eq: $password } }, limit: 1) {
@@ -104,7 +102,6 @@ query ValidateUserCredentials($email: String!, $password: String!)
   }
 }
 
-# List all registrations
 query ListRegistrations @auth(level: USER) {
   registrations {
     eventId
@@ -113,7 +110,6 @@ query ListRegistrations @auth(level: USER) {
   }
 }
 
-# Get registration by event ID and user ID
 query GetRegistration($eventId: UUID!, $userId: UUID!) @auth(level: USER) {
   registration(key: { eventId: $eventId, userId: $userId }) {
     eventId
@@ -122,32 +118,14 @@ query GetRegistration($eventId: UUID!, $userId: UUID!) @auth(level: USER) {
   }
 }
 
-# Create a registration
 mutation CreateRegistration($eventId: UUID!, $userId: UUID!, $notif: Boolean)
 @auth(level: USER) {
   registration_insert(data: { eventId: $eventId, userId: $userId, notif: $notif })
 }
 
-# Delete a registration
 mutation DeleteRegistration($eventId: UUID!, $userId: UUID!)
 @auth(level: USER) {
   registration_delete(key: { eventId: $eventId, userId: $userId })
-}
-
-
-# List events a specific user is registered for
-query listMyEvents($userId: String!) {
-  registrations(filter: { userId: { _eq: $userId } }) {
-    eventLists(filter: { id: { _eq: eventId } }) {
-      id
-      eventname
-      location
-      eventdesc
-      starttime
-      endtime
-      eventstatus
-    }
-  }
 }
 
 mutation CreateUser(

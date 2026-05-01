@@ -8,6 +8,15 @@ extend type EventList {
   """
   _count: Int! @fdc_generated(from: "EventList.", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `EventList` table where the `category` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  category_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.category", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `EventList` table where the `endtime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   endtime_count(
@@ -61,6 +70,15 @@ extend type EventList {
     """
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "EventList.id", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `imageUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  imageUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.imageUrl", purpose: QUERY_COUNT)
   """
   ✨ Count the number of rows in the `EventList` table where the `lat` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """

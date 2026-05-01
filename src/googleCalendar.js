@@ -143,7 +143,7 @@ export async function requestGoogleCalendarAccess() {
 
 
 export async function createGoogleCalendarEvent(event, user) {
-  const accessToken = await requestAccessToken({ prompt: "" });
+  const accessToken = await requestAccessToken({ prompt: "none" });
   
   const eventId = buildCalendarEventId(normalizeCalendarId(event.id), normalizeCalendarId(user.uid || user.email || "unknown"));
   

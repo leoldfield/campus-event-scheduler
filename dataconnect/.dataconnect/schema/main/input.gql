@@ -29,6 +29,14 @@ input EventList_Data {
   """
   id_expr: UUID_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `EventList`.`category` of type `String`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `EventList`.`category` of type `String`)
+  """
+  category_expr: String_Expr @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`
   """
   endtime: Timestamp
@@ -76,6 +84,14 @@ input EventList_Data {
   ✨ `_expr` server value variant of `eventstatus` (✨ Generated from Field `EventList`.`eventstatus` of type `Boolean!`)
   """
   eventstatus_expr: Boolean_Expr @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `EventList`.`imageUrl` of type `String`
+  """
+  imageUrl: String
+  """
+  ✨ `_expr` server value variant of `imageUrl` (✨ Generated from Field `EventList`.`imageUrl` of type `String`)
+  """
+  imageUrl_expr: String_Expr @fdc_forbiddenInVariables
   """
   ✨ Generated from Field `EventList`.`lat` of type `Float`
   """
@@ -146,6 +162,10 @@ input EventList_Filter {
   """
   id: UUID_Filter
   """
+  ✨ Generated from Field `EventList`.`category` of type `String`
+  """
+  category: String_Filter
+  """
   ✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`
   """
   endtime: Timestamp_Filter
@@ -165,6 +185,10 @@ input EventList_Filter {
   ✨ Generated from Field `EventList`.`eventstatus` of type `Boolean!`
   """
   eventstatus: Boolean_Filter
+  """
+  ✨ Generated from Field `EventList`.`imageUrl` of type `String`
+  """
+  imageUrl: String_Filter
   """
   ✨ Generated from Field `EventList`.`lat` of type `Float`
   """
@@ -220,6 +244,10 @@ input EventList_Having {
   """
   _count: Int_Filter
   """
+  ✨ Generated from Field `EventList`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
   ✨ Generated from Field `EventList`.`endtime_count` of type `Int!`
   """
   endtime_count: Int_Filter
@@ -243,6 +271,10 @@ input EventList_Having {
   ✨ Generated from Field `EventList`.`id_count` of type `Int!`
   """
   id_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: Int_Filter
   """
   ✨ Generated from Field `EventList`.`lat_count` of type `Int!`
   """
@@ -343,6 +375,10 @@ input EventList_Order {
   """
   id: OrderDirection
   """
+  ✨ Generated from Field `EventList`.`category` of type `String`
+  """
+  category: OrderDirection
+  """
   ✨ Generated from Field `EventList`.`endtime` of type `Timestamp!`
   """
   endtime: OrderDirection
@@ -363,6 +399,10 @@ input EventList_Order {
   """
   eventstatus: OrderDirection
   """
+  ✨ Generated from Field `EventList`.`imageUrl` of type `String`
+  """
+  imageUrl: OrderDirection
+  """
   ✨ Generated from Field `EventList`.`lat` of type `Float`
   """
   lat: OrderDirection
@@ -382,6 +422,10 @@ input EventList_Order {
   ✨ Generated from Field `EventList`.`_count` of type `Int!`
   """
   _count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
   """
   ✨ Generated from Field `EventList`.`endtime_count` of type `Int!`
   """
@@ -406,6 +450,10 @@ input EventList_Order {
   ✨ Generated from Field `EventList`.`id_count` of type `Int!`
   """
   id_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`imageUrl_count` of type `Int!`
+  """
+  imageUrl_count: OrderDirection
   """
   ✨ Generated from Field `EventList`.`lat_count` of type `Int!`
   """
