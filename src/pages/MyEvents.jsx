@@ -10,7 +10,7 @@ import "../css/MyEvents.css";
 import "../css/Events.css";
 
 import pencil from "../assets/edit-pencil.png";
-import testimage from "../assets/test-image-600x300.png";
+import testimage from "../assets/UALR-banner.jpg";
 
 import { deleteGoogleCalendarEvent } from "../googleCalendar";
 import { auth } from "../firebase";
