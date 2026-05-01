@@ -77,6 +77,25 @@ export default function Events() {
     refreshEvents();
   }, [refreshEvents]);
 
+  // Add this inside Events.jsx to catch shared links
+  useEffect(() => {
+    // Look at the URL for "?eventId=..."
+    const searchParams = new URLSearchParams(window.location.search);
+    const sharedEventId = searchParams.get("eventId");
+
+    // If there is an ID in the URL, and our events have finished loading...
+    if (sharedEventId && events.length > 0) {
+      // Make sure the event actually exists in our database
+      const eventToOpen = events.find(e => e.id === sharedEventId);
+      if (eventToOpen) {
+        setSelectedEventId(sharedEventId);
+
+        // Optional: Clean up the URL so it doesn't stay there if they close the modal
+        window.history.replaceState(null, '', '/');
+      }
+    }
+  }, [events]); // Re-run this check once the 'events' array is populated from Firebase
+
   const selectedEvent = useMemo(() => {
     return events.find((e) => e.id === selectedEventId) || null;
   }, [events, selectedEventId]);
@@ -148,16 +167,23 @@ export default function Events() {
   // SHARE
   // =========================
   const handleShare = async (event) => {
-    const url = `${window.location.origin}/event/${event.id}`;
+    const shareUrl = `${window.location.origin}/?eventId=${event.id}`;
 
     if (navigator.share) {
-      await navigator.share({
-        title: event.eventname,
-        url,
-      });
+      try {
+        await navigator.share({
+          title: event.eventname,
+          text: `Check out ${event.eventname} on Campus Events!`,
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.log("Error sharing:", error);
+      }
     } else {
-      await navigator.clipboard.writeText(url);
-      alert("Link copied!");
+      // Fallback for Desktop: Copy link to clipboard
+      navigator.clipboard.writeText(shareUrl);
+      alert("Event link copied to clipboard!");
+      // (If you have a toast notification system, use that instead of alert!)
     }
   };
 
@@ -299,8 +325,17 @@ export default function Events() {
 
       {/* EVENTS SECTION */}
       <section className="events-section" style={{ margin: "40px 0" }}>
-        <div style={{ marginBottom: "24px" }}>
+        {/* NEW MOBILE HEADER GROUP */}
+        <div className="mobile-header-group" style={{ marginBottom: "24px" }}>
           <h2>Upcoming Events</h2>
+
+          {/* This button will ONLY show on mobile screens */}
+          <button
+            className="filter-toggle-btn mobile-only-btn"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            {isFilterOpen ? "Close Filters" : "Filters"}
+          </button>
         </div>
 
         {/* NEW WRAPPER FOR SIDEBAR AND GRID */}
@@ -352,7 +387,7 @@ export default function Events() {
                 </button>
               </div>
             ) : (
-              <button className="open-filter-tab" onClick={() => setIsFilterOpen(true)}>
+              < button className="open-filter-tab desktop-only-btn" onClick={() => setIsFilterOpen(true)}>
                 <span className="vertical-text">FILTERS</span>
               </button>
             )}
@@ -417,8 +452,8 @@ export default function Events() {
                   </div>
                 ) : (
                   // Show a subtle text if there are between 1 and 8 events (meaning no button is needed)
-                  <div style={{ textAlign: "center", marginTop: "100px", marginBottom: "-80px"}}>
-                    <p style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "24px"}}>
+                  <div style={{ textAlign: "center", marginTop: "100px", marginBottom: "-80px" }}>
+                    <p style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "24px" }}>
                       That's all the events for now! Check back later for more.
                     </p>
                   </div>
@@ -427,10 +462,10 @@ export default function Events() {
             )}
           </div>
         </div>
-      </section>
+      </section >
 
       {/* HOW IT WORKS PLACEHOLDER */}
-      <section className="how-it-works-section">
+      < section className="how-it-works-section" >
         <div className="section-header">
           <h2>How Our App Works</h2>
           <p>Your journey to campus engagement in three simple steps.</p>
@@ -455,10 +490,10 @@ export default function Events() {
             <p>Attend events, meet fellow Trojans, and make the most out of your UA Little Rock experience!</p>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* JOIN PLACEHOLDER */}
-      <section className="join-section">
+      < section className="join-section" >
         <div className="join-content">
           <h2>Join the Campus Community</h2>
           <p>Don't miss out on what's happening around campus. Create an account today to start registering for events, syncing with your calendar, and connecting with peers!</p>
@@ -470,16 +505,17 @@ export default function Events() {
             Sign Up Now
           </button>
         </div>
-      </section>
+      </section >
 
       {/* MODAL */}
-      <EventModal
+      < EventModal
         event={selectedEvent}
-        onClose={() => setSelectedEventId(null)}
+        onClose={() => setSelectedEventId(null)
+        }
         onRegister={handleRegister}
         onShare={handleShare}
         loading={registerLoadingId === selectedEvent?.id}
       />
-    </div>
+    </div >
   );
 }
