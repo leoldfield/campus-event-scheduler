@@ -1,235 +1,378 @@
 /* ===== BACKGROUND WRAPPER ===== */
 .create-event-wrapper {
-  min-height: 100vh;
+  min-height: calc(100vh - 72px);
+  /* Accommodates the navbar */
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background: linear-gradient(180deg, #f5f5f5 65%, #550101 35%);
+  background-color: #f9fafb;
+  /* Soft light gray background */
+  padding: 40px 20px;
 }
 
 /* ===== CARD ===== */
 .create-event-card {
   background: #ffffff;
   width: 100%;
-  max-width: 460px;
-  border-radius: 14px;
+  max-width: 600px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.18);
-  transition: transform 0.2s ease;
-}
-
-.create-event-card:hover {
-  transform: translateY(-4px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border-top: 6px solid #6E2639;
+  /* Add this transition line: */
+  transition: max-width 0.4s ease, transform 0.2s ease;
 }
 
 /* ===== HEADER ===== */
 .create-event-card h1 {
-  background: linear-gradient(135deg, #b22222, #8b0000);
-  color: white;
+  color: #111827;
   margin: 0;
-  padding: 18px 22px;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  padding: 30px 30px 10px 30px;
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
 }
 
 /* ===== SUBTEXT (Step + description) ===== */
-.create-event-card p {
-  padding: 8px 22px 0px 22px;
+.create-event-card > p {
+  padding: 0 30px;
   margin: 0;
-  font-size: 13px;
-  color: #777;
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-container {
+  padding: 20px 30px 0;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #6E2639;
+  /* Your Accent Color */
+  border-radius: 10px;
+  transition: width 0.4s ease;
 }
 
 /* ===== FORM ===== */
 .create-event-form {
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  padding: 20px 30px 30px 30px;
 }
 
 /* ===== STEP TITLES ===== */
 .form-step {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  align-self: center;
+  gap: 16px;
+  animation: fadeSlide 0.3s ease;
 }
 
 .form-step h2 {
-  margin-bottom: 8px;
-  font-size: 18px;
-  color: #222;
-  font-weight: 600;
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  color: #374151;
+  font-weight: 700;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 8px;
 }
 
 /* ===== INPUTS ===== */
 .input {
-  background: #f7f7f7;
-  border: 1px solid #ddd;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  padding: 11px 12px;
-  font-size: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #1f2937;
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input::placeholder {
-  color: #aaa;
+  color: #9ca3af;
 }
 
 .input:focus {
-  border-color: #b22222;
-  background: #fff;
-  box-shadow: 0 0 0 2px rgba(178,34,34,0.15);
+  outline: none;
+  border-color: #6E2639;
+  /* Your Accent Color */
+  box-shadow: 0 0 0 3px rgba(110, 38, 57, 0.15);
+  /* Soft red glow */
 }
 
-/* textarea */
 textarea.input {
-  resize: none;
+  resize: vertical;
+  min-height: 120px;
 }
 
-/* ===== BUTTON ===== */
-.stepButtonNext {
-  margin-top: 8px;
-  background: linear-gradient(135deg, #b22222, #8b0000);
+/* ===== BUTTONS ===== */
+.step-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.stepButtonNext,
+.submitButton {
+  flex: 1;
+  background: #6E2639;
+  /* Your Accent Color */
   border: none;
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 8px;
+  padding: 14px;
   color: white;
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: 0.3px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  align-self: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(110, 38, 57, 0.2);
 }
 
-.stepButtonNext:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
+.stepButtonNext:hover,
+.submitButton:hover {
+  background: #521c2a;
+  /* Slightly darker shade for hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(110, 38, 57, 0.3);
 }
 
-.stepButtonNext:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ===== BACK BUTTON ===== */
 .stepButtonBack {
-  margin-top: 8px;
-  background: linear-gradient(135deg, #b22222, #8b0000);
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  color: white;
+  flex: 1;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 14px;
+  color: #4b5563;
+  font-size: 16px;
   font-weight: 600;
-  letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .stepButtonBack:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
+  background: #e5e7eb;
+  color: #1f2937;
 }
 
-.stepButtonBack:disabled {
+/* Disabled state */
+.stepButtonNext:disabled,
+.submitButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-
-.submitButton {
-  margin-top: 8px;
-  background: linear-gradient(135deg, #b22222, #8b0000);
-  border: none;
-  border-radius: 12px;
-  padding: 12px;
-  color: white;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.submitButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
-}
-
-/* ===== STEP BUTTONS LAYOUT ===== */
-.step-buttons {
+/* ===== REVIEW SECTION ===== */
+.review-item {
   display: flex;
-  width: auto;
-  gap: 60px;
-  justify-content: space-between;
-  margin-top: 10px;
+  flex-direction: column;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+}
+
+.review-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #6b7280;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.review-value {
+  font-size: 16px;
+  color: #1f2937;
+  font-weight: 500;
 }
 
 /* ===== ERROR / SUCCESS ===== */
 .form-report {
-  margin-top: 10px;
-  margin-bottom: -20px;
+  padding: 0 30px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: none;
+  border: none;
 }
 
 /* ===== ANIMATION ===== */
-.form-step {
-  animation: fadeSlide 0.3s ease;
-}
-
 @keyframes fadeSlide {
   from {
     opacity: 0;
-    transform: translateX(15px);
+    transform: translateX(10px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
 
-/* ===== PROGRESS BAR ===== */
-.progress-bar {
-  height: 6px;
-  background: #eee;
-  border-radius: 10px;
-  margin: 14px 22px 10px 22px;
-  overflow: hidden;
+.create-event-card.wide-card {
+  max-width: 900px; /* Expands to fit the preview card */
 }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #b22222, #8b0000);
-  border-radius: 10px;
-  transition: width 0.3s ease;
+/* ===== TWO-COLUMN REVIEW LAYOUT ===== */
+.review-step-container {
+  display: flex;
+  flex-direction: row; /* <--- ADD THIS LINE to override .form-step */
+  gap: 40px;
+  align-items: flex-start;
 }
 
-/* ===== REVIEW PAGE ===== */
-.review-item {
+.review-details {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  gap: 12px;
 }
 
-.review-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #888;
+.review-details h2 {
+  margin-top: 0;
+}
+
+.review-preview {
+  flex: 1;
+  min-width: 0;
+  background: #f9fafb;
+  padding: 24px;
+  margin-top: 28px;
+  border-radius: 12px;
+  border: 2px dashed #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.review-preview h2 {
+  margin-bottom: 20px;
+  font-size: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  color: #6b7280;
+  border: none;
+  padding: 0;
 }
 
-.review-value {
-  font-size: 15px;
-  color: #222;
-  font-weight: 500;
-  margin-top: 2px;
+/* Prevents the preview card from being clickable/hoverable */
+.review-preview .event-card {
+  width: 100%;
+  max-width: 275px;
+  pointer-events: none; 
+  margin: 0;
 }
 
-.review-item {
-  background: #fafafa;
-  padding: 10px 12px;
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 850px) {
+  .create-event-card.wide-card {
+    max-width: 550px; /* Drops back to normal width */
+  }
+  
+  .review-step-container {
+    flex-direction: column;
+  }
+
+  .review-preview {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* ===== IMAGE UPLOAD ===== */
+.image-upload-wrapper {
+  margin-bottom: 16px;
+}
+
+.image-upload-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 180px;
+  border: 2px dashed #d1d5db;
   border-radius: 8px;
-  border: 1px solid #eee;
+  background-color: #f9fafb;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.image-upload-box:hover {
+  border-color: #6E2639; /* Your accent color */
+  background-color: #fff0f2; /* Very faint red */
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #6b7280;
+}
+
+.upload-placeholder p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.banner-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image fills the box without stretching */
+}
+
+/* ===== CATEGORY SELECTION ===== */
+.category-selection-wrapper {
+  margin-top: 16px;
+}
+
+.category-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+}
+
+.category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.category-pill-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  color: #4b5563;
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Selected/Active State */
+.category-pill-btn.active {
+  border: 2px solid #6E2639; /* Your accent color */
+  background-color: #fff0f2;
+  color: #6E2639;
+}
+
+.category-pill-btn:hover:not(.active) {
+  background-color: #e5e7eb;
 }

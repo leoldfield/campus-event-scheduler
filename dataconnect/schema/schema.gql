@@ -9,6 +9,8 @@ type EventList @table {
   eventstatus: Boolean! @default(value: true)
   lat: Float
   lng: Float
+  imageUrl: String
+  category: String
 }
 
 type UserList @table {

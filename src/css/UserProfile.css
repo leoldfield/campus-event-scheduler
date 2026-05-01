@@ -10,8 +10,8 @@ body {
   padding: 40px 60px;
   box-sizing: border-box;
   background:
-    linear-gradient(to right, #c41212 17%, transparent 17%),
-    linear-gradient(to top, #c41212 14%, transparent 14%);
+    linear-gradient(to right, #6E2639 17%, transparent 17%),
+    linear-gradient(to top, #6E2639 14%, transparent 14%);
   background-color: #f4f4f4;
 }
 
@@ -48,7 +48,7 @@ body {
   width: 140px;
   height: 140px;
   object-fit: cover;
-  border: 4px solid #8b0000;
+  border: 4px solid #6E2639;
   border-radius: 50%;
   margin-bottom: 18px;
 }
@@ -56,7 +56,7 @@ body {
 .profile-name {
   font-size: 38px;
   font-weight: 700;
-  color: #8b0000;
+  color: #6E2639;
   margin: 10px 0 6px;
 }
 
@@ -90,14 +90,14 @@ body {
 }
 
 .btn-primary {
-  background: #8b0000;
+  background: #6E2639;
   color: white;
   border: none;
 }
 
 .btn-outline {
   background: white;
-  color: #8b0000;
+  color: #6E2639;
   border: 2px solid #cfcfcf;
 }
 
@@ -151,7 +151,7 @@ body {
 .section-title {
   font-size: 20px;
   font-weight: 700;
-  color: #8b0000;
+  color: #6E2639;
   margin-bottom: 18px;
 }
 
@@ -175,7 +175,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: #8b0000;
+  background: #6E2639;
 }
 
 @media (max-width: 1000px) {
@@ -190,4 +190,9 @@ body {
   .profile-page {
     padding: 24px;
   }
+}
+
+.profile-form {
+  margin: 0 auto;
+  padding: 24px;
 }
