@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   findUserByEmail,
   getUserByFirebaseUid,
@@ -6,7 +6,20 @@ import {
 } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
 import { requestGoogleCalendarAccess } from "../googleCalendar";
-import "../css/UserProfile.css"
+import { useEventContext } from "./EventContext.jsx";
+import "../css/UserProfile.css";
+
+import profilePicture from "../assets/johndoe.png";
+
+// Category definitions for Top Interests styling
+const CATEGORIES = [
+  { id: 1, name: "Academic", icon: "📚", color: "#e0f2fe", text: "#0284c7" },
+  { id: 2, name: "Social", icon: "🎉", color: "#fef08a", text: "#a16207" },
+  { id: 3, name: "Sports", icon: "🏆", color: "#dcfce7", text: "#16a34a" },
+  { id: 4, name: "Arts", icon: "🎨", color: "#f3e8ff", text: "#9333ea" },
+  { id: 5, name: "Technology", icon: "💻", color: "#e2e8f0", text: "#475569" },
+  { id: 6, name: "Career", icon: "💼", color: "#ffedd5", text: "#ea580c" }
+];
 
 export default function UserProfile() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -19,19 +32,94 @@ export default function UserProfile() {
     major: "",
   });
 
+  // UI States
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   const [authorizingCalendar, setAuthorizingCalendar] = useState(false);
   const [calendarMessage, setCalendarMessage] = useState("");
   const [calendarError, setCalendarError] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // === FETCH GLOBAL EVENT DATA ===
+  const { events, registeredEventIds, dbUserId } = useEventContext();
+
+  // === CALCULATE DYNAMIC DASHBOARD STATS ===
+  // === CALCULATE DYNAMIC DASHBOARD STATS ===
+  const userStats = useMemo(() => {
+    const now = new Date();
+    let upcomingCount = 0;
+    let attendedCount = 0;
+    let hostedCount = 0;
+    const categoryTallies = {};
+
+    // SAFETY NET 1: Default to empty arrays while Firebase is loading
+    const safeEvents = events || [];
+
+    // SAFETY NET 2: Handle both Arrays and Sets, and protect against null
+    const safeRegisteredIds = Array.isArray(registeredEventIds)
+      ? registeredEventIds
+      : (registeredEventIds instanceof Set ? Array.from(registeredEventIds) : []);
+
+    // 1. Filter out only the events this user is registered for
+    const myRegisteredEvents = safeEvents.filter((e) => safeRegisteredIds.includes(e.id));
+
+    // 2. Tally up Attended, Upcoming, and Categories
+    myRegisteredEvents.forEach((e) => {
+      if (new Date(e.endtime) < now) {
+        attendedCount++;
+      } else {
+        upcomingCount++;
+      }
+
+      if (e.category) {
+        categoryTallies[e.category] = (categoryTallies[e.category] || 0) + 1;
+      }
+    });
+
+    // 3. Count Hosted Events (where user is the creator)
+    safeEvents.forEach((e) => {
+      if (e.eventcoord === dbUserId) {
+        hostedCount++;
+      }
+    });
+
+    // 4. Calculate Top Interests
+    const sortedInterests = Object.entries(categoryTallies)
+      .sort((a, b) => b[1] - a[1]) // Sort by frequency (highest first)
+      .slice(0, 3) // Take top 3
+      .map(([catName]) => {
+        return CATEGORIES.find(c => c.name.toLowerCase() === catName.toLowerCase())
+          || { name: catName, icon: "📌", color: "#f3f4f6", text: "#374151" };
+      });
+
+    // 5. Award Badges Based on Stats
+    const badges = [];
+    if (attendedCount >= 10) badges.push({ icon: "🦋", name: "Social Butterfly", desc: "Attended 10+ Events" });
+    else if (attendedCount >= 5) badges.push({ icon: "🌟", name: "Rising Star", desc: "Attended 5+ Events" });
+    else badges.push({ icon: "🌱", name: "Newcomer", desc: "Welcome to Campus!" });
+
+    if (hostedCount >= 3) badges.push({ icon: "👑", name: "Event Leader", desc: "Hosted 3+ Events" });
+    else if (hostedCount >= 1) badges.push({ icon: "🎤", name: "Host", desc: "Hosted an Event" });
+
+    if (upcomingCount >= 3) badges.push({ icon: "📅", name: "Planner", desc: "3+ Upcoming RSVPs" });
+
+    // Show max 4 badges so UI doesn't break
+    return {
+      upcoming: upcomingCount,
+      attended: attendedCount,
+      hosted: hostedCount,
+      topInterests: sortedInterests,
+      badges: badges.slice(0, 4)
+    };
+  }, [events, registeredEventIds, dbUserId]);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user || null);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -41,36 +129,26 @@ export default function UserProfile() {
         setLoading(false);
         return;
       }
-
       setLoading(true);
       setError("");
       setSuccessMessage("");
-
       try {
         let matchedUser = null;
-
         try {
-          const uidResult = await getUserByFirebaseUid(getDataConnectClient(), {
-            firebaseUid: currentUser.uid,
-          });
+          const uidResult = await getUserByFirebaseUid(getDataConnectClient(), { firebaseUid: currentUser.uid });
           matchedUser = uidResult.data?.userLists?.[0] || null;
         } catch (uidError) {
           console.warn("User not found by firebase uid, trying email fallback", uidError);
         }
-
         if (!matchedUser && currentUser.email) {
-          const emailResult = await findUserByEmail(getDataConnectClient(), {
-            email: currentUser.email.toLowerCase(),
-          });
+          const emailResult = await findUserByEmail(getDataConnectClient(), { email: currentUser.email.toLowerCase() });
           matchedUser = emailResult.data?.userLists?.[0] || null;
         }
-
         if (!matchedUser) {
           setError("Could not find your profile.");
           setLoading(false);
           return;
         }
-
         setProfileId(matchedUser.id);
         setFormData({
           firstname: matchedUser.firstname || "",
@@ -86,37 +164,28 @@ export default function UserProfile() {
         setLoading(false);
       }
     };
-
     loadProfile();
   }, [currentUser]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleAuthorizeCalendar = async () => {
     setCalendarError("");
     setCalendarMessage("");
-
     if (!currentUser || currentUser.isAnonymous) {
       setCalendarError("Please log in to enable Google Calendar access.");
       return;
     }
-
     setAuthorizingCalendar(true);
-
     try {
       await requestGoogleCalendarAccess();
-      setCalendarMessage("Google Calendar access granted. Your event registrations can now sync.");
+      setCalendarMessage("Google Calendar access granted. Your events can now sync.");
     } catch (authError) {
       console.error("Calendar authorization failed", authError);
-      setCalendarError(
-        authError?.message || "Google Calendar authorization failed. Please try again."
-      );
+      setCalendarError(authError?.message || "Google Calendar authorization failed.");
     } finally {
       setAuthorizingCalendar(false);
     }
@@ -131,26 +200,16 @@ export default function UserProfile() {
       setError("Please log in to edit your profile.");
       return;
     }
-
-    if (
-      !profileId ||
-      !formData.firstname.trim() ||
-      !formData.lastname.trim() ||
-      !formData.age.trim() ||
-      !formData.major.trim()
-    ) {
+    if (!profileId || !formData.firstname.trim() || !formData.lastname.trim() || !formData.age.trim() || !formData.major.trim()) {
       setError("Please fill out all editable fields.");
       return;
     }
-
     const parsedAge = Number.parseInt(formData.age, 10);
     if (Number.isNaN(parsedAge) || parsedAge < 0) {
       setError("Please enter a valid age.");
       return;
     }
-
     setSaving(true);
-
     try {
       await updateUserProfile(getDataConnectClient(), {
         id: profileId,
@@ -159,8 +218,8 @@ export default function UserProfile() {
         age: parsedAge,
         major: formData.major.trim(),
       });
-
       setSuccessMessage("Profile updated successfully.");
+      setIsEditing(false);
     } catch (saveError) {
       console.error("Failed to update profile", saveError);
       setError(saveError?.message || "Failed to update profile.");
@@ -171,190 +230,162 @@ export default function UserProfile() {
 
   if (loading) {
     return (
-      <div style={{ maxWidth: "700px", margin: "0 auto", padding: "24px" }}>
-        <h1>User Profile</h1>
-        <p>Loading profile...</p>
+      <div className="profile-page">
+        <div style={{ textAlign: "center" }}><h2>Loading profile...</h2></div>
       </div>
     );
   }
 
   if (!currentUser || currentUser.isAnonymous) {
     return (
-      <div style={{ maxWidth: "700px", margin: "0 auto", padding: "24px" }}>
-        <h1>User Profile</h1>
-        <p>Please log in to view and edit your profile.</p>
+      <div className="profile-page">
+        <div style={{ textAlign: "center" }}><h2>Please log in to view your profile.</h2></div>
       </div>
     );
   }
 
   return (
-    <div className="profile-form" style={{ maxWidth: "700px" }}>
-      <h1>User Profile</h1>
-      <p>View and update your account information below.</p>
+    <div className="profile-page">
+      {!isEditing ? (
+        <div className="profile-container">
+          {/* ================= LEFT COLUMN ================= */}
+          <div className="left-column">
+            <div className="card profile-card">
+              <img src={profilePicture} alt="Profile" className="profile-img" />
+              <h2 className="profile-name">
+                {formData.firstname} {formData.lastname}
+              </h2>
+              <p className="profile-subtitle">{formData.major || "Undeclared Major"}</p>
+              <p className="profile-description">Active Campus Member</p>
 
-      <div
-        style={{
-          marginTop: "16px",
-          padding: "18px",
-          borderRadius: "12px",
-          background: "#f9fafb",
-          border: "1px solid #e5e7eb",
-        }}
-      >
-        <p style={{ margin: 0, marginBottom: "12px" }}>
-          If you skipped Google Calendar consent during registration, authorize it now so your registered events can sync to your calendar.
-        </p>
-        {calendarError ? <p style={{ color: "crimson" }}>{calendarError}</p> : null}
-        {calendarMessage ? <p style={{ color: "green" }}>{calendarMessage}</p> : null}
-        <button
-          type="button"
-          onClick={handleAuthorizeCalendar}
-          disabled={authorizingCalendar}
-          style={{
-            padding: "12px 16px",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: "#1a73e8",
-            color: "white",
-            fontWeight: "600",
-            cursor: authorizingCalendar ? "not-allowed" : "pointer",
-          }}
-        >
-          {authorizingCalendar ? "Authorizing..." : "Authorize Calendar Access"}
-        </button>
-      </div>
+              <div className="profile-actions">
+                <button className="btn btn-primary" onClick={() => setIsEditing(true)}>
+                  Edit Profile
+                </button>
+                <button className="btn btn-outline" onClick={handleAuthorizeCalendar} disabled={authorizingCalendar}>
+                  {authorizingCalendar ? "Syncing..." : "Sync Calendar"}
+                </button>
+              </div>
+              {calendarError && <p style={{ color: "crimson", marginTop: "15px", fontSize: "14px" }}>{calendarError}</p>}
+              {calendarMessage && <p style={{ color: "green", marginTop: "15px", fontSize: "14px" }}>{calendarMessage}</p>}
+            </div>
 
-      {error ? <p style={{ color: "crimson" }}>{error}</p> : null}
-      {successMessage ? <p style={{ color: "green" }}>{successMessage}</p> : null}
+            <div className="card">
+              <h3 className="section-title">Personal Information</h3>
+              <table className="info-table">
+                <tbody>
+                  <tr><td>Email</td><td>{formData.email}</td></tr>
+                  <tr><td>Age</td><td>{formData.age || "Not specified"}</td></tr>
+                  <tr><td>Major</td><td>{formData.major || "Not specified"}</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "grid",
-          gap: "16px",
-          marginTop: "24px",
-          marginBottom: "36px",
-          padding: "24px",
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          background: "#fff",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-        }}
-      >
-        <div>
-          <label htmlFor="firstname" style={{ display: "block", marginBottom: "6px" }}>
-            First Name
-          </label>
-          <input
-            id="firstname"
-            name="firstname"
-            type="text"
-            value={formData.firstname}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-            }}
-          />
+          {/* ================= RIGHT COLUMN ================= */}
+          <div className="right-column">
 
+            <div className="card">
+              <h3 className="section-title">Campus Activity</h3>
+              <div className="activity-stats-grid">
+                <div className="activity-stat-box">
+                  <div className="stat-icon" style={{ background: "#e0f2fe", color: "#0284c7" }}>📅</div>
+                  <span className="stat-number">{userStats.upcoming}</span>
+                  <span className="stat-label">Upcoming</span>
+                </div>
+                <div className="activity-stat-box">
+                  <div className="stat-icon" style={{ background: "#dcfce7", color: "#16a34a" }}>✅</div>
+                  <span className="stat-number">{userStats.attended}</span>
+                  <span className="stat-label">Attended</span>
+                </div>
+                <div className="activity-stat-box">
+                  <div className="stat-icon" style={{ background: "#f3e8ff", color: "#9333ea" }}>🎤</div>
+                  <span className="stat-number">{userStats.hosted}</span>
+                  <span className="stat-label">Hosted</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="card">
+              <h3 className="section-title">Interests & Achievements</h3>
+
+              <h4 className="subsection-title">Top Interests</h4>
+              <div className="interests-container">
+                {userStats.topInterests.length > 0 ? (
+                  userStats.topInterests.map((cat, idx) => (
+                    <span
+                      key={idx}
+                      className="interest-pill"
+                      style={{ background: cat.color, color: cat.text }}
+                    >
+                      {cat.icon} {cat.name}
+                    </span>
+                  ))
+                ) : (
+                  <span className="interest-pill" style={{ background: "#f3f4f6", color: "#374151" }}>
+                    Register for events to see interests!
+                  </span>
+                )}
+              </div>
+
+              <h4 className="subsection-title" style={{ marginTop: "24px" }}>Recent Badges</h4>
+              <div className="badges-container">
+                {userStats.badges.map((badge, idx) => (
+                  <div className="badge-item" key={idx}>
+                    <div className="badge-icon">{badge.icon}</div>
+                    <span className="badge-name">{badge.name}</span>
+                    <span className="badge-desc">{badge.desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
         </div>
 
-        <div>
-          <label htmlFor="lastname" style={{ display: "block", marginBottom: "6px" }}>
-            Last Name
-          </label>
-          <input
-            id="lastname"
-            name="lastname"
-            type="text"
-            value={formData.lastname}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-            }}
-          />
-        </div>
+      ) : (
+        /* ================= EDIT PROFILE MODE ================= */
+        <div className="profile-form card" style={{ maxWidth: "700px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+            <h2 style={{ color: "#6E2639", margin: 0 }}>Edit Profile Settings</h2>
+            <button className="btn btn-outline" style={{ padding: "8px 16px", minWidth: "auto" }} onClick={() => setIsEditing(false)}>
+              Cancel
+            </button>
+          </div>
+          <p style={{ color: "#666", marginBottom: "20px" }}>Update your personal details below.</p>
 
-        <div>
-          <label htmlFor="email" style={{ display: "block", marginBottom: "6px" }}>
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            readOnly
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              backgroundColor: "#f3f3f3",
-            }}
-          />
-        </div>
+          {error && <p style={{ color: "crimson" }}>{error}</p>}
+          {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
-        <div>
-          <label htmlFor="age" style={{ display: "block", marginBottom: "6px" }}>
-            Age
-          </label>
-          <input
-            id="age"
-            name="age"
-            type="number"
-            min="0"
-            value={formData.age}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-            }}
-          />
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ display: "flex", gap: "16px" }}>
+              <div style={{ flex: 1 }}>
+                <label htmlFor="firstname" style={{ display: "block", marginBottom: "6px", fontWeight: "bold", color: "#444" }}>First Name</label>
+                <input id="firstname" name="firstname" type="text" value={formData.firstname} onChange={handleChange} className="form-input" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label htmlFor="lastname" style={{ display: "block", marginBottom: "6px", fontWeight: "bold", color: "#444" }}>Last Name</label>
+                <input id="lastname" name="lastname" type="text" value={formData.lastname} onChange={handleChange} className="form-input" />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="email" style={{ display: "block", marginBottom: "6px", fontWeight: "bold", color: "#444" }}>Email (Read Only)</label>
+              <input id="email" name="email" type="email" value={formData.email} readOnly className="form-input read-only" />
+            </div>
+            <div>
+              <label htmlFor="age" style={{ display: "block", marginBottom: "6px", fontWeight: "bold", color: "#444" }}>Age</label>
+              <input id="age" name="age" type="number" min="0" value={formData.age} onChange={handleChange} className="form-input" />
+            </div>
+            <div>
+              <label htmlFor="major" style={{ display: "block", marginBottom: "6px", fontWeight: "bold", color: "#444" }}>Major</label>
+              <input id="major" name="major" type="text" value={formData.major} onChange={handleChange} className="form-input" />
+            </div>
+            <button type="submit" disabled={saving} className="btn btn-primary" style={{ marginTop: "10px", padding: "14px" }}>
+              {saving ? "Saving Changes..." : "Save Changes"}
+            </button>
+          </form>
         </div>
-
-        <div>
-          <label htmlFor="major" style={{ display: "block", marginBottom: "6px" }}>
-            Major
-          </label>
-          <input
-            id="major"
-            name="major"
-            type="text"
-            value={formData.major}
-            onChange={handleChange}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-            }}
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={saving}
-          style={{
-            padding: "12px 16px",
-            borderRadius: "8px",
-            border: "none",
-            backgroundColor: "#6E2639",
-            color: "white",
-            fontWeight: "600",
-            cursor: saving ? "not-allowed" : "pointer",
-          }}
-        >
-          {saving ? "Saving..." : "Save Changes"}
-        </button>
-      </form>
+      )}
     </div>
   );
 }

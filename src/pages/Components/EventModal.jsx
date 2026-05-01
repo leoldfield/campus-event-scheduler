@@ -118,9 +118,15 @@ export default function EventModal({
                 </button>
               )}
 
-              <button className="modal-btn share-btn" onClick={() => onShare(event)}>
-                <span style={{ marginRight: "6px" }}>🔗</span> Share
-              </button>
+              <button
+            className="share-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onShare) onShare(event);
+            }}
+          >
+            Share Event
+          </button>
             </div>
           </div>
 
