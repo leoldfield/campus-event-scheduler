@@ -41,6 +41,7 @@ export function EventProvider({ children }) {
 
   const [events, setEvents] = useState([]);
 
+  // ⭐ NEW: global loading + error
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [eventsError, setEventsError] = useState("");
 
@@ -207,6 +208,7 @@ export function EventProvider({ children }) {
     );
   };
 
+  // ⭐ NEW: Optimistically add a newly created event instantly
   const addEventLocal = (newEvent) => {
     setEvents((prev) => [...prev, newEvent]);
   };
@@ -241,8 +243,6 @@ export function EventProvider({ children }) {
   // =========================
   const registerForEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
- 
-    const event = events.find((e) => e.id === eventId);
 
     await createRegistration(getDataConnectClient(), {
       eventId,
@@ -250,9 +250,18 @@ export function EventProvider({ children }) {
       notif: true,
     });
 
-    await Promise.all([registrationPromise, calendarPromise]);
-
     setRegisteredEventIds((prev) => new Set(prev).add(eventId));
+
+    const event = events.find((e) => e.id === eventId);
+
+    // 🔥 GOOGLE CALENDAR SYNC
+    if (event && currentUser?.email) {
+      try {
+        await createGoogleCalendarEvent(event, currentUser);
+      } catch (err) {
+        console.warn("Calendar add failed:", err);
+      }
+    }
 
     addNotification({
       type: "success",
@@ -265,23 +274,12 @@ export function EventProvider({ children }) {
   // UNREGISTER
   // =========================
   const unregisterFromEvent = async (eventId, currentUser) => {
-    if (!dbUserId || !currentUser) return;
+    if (!dbUserId) return;
 
-    const event = events.find((e) => e.id === eventId);
-
-    let calendarPromise = Promise.resolve();
-    if (event && currentUser?.email) {
-      calendarPromise = deleteGoogleCalendarEvent(event, currentUser).catch(err => {
-        console.warn("Calendar delete failed:", err);
-      });
-    }
-
-    const deletePromise = deleteRegistration(getDataConnectClient(), {
+    await deleteRegistration(getDataConnectClient(), {
       eventId,
       userId: dbUserId,
     });
-
-    await Promise.all([deletePromise, calendarPromise]);
 
     setRegisteredEventIds((prev) => {
       const next = new Set(prev);
