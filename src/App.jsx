@@ -20,7 +20,6 @@ import profilePicture from "./assets/johndoe.png";
 import logo from "./assets/ualr-logo.png";
 import "../src/css/App.css";
 import "./assets/edit-pencil.png";
-import "./assets/test-image-600x300.png";
 import NotificationToast from "./pages/Components/NotificationToast.jsx";
 import Footer from "./pages/Components/Footer.jsx";
 import Welcome from "./pages/Welcome.jsx";
