@@ -87,11 +87,11 @@ export default function Register() {
   };
 
   // ===== FINAL SUBMIT ===== //
+  // ===== FINAL SUBMIT ===== //
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setSuccessMessage("");
-
 
     if (!age.trim() || !major.trim()) {
       setError("Please fill out all fields.");
@@ -107,12 +107,10 @@ export default function Register() {
     const normalizedEmail = normalizeEmail(email);
 
     setIsSubmitting(true);
-
     try {
       const { data: existingUserData } = await findUserByEmail(getDataConnectClient(), {
         email: normalizedEmail,
       });
-
       const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
 
       if (existingUserData.userLists.length === 0) {
@@ -123,18 +121,18 @@ export default function Register() {
         });
       }
 
-      await signOut(auth);
+      // 1. Updated Success Message
+      setSuccessMessage("Account created. Redirecting to Welcome page...");
 
-      setSuccessMessage("Account created. Redirecting to login...");
+      // 2. Updated Redirect Target
+      setTimeout(() => navigate("/welcome"), 700);
 
-      setTimeout(() => navigate("/login"), 700);
     } catch (createError) {
       console.error("Failed to create account", createError);
 
       if (createError?.code === "auth/email-already-in-use") {
         try {
           const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
-
           const { data: existingUserData } = await findUserByEmail(getDataConnectClient(), {
             email: normalizedEmail,
           });
@@ -151,9 +149,11 @@ export default function Register() {
             parsedAge,
           });
 
-          await signOut(auth);
-          setSuccessMessage("Account profile restored. Redirecting...");
-          setTimeout(() => navigate("/login"), 700);
+          // 3. Updated Success Message
+          setSuccessMessage("Account profile restored. Redirecting to Welcome page...");
+
+          // 4. Updated Redirect Target
+          setTimeout(() => navigate("/welcome"), 700);
 
         } catch (recoveryError) {
           setError("Failed to restore deleted profile.");
@@ -166,8 +166,6 @@ export default function Register() {
     } finally {
       setIsSubmitting(false);
     }
-
-
   };
 
   return (<div className="create-event-wrapper">
@@ -175,19 +173,24 @@ export default function Register() {
 
       <h1>Register</h1>
 
-      {/* Progress Bar */}
-      <div className="progress-bar">
-        <div
-          className="progress-fill"
-          style={{ width: `${(step / 4) * 100}%` }}
-        />
+      {/* PROGRESS BAR */}
+      <div className="progress-bar-container">
+        <div className="progress-bar">
+          <div
+            className="progress-fill"
+            style={{ width: `${(step / 4) * 100}%` }}
+          />
+        </div>
       </div>
 
-      <p>Step {step} of 4</p>
+      <p style={{ marginTop: "12px" }}>Step {step} of 4</p>
 
+      {/* MESSAGES */}
       <div className="form-report">
-        {error && <p style={{ color: "#b00020" }}>{error}</p>}
-        {successMessage && <p style={{ color: "#0b6b2f" }}>{successMessage}</p>}
+        {error && <p style={{ color: "#b00020", marginTop: "10px" }}>{error}</p>}
+        {successMessage && (
+          <p style={{ color: "#0b6b2f", marginTop: "10px" }}>{successMessage}</p>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="create-event-form">

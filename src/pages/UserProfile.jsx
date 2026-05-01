@@ -6,6 +6,7 @@ import {
 } from "../dataconnect-generated";
 import { auth, getDataConnectClient } from "../firebase";
 import { requestGoogleCalendarAccess } from "../googleCalendar";
+import "../css/UserProfile.css"
 
 export default function UserProfile() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -187,7 +188,7 @@ export default function UserProfile() {
   }
 
   return (
-    <div style={{ maxWidth: "700px", margin: "0 auto", padding: "24px" }}>
+    <div className="profile-form" style={{ maxWidth: "700px" }}>
       <h1>User Profile</h1>
       <p>View and update your account information below.</p>
 
@@ -232,6 +233,7 @@ export default function UserProfile() {
           display: "grid",
           gap: "16px",
           marginTop: "24px",
+          marginBottom: "36px",
           padding: "24px",
           border: "1px solid #ddd",
           borderRadius: "12px",
@@ -276,68 +278,6 @@ export default function UserProfile() {
               border: "1px solid #ccc",
             }}
           />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </div>
 
         <div>
@@ -406,7 +346,7 @@ export default function UserProfile() {
             padding: "12px 16px",
             borderRadius: "8px",
             border: "none",
-            backgroundColor: "#b30000",
+            backgroundColor: "#6E2639",
             color: "white",
             fontWeight: "600",
             cursor: saving ? "not-allowed" : "pointer",

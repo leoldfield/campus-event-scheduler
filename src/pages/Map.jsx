@@ -51,6 +51,7 @@ function MapControls({ myOnly, setMyOnly }) {
                 zIndex: 1000,
                 background: "white",
                 padding: 10,
+                marginBottom: 0,
                 borderRadius: 8,
             }}
         >

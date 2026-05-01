@@ -97,53 +97,63 @@ export default function Login() {
   };
 
   return (
-  <div className="auth-wrapper">
-    <div className="auth-card">
-      <h1>Login</h1>
-      <div className="auth-card-p1">
-      <p>Enter your campus account credentials.</p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="auth-form">
-
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          className="input"
-          type="email"
-          placeholder="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          autoComplete="email"
-          autoCapitalize="none"
-          spellCheck={false}
-        />
-
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          className="input"
-          type="password"
-          placeholder="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          autoComplete="current-password"
-        />
+    <div className="auth-wrapper">
+      <div className="auth-card">
         
-        <p className="auth-switch">
-        Don’t have an account?{" "}
-          <span onClick={() => navigate("/register")}>
-            Register here
-          </span>
-        </p>
+        <div className="auth-header">
+          <h1>Welcome Back</h1>
+          <p>Enter your campus account credentials to login.</p>
+        </div>
 
-        {error && <p className="error-text">{error}</p>}
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="input-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              className="input"
+              type="email"
+              placeholder="e.g. student@ualr.edu"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              autoCapitalize="none"
+              spellCheck={false}
+            />
+          </div>
 
-        <button className="button" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Checking..." : "Login"}
-        </button>
+          <div className="input-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              className="input"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="current-password"
+            />
+          </div>
 
-      </form>
+          {error && (
+            <div className="form-report">
+              <p className="error-text">{error}</p>
+            </div>
+          )}
+
+          <button className="submitButton" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Checking..." : "Login"}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          <p className="auth-switch">
+            Don’t have an account?{" "}
+            <span onClick={() => navigate("/register")}>
+              Register here
+            </span>
+          </p>
+        </div>
+
+      </div>
     </div>
-  </div>
-);}
+  );}

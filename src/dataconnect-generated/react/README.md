@@ -157,6 +157,8 @@ export interface ListEventsData {
     eventstatus: boolean;
     lat?: number | null;
     lng?: number | null;
+    imageUrl?: string | null;
+    category?: string | null;
   } & EventList_Key)[];
 }
 ```
@@ -319,6 +321,8 @@ export interface GetEventByIdData {
     endtime: TimestampString;
     lat?: number | null;
     lng?: number | null;
+    imageUrl?: string | null;
+    category?: string | null;
   } & EventList_Key;
 }
 ```
@@ -1020,6 +1024,8 @@ export interface CreateEventVariables {
   endtime: TimestampString;
   lat?: number | null;
   lng?: number | null;
+  imageUrl?: string | null;
+  category?: string | null;
 }
 ```
 ### Return Type
@@ -1078,10 +1084,12 @@ export default function CreateEventComponent() {
     endtime: ..., 
     lat: ..., // optional
     lng: ..., // optional
+    imageUrl: ..., // optional
+    category: ..., // optional
   };
   mutation.mutate(createEventVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
+  mutation.mutate({ id: ..., eventcoord: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., imageUrl: ..., category: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {
@@ -1533,6 +1541,8 @@ export interface UpdateEventVariables {
   endtime: TimestampString;
   lat?: number | null;
   lng?: number | null;
+  imageUrl?: string | null;
+  category?: string | null;
 }
 ```
 ### Return Type
@@ -1590,10 +1600,12 @@ export default function UpdateEventComponent() {
     endtime: ..., 
     lat: ..., // optional
     lng: ..., // optional
+    imageUrl: ..., // optional
+    category: ..., // optional
   };
   mutation.mutate(updateEventVars);
   // Variables can be defined inline as well.
-  mutation.mutate({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., });
+  mutation.mutate({ id: ..., eventname: ..., location: ..., eventdesc: ..., starttime: ..., endtime: ..., lat: ..., lng: ..., imageUrl: ..., category: ..., });
 
   // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
   const options = {

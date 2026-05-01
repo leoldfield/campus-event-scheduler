@@ -24,9 +24,44 @@
 ========================= */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 410px));
   gap: 24px;
   align-items: stretch;
+  transition: grid-template-columns 0.3s ease; /* Smooth transition when shifting */
+}
+
+.events-grid.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.events-grid.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Responsive fallbacks */
+@media (max-width: 1100px) {
+  .events-grid.grid-4, .events-grid.grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .events-page-layout {
+    flex-direction: column;
+  }
+  .filters-sidebar.open, .filters-sidebar.closed {
+    width: 100%;
+    position: static;
+  }
+  .open-filter-tab {
+    height: 48px;
+  }
+  .vertical-text {
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+  .events-grid.grid-4, .events-grid.grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =========================
@@ -36,7 +71,7 @@
   background: white;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 
   display: flex;
@@ -47,7 +82,7 @@
 
 .event-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 16px 35px rgba(0,0,0,0.15);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.15);
 }
 
 /* =========================
@@ -55,7 +90,8 @@
 ========================= */
 .event-card-image img {
   width: 100%;
-  height: 180px;
+  aspect-ratio: 16 / 9; /* Replaces height: 180px to maintain proportion */
+  height: auto;
   object-fit: cover;
 }
 
@@ -66,7 +102,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 18px;
+  padding: 14px; /* Reduced from 18px to tighten the card */
 }
 
 /* TEXT */
@@ -83,17 +119,13 @@
   margin: 6px 0;
 }
 
-.event-desc {
-  font-size: 14px;
-  color: #444;
-  margin-bottom: 16px;
-}
 
 /* DATE PILLS */
 .event-card-date {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 10px;
 }
 
 .pill {
@@ -108,10 +140,10 @@
    ACTION BUTTON AREA (FIXED)
 ========================= */
 .event-actions {
-  margin-top: auto; /* KEY LINE — pushes to bottom */
+  margin-top: auto;
   display: flex;
-  gap: 50px;
-  padding: 12px 10px 10px 10px;
+  gap: 12px; /* Reduced from 50px so buttons don't stretch the card */
+  padding: 12px 0 0 0; /* Tightened padding */
 }
 
 /* =========================
@@ -119,7 +151,7 @@
 ========================= */
 .register-button {
   flex: 1;
-  background: linear-gradient(135deg, #b22222, #8b0000);
+  background: #6E2639;
   color: white;
   border: none;
   padding: 10px;
@@ -132,7 +164,7 @@
 .register-button:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
-  background: #720015;
+  background: #411621;
 }
 
 .register-button.registered {
@@ -141,14 +173,14 @@
 }
 
 .register-button.registered:hover {
-  background: #8b0000;
+  background: #6E2639;
 }
 
 .share-button {
   flex: 1;
   background: transparent;
-  border: 1px solid #8b0000;
-  color: #8b0000;
+  border: 1px solid #6E2639;
+  color: #6E2639;
   padding: 10px;
   margin-top: auto;
   border-radius: 8px;
@@ -157,7 +189,7 @@
 }
 
 .share-button:hover {
-  background: #8b0000;
+  background: #6E2639;
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(139, 0, 0, 0.25);
   color: white;
@@ -194,15 +226,38 @@
 }
 
 .ua-filter-clear {
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
+  width: 100%;
+  padding: 10px;
   background-color: #f3f4f6;
+  color: #4b5563;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 10px;
 }
 
 .ua-filter-clear:hover {
   background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+/* See More Button Makeover */
+.see-more-button {
+  padding: 12px 32px;
+  background-color: #fff;
+  border: 2px solid #6E2639;
+  color: #6E2639;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.see-more-button:hover {
+  background-color: #6E2639;
+  color: white;
 }
 
 .event-card-date-row {
@@ -218,6 +273,7 @@
   cursor: pointer;
   font-size: 16px;
   padding: 6px;
+  margin-left: 12px;
   border-radius: 6px;
   transition: background 0.2s ease, transform 0.1s ease;
 }
@@ -229,4 +285,410 @@
 
 .edit-icon-button:active {
   transform: scale(0.95);
+}
+
+/* =========================
+   SIDEBAR LAYOUT
+========================= */
+.events-page-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  position: relative;
+}
+
+/* Sidebar Container */
+.filters-sidebar {
+  flex-shrink: 0;
+  position: sticky;
+  top: 90px;
+  transition: all 0.3s ease;
+}
+
+.filters-sidebar.open {
+  width: 260px;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.filters-sidebar.closed {
+  width: 44px; /* Thin profile just for the tab */
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.filters-sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #1f2937;
+  border-bottom: 2px solid #f3f4f6;
+  padding-bottom: 10px;
+}
+
+/* Individual Filter Groups */
+.filter-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* Main Content Area */
+.events-main-content {
+  flex: 1; /* Takes up the remaining space */
+}
+
+.open-filter-tab {
+  width: 100%;
+  height: 140px;
+  background-color: #6E2639; /* Dark color to sit subtly on the edge */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.open-filter-tab:hover {
+  background-color: #6E2639; /* Lights up with UALR red on hover */
+  transform: translateX(2px); /* Slight nudge to indicate it opens */
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-weight: bold;
+  letter-spacing: 3px;
+  transform: rotate(180deg); 
+  font-size: 14px;
+}
+
+.close-filter-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+}
+
+.close-filter-btn:hover {
+  color: #1f2937;
+}
+
+/* =========================
+   HOW IT WORKS SECTION
+========================= */
+.how-it-works-section {
+  text-align: center;
+  padding: 60px 20px;
+  border-radius: 16px;
+  margin: 80px 0;
+}
+
+.section-header h2 {
+  font-size: 32px;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.section-header p {
+  color: #6b7280;
+  font-size: 16px;
+  margin-bottom: 40px;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.step-card {
+  background: white;
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background-color: #6E2639; /* UALR Red */
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.step-card h3 {
+  font-size: 20px;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.step-card p {
+  color: #4b5563;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* =========================
+   JOIN SECTION
+========================= */
+.join-section {
+  background: #6E2639;
+  border-radius: 16px;
+  padding: 60px 20px;
+  text-align: center;
+  color: white;
+  margin: 80px 0;
+  box-shadow: 0 10px 25px rgba(139, 0, 0, 0.25);
+}
+
+.join-content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.join-content h2 {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.join-content p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  color: #fca5a5; /* A soft pinkish-red that contrasts beautifully against the dark red */
+}
+
+.cta-button {
+  background-color: white;
+  color: #6E2639;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 14px 36px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:hover {
+  background-color: #f3f4f6;
+  transform: scale(1.05); /* Slightly enlarges on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   CATEGORIES SECTION
+========================= */
+.categories-section {
+  margin: 60px 0;
+  text-align: center;
+}
+
+/* The Grid Fix: Exact 6 columns on desktop */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); 
+  gap: 20px;
+  max-width: 100% /* allows it to stretch */;
+  margin: 0 auto;
+}
+
+/* The Clean Card Makeover */
+.category-card {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-top: 6px solid #6E2639;
+  padding: 24px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  border-color: #411622;
+}
+
+/* Colored Icon Wrapper */
+.category-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  margin-bottom: 6px;
+}
+
+.category-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.category-card h3 {
+  font-size: 16px;
+  margin: 0;
+  color: #374151; /* Dark gray text */
+  font-weight: 600;
+}
+
+/* Responsive adjustment for very small screens */
+@media (max-width: 1024px) {
+  /* Drops to perfectly balanced 3 on top, 3 on bottom */
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  /* Drops to 2 columns for mobile phones */
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* =========================
+   HERO BANNER SECTION
+========================= */
+.hero-container {
+  display: flex;
+  align-items: center; /* Vertically centers the banner and images */
+  justify-content: space-between;
+  gap: 24px; /* Space between the images and the banner */
+  margin-bottom: 50px;
+  margin-top: 30px;
+}
+
+/* Side Images */
+.hero-side-image {
+  width: 250px; /* You can adjust this value to make them smaller/larger */
+  height: auto;
+  object-fit: contain;
+}
+
+/* Keep your existing .hero-section intact, but tweak its width behavior */
+.hero-section {
+  flex: 1; 
+  color: white;
+  padding: 60px 20px;
+  border-radius: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 0; /* Removed bottom margin because .hero-container handles it now */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-section h1 {
+  font-size: 36px;
+  margin-bottom: 16px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: black;
+}
+
+.hero-welcome {
+  font-size: 24px;
+  color: #6E2639;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.hero-section p {
+  font-size: 20px;
+  color: #232425;
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+@media (max-width: 950px) {
+  .hero-side-image {
+    /* Hide the side images on small screens so the banner text has enough room */
+    display: none; 
+  }
+}
+
+/* ===== EVENT CARD CATEGORY PILL ===== */
+.event-category-pill {
+  display: inline-block;
+  border-radius: 8px;
+  font-size: 12px;
+  padding: 6px 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-right: 8px; /* Adds space if placed next to date/time pills */
+}
+
+/* Category Specific Colors */
+.cat-academic {
+  background-color: #e0f2fe; /* Light Blue */
+  color: #0284c7;            /* Dark Blue */
+}
+
+.cat-social {
+  background-color: #fef08a; /* Light Yellow */
+  color: #a16207;            /* Dark Yellow/Gold */
+}
+
+.cat-sports {
+  background-color: #dcfce7; /* Light Green */
+  color: #16a34a;            /* Dark Green */
+}
+
+.cat-arts {
+  background-color: #f3e8ff; /* Light Purple */
+  color: #9333ea;            /* Dark Purple */
+}
+
+.cat-technology {
+  background-color: #e2e8f0; /* Slate Gray */
+  color: #475569;            /* Dark Slate */
+}
+
+.cat-career {
+  background-color: #ffedd5; /* Light Orange */
+  color: #ea580c;            /* Dark Orange */
 }

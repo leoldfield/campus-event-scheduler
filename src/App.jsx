@@ -22,6 +22,8 @@ import "../src/css/App.css";
 import "./assets/edit-pencil.png";
 import "./assets/test-image-600x300.png";
 import NotificationToast from "./pages/Components/NotificationToast.jsx";
+import Footer from "./pages/Components/Footer.jsx";
+import Welcome from "./pages/Welcome.jsx";
 
 /* ================================
    FIXED PAGE WRAPPER (OUTSIDE APP)
@@ -94,7 +96,7 @@ export default function App() {
           <Link to="/">
             <img src={logo} style={{ height: 40 }} />
           </Link>
-          <div className="nav-title">UA Little Rock Events</div>
+          <div className="nav-title">UALR Events</div>
         </div>
 
         <div className="nav-right">
@@ -174,7 +176,7 @@ export default function App() {
       <NotificationToast />
 
       {/* ================= ROUTES ================= */}
-      <div className="page">
+      <div className="page" style={{ minHeight: "80vh" }}>
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<PageWrapper><Events /></PageWrapper>} />
@@ -185,9 +187,12 @@ export default function App() {
             <Route path="/map" element={<PageWrapper><Map /></PageWrapper>} />
             <Route path="/Notification" element={<PageWrapper><Notification /></PageWrapper>} />
             <Route path="/UserProfile" element={<PageWrapper><UserProfile /></PageWrapper>} />
+            <Route path="/welcome" element={<PageWrapper><Welcome /></PageWrapper>} />
           </Routes>
         </AnimatePresence>
       </div>
+
+      <Footer />
     </>
   );
 }
