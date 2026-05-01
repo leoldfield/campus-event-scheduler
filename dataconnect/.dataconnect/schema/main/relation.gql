@@ -8,6 +8,15 @@ extend type EventList {
   """
   _count: Int! @fdc_generated(from: "EventList.", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `EventList` table where the `category` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  category_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.category", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `EventList` table where the `endtime` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   endtime_count(
@@ -62,6 +71,33 @@ extend type EventList {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "EventList.id", purpose: QUERY_COUNT)
   """
+  ✨ Count the number of rows in the `EventList` table where the `imageUrl` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  imageUrl_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.imageUrl", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `lat` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lat_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.lat", purpose: QUERY_COUNT)
+  """
+  ✨ Count the number of rows in the `EventList` table where the `lng` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
+  """
+  lng_count(
+    """
+    Set to true to count the number of distinct values.
+    """
+    distinct: Boolean = false
+  ): Int! @fdc_generated(from: "EventList.lng", purpose: QUERY_COUNT)
+  """
   ✨ Count the number of rows in the `EventList` table where the `location` field is non-null. Pass the `distinct` argument to instead count the number of distinct values.
   """
   location_count(
@@ -80,9 +116,53 @@ extend type EventList {
     distinct: Boolean = false
   ): Int! @fdc_generated(from: "EventList.starttime", purpose: QUERY_COUNT)
   """
+  ✨ Sum the `lat` field in the `EventList` table.
+  """
+  lat_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "EventList.lat", purpose: QUERY_SUM)
+  """
+  ✨ Sum the `lng` field in the `EventList` table.
+  """
+  lng_sum(
+    """
+    Set to true to sum the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "EventList.lng", purpose: QUERY_SUM)
+  """
+  ✨ Average the `lat` field in the `EventList` table.
+  """
+  lat_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "EventList.lat", purpose: QUERY_AVG)
+  """
+  ✨ Average the `lng` field in the `EventList` table.
+  """
+  lng_avg(
+    """
+    Set to true to average the distinct values.
+    """
+    distinct: Boolean = false
+  ): Float @fdc_generated(from: "EventList.lng", purpose: QUERY_AVG)
+  """
   ✨ Minimum of the `endtime` field in the `EventList` table.
   """
   endtime_min: Timestamp @fdc_generated(from: "EventList.endtime", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `lat` field in the `EventList` table.
+  """
+  lat_min: Float @fdc_generated(from: "EventList.lat", purpose: QUERY_MIN)
+  """
+  ✨ Minimum of the `lng` field in the `EventList` table.
+  """
+  lng_min: Float @fdc_generated(from: "EventList.lng", purpose: QUERY_MIN)
   """
   ✨ Minimum of the `starttime` field in the `EventList` table.
   """
@@ -91,6 +171,14 @@ extend type EventList {
   ✨ Maximum of the `endtime` field in the `EventList` table.
   """
   endtime_max: Timestamp @fdc_generated(from: "EventList.endtime", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `lat` field in the `EventList` table.
+  """
+  lat_max: Float @fdc_generated(from: "EventList.lat", purpose: QUERY_MAX)
+  """
+  ✨ Maximum of the `lng` field in the `EventList` table.
+  """
+  lng_max: Float @fdc_generated(from: "EventList.lng", purpose: QUERY_MAX)
   """
   ✨ Maximum of the `starttime` field in the `EventList` table.
   """

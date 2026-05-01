@@ -76,17 +76,8 @@ export default function MyEvents() {
   const handleUnregister = async (eventId) => {
     setUnregisterLoading(eventId);
     try {
-      const event = events.find((e) => e.id === eventId);
-      await unregisterFromEvent(eventId);
-
-      if (event && currentUser?.email) {
-        try {
-          await deleteGoogleCalendarEvent(event, currentUser);
-        } catch (err) {
-          console.warn("Calendar deletion failed:", err);
-          alert("Unregistered successfully, but Google Calendar could not be updated.");
-        }
-      }
+      // Centralize unregistration logic by passing currentUser to the context
+      await unregisterFromEvent(eventId, currentUser);
       setSelectedEventId(null);
     } catch (err) {
       console.error(err);

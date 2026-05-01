@@ -3,6 +3,7 @@ import {
   createRegistration,
   deleteRegistration,
   getRegistration,
+  listRegistrations, // Add listRegistrations import
   getUserByFirebaseUid,
   findUserByEmail,
   listEvents,
@@ -179,28 +180,20 @@ export function EventProvider({ children }) {
     if (!userId) return;
 
     try {
-      const { data } = await listEvents(getDataConnectClient());
-      const allEvents = data?.eventLists || [];
+      // Fetch all registrations in a single call
+      const { data } = await listRegistrations(getDataConnectClient());
+      const allRegistrations = data?.registrations || [];
 
-      const ids = new Set();
+      // Filter registrations for the current user and extract event IDs
+      const userRegisteredEventIds = new Set(
+        allRegistrations
+          .filter(reg => reg.userId === userId)
+          .map(reg => reg.eventId)
+      );
 
-      for (const event of allEvents) {
-        try {
-          
-          const reg = await getRegistration(getDataConnectClient(), {
-            eventId: event.id,
-            userId,
-          });
-
-          if (reg.data?.registration) {
-            ids.add(event.id);
-          }
-        } catch { }
-      }
-
-      setRegisteredEventIds(ids);
+      setRegisteredEventIds(userRegisteredEventIds);
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load registrations", err);
     }
   };
 
@@ -251,12 +244,6 @@ export function EventProvider({ children }) {
   const registerForEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
 
-    try {
-      await requestGoogleCalendarAccess();
-    } catch (err) {
-      console.warn("Google Calendar permission not granted yet:", err);
-    }
-
     await createRegistration(getDataConnectClient(), {
       eventId,
       userId: dbUserId,
@@ -305,9 +292,20 @@ export function EventProvider({ children }) {
     // 🔥 GOOGLE CALENDAR DELETE
     if (event && currentUser?.email) {
       try {
-        await deleteGoogleCalendarEvent(event, currentUser);
+        await deleteGoogleCalendarEvent(event, currentUser, { prompt: "none" });
       } catch (err) {
-        console.warn("Calendar delete failed:", err);
+        // If the token is expired or revoked, it requires user interaction.
+        // We can catch this, request access, and retry.
+        if (err.message?.includes("interaction_required")) {
+          console.warn("Calendar interaction required. Prompting user for access.");
+          await requestGoogleCalendarAccess();
+          // Retry after getting new permissions
+          await deleteGoogleCalendarEvent(event, currentUser).catch(retryErr => {
+            console.error("Calendar deletion failed on retry:", retryErr);
+          });
+        } else {
+          console.warn("Calendar deletion failed:", err);
+        }
       }
     }
 
