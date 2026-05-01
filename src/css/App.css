@@ -34,7 +34,7 @@ body {
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 28px; /* tighter = more professional */
+  gap: 48px; /* tighter = more professional */
 }
 
 /* logo image */

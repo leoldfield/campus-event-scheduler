@@ -154,6 +154,7 @@ export default function Register() {
 
           // 4. Updated Redirect Target
           setTimeout(() => navigate("/welcome"), 700);
+          window.location.href = "/";
 
         } catch (recoveryError) {
           setError("Failed to restore deleted profile.");
@@ -187,7 +188,7 @@ export default function Register() {
 
       {/* MESSAGES */}
       <div className="form-report">
-        {error && <p style={{ color: "#b00020", marginTop: "10px" }}>{error}</p>}
+        {error && <p style={{ color: "#b00020", marginTop: "10px"}}>{error}</p>}
         {successMessage && (
           <p style={{ color: "#0b6b2f", marginTop: "10px" }}>{successMessage}</p>
         )}

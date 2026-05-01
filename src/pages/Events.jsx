@@ -9,7 +9,6 @@ import "../css/Events.css";
 import "../css/EventModal.css";
 
 import pencil from "../assets/edit-pencil.png";
-import testimage from "../assets/test-image-600x300.png";
 
 import peopleBanner1 from "../assets/PeopleBanner1.png";
 import peopleBanner2 from "../assets/PeopleBanner2.png";
