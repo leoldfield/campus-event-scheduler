@@ -104,6 +104,7 @@ export default function CreateEvent() {
   const [eventDescription, setEventDescription] = useState(
     editingEvent?.eventdesc || ""
   );
+  const [imageUrl, setImageUrl] = useState(editingEvent?.imageUrl || "");
   const [startTime, setStartTime] = useState(
     formatForDateTimeInput(editingEvent?.starttime)
   );
