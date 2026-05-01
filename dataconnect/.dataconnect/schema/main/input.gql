@@ -77,6 +77,30 @@ input EventList_Data {
   """
   eventstatus_expr: Boolean_Expr @fdc_forbiddenInVariables
   """
+  ✨ Generated from Field `EventList`.`lat` of type `Float`
+  """
+  lat: Float
+  """
+  ✨ `_expr` server value variant of `lat` (✨ Generated from Field `EventList`.`lat` of type `Float`)
+  """
+  lat_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `lat` (✨ Generated from Field `EventList`.`lat` of type `Float`)
+  """
+  lat_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
+  ✨ Generated from Field `EventList`.`lng` of type `Float`
+  """
+  lng: Float
+  """
+  ✨ `_expr` server value variant of `lng` (✨ Generated from Field `EventList`.`lng` of type `Float`)
+  """
+  lng_expr: Float_Expr @fdc_forbiddenInVariables
+  """
+  ✨ `_update` server value variant of `lng` (✨ Generated from Field `EventList`.`lng` of type `Float`)
+  """
+  lng_update: [Float_Update!] @fdc_forbiddenInVariables
+  """
   ✨ Generated from Field `EventList`.`location` of type `String`
   """
   location: String
@@ -141,6 +165,14 @@ input EventList_Filter {
   ✨ Generated from Field `EventList`.`eventstatus` of type `Boolean!`
   """
   eventstatus: Boolean_Filter
+  """
+  ✨ Generated from Field `EventList`.`lat` of type `Float`
+  """
+  lat: Float_Filter
+  """
+  ✨ Generated from Field `EventList`.`lng` of type `Float`
+  """
+  lng: Float_Filter
   """
   ✨ Generated from Field `EventList`.`location` of type `String`
   """
@@ -212,6 +244,14 @@ input EventList_Having {
   """
   id_count: Int_Filter
   """
+  ✨ Generated from Field `EventList`.`lat_count` of type `Int!`
+  """
+  lat_count: Int_Filter
+  """
+  ✨ Generated from Field `EventList`.`lng_count` of type `Int!`
+  """
+  lng_count: Int_Filter
+  """
   ✨ Generated from Field `EventList`.`location_count` of type `Int!`
   """
   location_count: Int_Filter
@@ -220,9 +260,33 @@ input EventList_Having {
   """
   starttime_count: Int_Filter
   """
+  ✨ Generated from Field `EventList`.`lat_sum` of type `Float`
+  """
+  lat_sum: Float_Filter
+  """
+  ✨ Generated from Field `EventList`.`lng_sum` of type `Float`
+  """
+  lng_sum: Float_Filter
+  """
+  ✨ Generated from Field `EventList`.`lat_avg` of type `Float`
+  """
+  lat_avg: Float_Filter
+  """
+  ✨ Generated from Field `EventList`.`lng_avg` of type `Float`
+  """
+  lng_avg: Float_Filter
+  """
   ✨ Generated from Field `EventList`.`endtime_min` of type `Timestamp`
   """
   endtime_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `EventList`.`lat_min` of type `Float`
+  """
+  lat_min: Float_Filter
+  """
+  ✨ Generated from Field `EventList`.`lng_min` of type `Float`
+  """
+  lng_min: Float_Filter
   """
   ✨ Generated from Field `EventList`.`starttime_min` of type `Timestamp`
   """
@@ -231,6 +295,14 @@ input EventList_Having {
   ✨ Generated from Field `EventList`.`endtime_max` of type `Timestamp`
   """
   endtime_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `EventList`.`lat_max` of type `Float`
+  """
+  lat_max: Float_Filter
+  """
+  ✨ Generated from Field `EventList`.`lng_max` of type `Float`
+  """
+  lng_max: Float_Filter
   """
   ✨ Generated from Field `EventList`.`starttime_max` of type `Timestamp`
   """
@@ -291,6 +363,14 @@ input EventList_Order {
   """
   eventstatus: OrderDirection
   """
+  ✨ Generated from Field `EventList`.`lat` of type `Float`
+  """
+  lat: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lng` of type `Float`
+  """
+  lng: OrderDirection
+  """
   ✨ Generated from Field `EventList`.`location` of type `String`
   """
   location: OrderDirection
@@ -327,6 +407,14 @@ input EventList_Order {
   """
   id_count: OrderDirection
   """
+  ✨ Generated from Field `EventList`.`lat_count` of type `Int!`
+  """
+  lat_count: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lng_count` of type `Int!`
+  """
+  lng_count: OrderDirection
+  """
   ✨ Generated from Field `EventList`.`location_count` of type `Int!`
   """
   location_count: OrderDirection
@@ -335,9 +423,33 @@ input EventList_Order {
   """
   starttime_count: OrderDirection
   """
+  ✨ Generated from Field `EventList`.`lat_sum` of type `Float`
+  """
+  lat_sum: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lng_sum` of type `Float`
+  """
+  lng_sum: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lat_avg` of type `Float`
+  """
+  lat_avg: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lng_avg` of type `Float`
+  """
+  lng_avg: OrderDirection
+  """
   ✨ Generated from Field `EventList`.`endtime_min` of type `Timestamp`
   """
   endtime_min: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lat_min` of type `Float`
+  """
+  lat_min: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lng_min` of type `Float`
+  """
+  lng_min: OrderDirection
   """
   ✨ Generated from Field `EventList`.`starttime_min` of type `Timestamp`
   """
@@ -346,6 +458,14 @@ input EventList_Order {
   ✨ Generated from Field `EventList`.`endtime_max` of type `Timestamp`
   """
   endtime_max: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lat_max` of type `Float`
+  """
+  lat_max: OrderDirection
+  """
+  ✨ Generated from Field `EventList`.`lng_max` of type `Float`
+  """
+  lng_max: OrderDirection
   """
   ✨ Generated from Field `EventList`.`starttime_max` of type `Timestamp`
   """
