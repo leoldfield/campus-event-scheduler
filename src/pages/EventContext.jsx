@@ -249,6 +249,8 @@ export function EventProvider({ children }) {
   const registerForEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
  
+    const event = events.find((e) => e.id === eventId);
+
     let calendarPromise = createGoogleCalendarEvent(event, currentUser).catch(err => {
       console.warn("Calendar add failed:", err);
     });
@@ -258,8 +260,6 @@ export function EventProvider({ children }) {
       userId: dbUserId,
       notif: true,
     });
-
-    const event = events.find((e) => e.id === eventId);
 
     await Promise.all([registrationPromise, calendarPromise]);
 
