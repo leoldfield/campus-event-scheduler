@@ -9,8 +9,6 @@ import { requestGoogleCalendarAccess } from "../googleCalendar";
 import { useEventContext } from "./EventContext.jsx";
 import "../css/UserProfile.css";
 
-import profilePicture from "../assets/johndoe.png";
-
 // Category definitions for Top Interests styling
 const CATEGORIES = [
   { id: 1, name: "Academic", icon: "📚", color: "#e0f2fe", text: "#0284c7" },
@@ -244,6 +242,9 @@ export default function UserProfile() {
     );
   }
 
+  const userInitials = `${formData.firstname?.[0] || ""}${formData.lastname?.[0] || ""}`.toUpperCase() || "U";
+  const dynamicAvatarUrl = `https://ui-avatars.com/api/?name=${userInitials}&background=ca1e4c&color=fff&bold=true&size=150`;
+
   return (
     <div className="profile-page">
       {!isEditing ? (
@@ -251,7 +252,7 @@ export default function UserProfile() {
           {/* ================= LEFT COLUMN ================= */}
           <div className="left-column">
             <div className="card profile-card">
-              <img src={profilePicture} alt="Profile" className="profile-img" />
+              <img src={dynamicAvatarUrl} alt="Profile" className="profile-img" />
               <h2 className="profile-name">
                 {formData.firstname} {formData.lastname}
               </h2>
