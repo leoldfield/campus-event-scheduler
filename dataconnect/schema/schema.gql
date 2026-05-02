@@ -11,6 +11,7 @@ type EventList @table {
   lng: Float
   imageUrl: String
   category: String
+  hostUid: String @default(expr: "auth.uid")
 }
 
 type UserList @table {

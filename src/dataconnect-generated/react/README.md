@@ -27,6 +27,8 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*GetRegistration*](#getregistration)
   - [*FindUserByEmail*](#finduserbyemail)
   - [*GetUserByFirebaseUid*](#getuserbyfirebaseuid)
+  - [*ListSafeUsers*](#listsafeusers)
+  - [*ListAllRegistrations*](#listallregistrations)
 - [**Mutations**](#mutations)
   - [*CreateEvent*](#createevent)
   - [*CreateRegistration*](#createregistration)
@@ -34,6 +36,7 @@ You can also follow the instructions from the [Data Connect documentation](https
   - [*CreateUser*](#createuser)
   - [*UpdateUserProfile*](#updateuserprofile)
   - [*UpdateEvent*](#updateevent)
+  - [*DeleteSecureEvent*](#deletesecureevent)
 
 # TanStack Query Firebase & TanStack React Query
 This SDK provides [React](https://react.dev/) hooks generated specific to your application, for the operations found in the connector `example`. These hooks are generated using [TanStack Query Firebase](https://react-query-firebase.invertase.dev/) by our partners at Invertase, a library built on top of [TanStack React Query v5](https://tanstack.com/query/v5/docs/framework/react/overview).
@@ -975,6 +978,151 @@ export default function GetUserByFirebaseUidComponent() {
 }
 ```
 
+## ListSafeUsers
+You can execute the `ListSafeUsers` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListSafeUsers(dc: DataConnect, options?: useDataConnectQueryOptions<ListSafeUsersData>): UseDataConnectQueryResult<ListSafeUsersData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListSafeUsers(options?: useDataConnectQueryOptions<ListSafeUsersData>): UseDataConnectQueryResult<ListSafeUsersData, undefined>;
+```
+
+### Variables
+The `ListSafeUsers` Query has no variables.
+### Return Type
+Recall that calling the `ListSafeUsers` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListSafeUsers` Query is of type `ListSafeUsersData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListSafeUsersData {
+  userLists: ({
+    id: UUIDString;
+    firstname: string;
+    lastname: string;
+  } & UserList_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListSafeUsers`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useListSafeUsers } from '@dataconnect/generated/react'
+
+export default function ListSafeUsersComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListSafeUsers();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListSafeUsers(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListSafeUsers(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListSafeUsers(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.userLists);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## ListAllRegistrations
+You can execute the `ListAllRegistrations` Query using the following Query hook function, which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts):
+
+```javascript
+useListAllRegistrations(dc: DataConnect, options?: useDataConnectQueryOptions<ListAllRegistrationsData>): UseDataConnectQueryResult<ListAllRegistrationsData, undefined>;
+```
+You can also pass in a `DataConnect` instance to the Query hook function.
+```javascript
+useListAllRegistrations(options?: useDataConnectQueryOptions<ListAllRegistrationsData>): UseDataConnectQueryResult<ListAllRegistrationsData, undefined>;
+```
+
+### Variables
+The `ListAllRegistrations` Query has no variables.
+### Return Type
+Recall that calling the `ListAllRegistrations` Query hook function returns a `UseQueryResult` object. This object holds the state of your Query, including whether the Query is loading, has completed, or has succeeded/failed, and any data returned by the Query, among other things.
+
+To check the status of a Query, use the `UseQueryResult.status` field. You can also check for pending / success / error status using the `UseQueryResult.isPending`, `UseQueryResult.isSuccess`, and `UseQueryResult.isError` fields.
+
+To access the data returned by a Query, use the `UseQueryResult.data` field. The data for the `ListAllRegistrations` Query is of type `ListAllRegistrationsData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface ListAllRegistrationsData {
+  registrations: ({
+    eventId: UUIDString;
+    userId: UUIDString;
+  } & Registration_Key)[];
+}
+```
+
+To learn more about the `UseQueryResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery).
+
+### Using `ListAllRegistrations`'s Query hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig } from '@dataconnect/generated';
+import { useListAllRegistrations } from '@dataconnect/generated/react'
+
+export default function ListAllRegistrationsComponent() {
+  // You don't have to do anything to "execute" the Query.
+  // Call the Query hook function to get a `UseQueryResult` object which holds the state of your Query.
+  const query = useListAllRegistrations();
+
+  // You can also pass in a `DataConnect` instance to the Query hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const query = useListAllRegistrations(dataConnect);
+
+  // You can also pass in a `useDataConnectQueryOptions` object to the Query hook function.
+  const options = { staleTime: 5 * 1000 };
+  const query = useListAllRegistrations(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectQueryOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = { staleTime: 5 * 1000 };
+  const query = useListAllRegistrations(dataConnect, options);
+
+  // Then, you can render your component dynamically based on the status of the Query.
+  if (query.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (query.isError) {
+    return <div>Error: {query.error.message}</div>;
+  }
+
+  // If the Query is successful, you can access the data returned using the `UseQueryResult.data` field.
+  if (query.isSuccess) {
+    console.log(query.data.registrations);
+  }
+  return <div>Query execution {query.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
 # Mutations
 
 The React generated SDK provides Mutations hook functions that call and return [`useDataConnectMutation`](https://react-query-firebase.invertase.dev/react/data-connect/mutations) hooks from TanStack Query Firebase.
@@ -1625,6 +1773,102 @@ export default function UpdateEventComponent() {
   // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
   if (mutation.isSuccess) {
     console.log(mutation.data.eventList_update);
+  }
+  return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
+}
+```
+
+## DeleteSecureEvent
+You can execute the `DeleteSecureEvent` Mutation using the `UseMutationResult` object returned by the following Mutation hook function (which is defined in [dataconnect-generated/react/index.d.ts](./index.d.ts)):
+```javascript
+useDeleteSecureEvent(options?: useDataConnectMutationOptions<DeleteSecureEventData, FirebaseError, DeleteSecureEventVariables>): UseDataConnectMutationResult<DeleteSecureEventData, DeleteSecureEventVariables>;
+```
+You can also pass in a `DataConnect` instance to the Mutation hook function.
+```javascript
+useDeleteSecureEvent(dc: DataConnect, options?: useDataConnectMutationOptions<DeleteSecureEventData, FirebaseError, DeleteSecureEventVariables>): UseDataConnectMutationResult<DeleteSecureEventData, DeleteSecureEventVariables>;
+```
+
+### Variables
+The `DeleteSecureEvent` Mutation requires an argument of type `DeleteSecureEventVariables`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+
+```javascript
+export interface DeleteSecureEventVariables {
+  id: UUIDString;
+  eventcoord: UUIDString;
+}
+```
+### Return Type
+Recall that calling the `DeleteSecureEvent` Mutation hook function returns a `UseMutationResult` object. This object holds the state of your Mutation, including whether the Mutation is loading, has completed, or has succeeded/failed, among other things.
+
+To check the status of a Mutation, use the `UseMutationResult.status` field. You can also check for pending / success / error status using the `UseMutationResult.isPending`, `UseMutationResult.isSuccess`, and `UseMutationResult.isError` fields.
+
+To execute the Mutation, call `UseMutationResult.mutate()`. This function executes the Mutation, but does not return the data from the Mutation.
+
+To access the data returned by a Mutation, use the `UseMutationResult.data` field. The data for the `DeleteSecureEvent` Mutation is of type `DeleteSecureEventData`, which is defined in [dataconnect-generated/index.d.ts](../index.d.ts). It has the following fields:
+```javascript
+export interface DeleteSecureEventData {
+  eventList_deleteMany: number;
+}
+```
+
+To learn more about the `UseMutationResult` object, see the [TanStack React Query documentation](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation).
+
+### Using `DeleteSecureEvent`'s Mutation hook function
+
+```javascript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, DeleteSecureEventVariables } from '@dataconnect/generated';
+import { useDeleteSecureEvent } from '@dataconnect/generated/react'
+
+export default function DeleteSecureEventComponent() {
+  // Call the Mutation hook function to get a `UseMutationResult` object which holds the state of your Mutation.
+  const mutation = useDeleteSecureEvent();
+
+  // You can also pass in a `DataConnect` instance to the Mutation hook function.
+  const dataConnect = getDataConnect(connectorConfig);
+  const mutation = useDeleteSecureEvent(dataConnect);
+
+  // You can also pass in a `useDataConnectMutationOptions` object to the Mutation hook function.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useDeleteSecureEvent(options);
+
+  // You can also pass both a `DataConnect` instance and a `useDataConnectMutationOptions` object.
+  const dataConnect = getDataConnect(connectorConfig);
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  const mutation = useDeleteSecureEvent(dataConnect, options);
+
+  // After calling the Mutation hook function, you must call `UseMutationResult.mutate()` to execute the Mutation.
+  // The `useDeleteSecureEvent` Mutation requires an argument of type `DeleteSecureEventVariables`:
+  const deleteSecureEventVars: DeleteSecureEventVariables = {
+    id: ..., 
+    eventcoord: ..., 
+  };
+  mutation.mutate(deleteSecureEventVars);
+  // Variables can be defined inline as well.
+  mutation.mutate({ id: ..., eventcoord: ..., });
+
+  // You can also pass in a `useDataConnectMutationOptions` object to `UseMutationResult.mutate()`.
+  const options = {
+    onSuccess: () => { console.log('Mutation succeeded!'); }
+  };
+  mutation.mutate(deleteSecureEventVars, options);
+
+  // Then, you can render your component dynamically based on the status of the Mutation.
+  if (mutation.isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (mutation.isError) {
+    return <div>Error: {mutation.error.message}</div>;
+  }
+
+  // If the Mutation is successful, you can access the data returned using the `UseMutationResult.data` field.
+  if (mutation.isSuccess) {
+    console.log(mutation.data.eventList_deleteMany);
   }
   return <div>Mutation execution {mutation.isSuccess ? 'successful' : 'failed'}!</div>;
 }

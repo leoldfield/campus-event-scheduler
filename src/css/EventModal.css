@@ -326,3 +326,8 @@
   font-weight: 700;
   color: #111827;
 }
+
+.register-button.delete-button:hover {
+  transform: none;
+  box-shadow: none;
+}

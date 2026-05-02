@@ -1,4 +1,4 @@
-import { ListEventsData, ListUsersData, GetEventByIdData, GetEventByIdVariables, CreateEventData, CreateEventVariables, GetFirstNameByIdData, GetFirstNameByIdVariables, GetNameByIdData, GetNameByIdVariables, ValidateUserCredentialsData, ValidateUserCredentialsVariables, ListRegistrationsData, GetRegistrationData, GetRegistrationVariables, CreateRegistrationData, CreateRegistrationVariables, DeleteRegistrationData, DeleteRegistrationVariables, CreateUserData, CreateUserVariables, FindUserByEmailData, FindUserByEmailVariables, GetUserByFirebaseUidData, GetUserByFirebaseUidVariables, UpdateUserProfileData, UpdateUserProfileVariables, UpdateEventData, UpdateEventVariables } from '../';
+import { ListEventsData, ListUsersData, GetEventByIdData, GetEventByIdVariables, CreateEventData, CreateEventVariables, GetFirstNameByIdData, GetFirstNameByIdVariables, GetNameByIdData, GetNameByIdVariables, ValidateUserCredentialsData, ValidateUserCredentialsVariables, ListRegistrationsData, GetRegistrationData, GetRegistrationVariables, CreateRegistrationData, CreateRegistrationVariables, DeleteRegistrationData, DeleteRegistrationVariables, CreateUserData, CreateUserVariables, FindUserByEmailData, FindUserByEmailVariables, GetUserByFirebaseUidData, GetUserByFirebaseUidVariables, UpdateUserProfileData, UpdateUserProfileVariables, UpdateEventData, UpdateEventVariables, ListSafeUsersData, ListAllRegistrationsData, DeleteSecureEventData, DeleteSecureEventVariables } from '../';
 import { UseDataConnectQueryResult, useDataConnectQueryOptions, UseDataConnectMutationResult, useDataConnectMutationOptions} from '@tanstack-query-firebase/react/data-connect';
 import { UseQueryResult, UseMutationResult} from '@tanstack/react-query';
 import { DataConnect } from 'firebase/data-connect';
@@ -52,3 +52,12 @@ export function useUpdateUserProfile(dc: DataConnect, options?: useDataConnectMu
 
 export function useUpdateEvent(options?: useDataConnectMutationOptions<UpdateEventData, FirebaseError, UpdateEventVariables>): UseDataConnectMutationResult<UpdateEventData, UpdateEventVariables>;
 export function useUpdateEvent(dc: DataConnect, options?: useDataConnectMutationOptions<UpdateEventData, FirebaseError, UpdateEventVariables>): UseDataConnectMutationResult<UpdateEventData, UpdateEventVariables>;
+
+export function useListSafeUsers(options?: useDataConnectQueryOptions<ListSafeUsersData>): UseDataConnectQueryResult<ListSafeUsersData, undefined>;
+export function useListSafeUsers(dc: DataConnect, options?: useDataConnectQueryOptions<ListSafeUsersData>): UseDataConnectQueryResult<ListSafeUsersData, undefined>;
+
+export function useListAllRegistrations(options?: useDataConnectQueryOptions<ListAllRegistrationsData>): UseDataConnectQueryResult<ListAllRegistrationsData, undefined>;
+export function useListAllRegistrations(dc: DataConnect, options?: useDataConnectQueryOptions<ListAllRegistrationsData>): UseDataConnectQueryResult<ListAllRegistrationsData, undefined>;
+
+export function useDeleteSecureEvent(options?: useDataConnectMutationOptions<DeleteSecureEventData, FirebaseError, DeleteSecureEventVariables>): UseDataConnectMutationResult<DeleteSecureEventData, DeleteSecureEventVariables>;
+export function useDeleteSecureEvent(dc: DataConnect, options?: useDataConnectMutationOptions<DeleteSecureEventData, FirebaseError, DeleteSecureEventVariables>): UseDataConnectMutationResult<DeleteSecureEventData, DeleteSecureEventVariables>;

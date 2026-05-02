@@ -20,6 +20,8 @@ This README will guide you through the process of using the generated JavaScript
   - [*GetRegistration*](#getregistration)
   - [*FindUserByEmail*](#finduserbyemail)
   - [*GetUserByFirebaseUid*](#getuserbyfirebaseuid)
+  - [*ListSafeUsers*](#listsafeusers)
+  - [*ListAllRegistrations*](#listallregistrations)
 - [**Mutations**](#mutations)
   - [*CreateEvent*](#createevent)
   - [*CreateRegistration*](#createregistration)
@@ -27,6 +29,7 @@ This README will guide you through the process of using the generated JavaScript
   - [*CreateUser*](#createuser)
   - [*UpdateUserProfile*](#updateuserprofile)
   - [*UpdateEvent*](#updateevent)
+  - [*DeleteSecureEvent*](#deletesecureevent)
 
 # Accessing the connector
 A connector is a collection of Queries and Mutations. One SDK is generated for each connector - this SDK is generated for the connector `example`. You can find more information about connectors in the [Data Connect documentation](https://firebase.google.com/docs/data-connect#how-does).
@@ -1180,6 +1183,195 @@ executeQuery(ref).then((response) => {
 });
 ```
 
+## ListSafeUsers
+You can execute the `ListSafeUsers` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listSafeUsers(options?: ExecuteQueryOptions): QueryPromise<ListSafeUsersData, undefined>;
+
+interface ListSafeUsersRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListSafeUsersData, undefined>;
+}
+export const listSafeUsersRef: ListSafeUsersRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listSafeUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListSafeUsersData, undefined>;
+
+interface ListSafeUsersRef {
+  ...
+  (dc: DataConnect): QueryRef<ListSafeUsersData, undefined>;
+}
+export const listSafeUsersRef: ListSafeUsersRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listSafeUsersRef:
+```typescript
+const name = listSafeUsersRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListSafeUsers` query has no variables.
+### Return Type
+Recall that executing the `ListSafeUsers` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListSafeUsersData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListSafeUsersData {
+  userLists: ({
+    id: UUIDString;
+    firstname: string;
+    lastname: string;
+  } & UserList_Key)[];
+}
+```
+### Using `ListSafeUsers`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listSafeUsers } from '@dataconnect/generated';
+
+
+// Call the `listSafeUsers()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listSafeUsers();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listSafeUsers(dataConnect);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+listSafeUsers().then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+### Using `ListSafeUsers`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listSafeUsersRef } from '@dataconnect/generated';
+
+
+// Call the `listSafeUsersRef()` function to get a reference to the query.
+const ref = listSafeUsersRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listSafeUsersRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.userLists);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.userLists);
+});
+```
+
+## ListAllRegistrations
+You can execute the `ListAllRegistrations` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+listAllRegistrations(options?: ExecuteQueryOptions): QueryPromise<ListAllRegistrationsData, undefined>;
+
+interface ListAllRegistrationsRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListAllRegistrationsData, undefined>;
+}
+export const listAllRegistrationsRef: ListAllRegistrationsRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
+```typescript
+listAllRegistrations(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListAllRegistrationsData, undefined>;
+
+interface ListAllRegistrationsRef {
+  ...
+  (dc: DataConnect): QueryRef<ListAllRegistrationsData, undefined>;
+}
+export const listAllRegistrationsRef: ListAllRegistrationsRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the listAllRegistrationsRef:
+```typescript
+const name = listAllRegistrationsRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `ListAllRegistrations` query has no variables.
+### Return Type
+Recall that executing the `ListAllRegistrations` query returns a `QueryPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `ListAllRegistrationsData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface ListAllRegistrationsData {
+  registrations: ({
+    eventId: UUIDString;
+    userId: UUIDString;
+  } & Registration_Key)[];
+}
+```
+### Using `ListAllRegistrations`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, listAllRegistrations } from '@dataconnect/generated';
+
+
+// Call the `listAllRegistrations()` function to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await listAllRegistrations();
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await listAllRegistrations(dataConnect);
+
+console.log(data.registrations);
+
+// Or, you can use the `Promise` API.
+listAllRegistrations().then((response) => {
+  const data = response.data;
+  console.log(data.registrations);
+});
+```
+
+### Using `ListAllRegistrations`'s `QueryRef` function
+
+```typescript
+import { getDataConnect, executeQuery } from 'firebase/data-connect';
+import { connectorConfig, listAllRegistrationsRef } from '@dataconnect/generated';
+
+
+// Call the `listAllRegistrationsRef()` function to get a reference to the query.
+const ref = listAllRegistrationsRef();
+
+// You can also pass in a `DataConnect` instance to the `QueryRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = listAllRegistrationsRef(dataConnect);
+
+// Call `executeQuery()` on the reference to execute the query.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeQuery(ref);
+
+console.log(data.registrations);
+
+// Or, you can use the `Promise` API.
+executeQuery(ref).then((response) => {
+  const data = response.data;
+  console.log(data.registrations);
+});
+```
+
 # Mutations
 
 There are two ways to execute a Data Connect Mutation using the generated Web SDK:
@@ -1945,6 +2137,118 @@ console.log(data.eventList_update);
 executeMutation(ref).then((response) => {
   const data = response.data;
   console.log(data.eventList_update);
+});
+```
+
+## DeleteSecureEvent
+You can execute the `DeleteSecureEvent` mutation using the following action shortcut function, or by calling `executeMutation()` after calling the following `MutationRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
+```typescript
+deleteSecureEvent(vars: DeleteSecureEventVariables): MutationPromise<DeleteSecureEventData, DeleteSecureEventVariables>;
+
+interface DeleteSecureEventRef {
+  ...
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteSecureEventVariables): MutationRef<DeleteSecureEventData, DeleteSecureEventVariables>;
+}
+export const deleteSecureEventRef: DeleteSecureEventRef;
+```
+You can also pass in a `DataConnect` instance to the action shortcut function or `MutationRef` function.
+```typescript
+deleteSecureEvent(dc: DataConnect, vars: DeleteSecureEventVariables): MutationPromise<DeleteSecureEventData, DeleteSecureEventVariables>;
+
+interface DeleteSecureEventRef {
+  ...
+  (dc: DataConnect, vars: DeleteSecureEventVariables): MutationRef<DeleteSecureEventData, DeleteSecureEventVariables>;
+}
+export const deleteSecureEventRef: DeleteSecureEventRef;
+```
+
+If you need the name of the operation without creating a ref, you can retrieve the operation name by calling the `operationName` property on the deleteSecureEventRef:
+```typescript
+const name = deleteSecureEventRef.operationName;
+console.log(name);
+```
+
+### Variables
+The `DeleteSecureEvent` mutation requires an argument of type `DeleteSecureEventVariables`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+
+```typescript
+export interface DeleteSecureEventVariables {
+  id: UUIDString;
+  eventcoord: UUIDString;
+}
+```
+### Return Type
+Recall that executing the `DeleteSecureEvent` mutation returns a `MutationPromise` that resolves to an object with a `data` property.
+
+The `data` property is an object of type `DeleteSecureEventData`, which is defined in [dataconnect-generated/index.d.ts](./index.d.ts). It has the following fields:
+```typescript
+export interface DeleteSecureEventData {
+  eventList_deleteMany: number;
+}
+```
+### Using `DeleteSecureEvent`'s action shortcut function
+
+```typescript
+import { getDataConnect } from 'firebase/data-connect';
+import { connectorConfig, deleteSecureEvent, DeleteSecureEventVariables } from '@dataconnect/generated';
+
+// The `DeleteSecureEvent` mutation requires an argument of type `DeleteSecureEventVariables`:
+const deleteSecureEventVars: DeleteSecureEventVariables = {
+  id: ..., 
+  eventcoord: ..., 
+};
+
+// Call the `deleteSecureEvent()` function to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await deleteSecureEvent(deleteSecureEventVars);
+// Variables can be defined inline as well.
+const { data } = await deleteSecureEvent({ id: ..., eventcoord: ..., });
+
+// You can also pass in a `DataConnect` instance to the action shortcut function.
+const dataConnect = getDataConnect(connectorConfig);
+const { data } = await deleteSecureEvent(dataConnect, deleteSecureEventVars);
+
+console.log(data.eventList_deleteMany);
+
+// Or, you can use the `Promise` API.
+deleteSecureEvent(deleteSecureEventVars).then((response) => {
+  const data = response.data;
+  console.log(data.eventList_deleteMany);
+});
+```
+
+### Using `DeleteSecureEvent`'s `MutationRef` function
+
+```typescript
+import { getDataConnect, executeMutation } from 'firebase/data-connect';
+import { connectorConfig, deleteSecureEventRef, DeleteSecureEventVariables } from '@dataconnect/generated';
+
+// The `DeleteSecureEvent` mutation requires an argument of type `DeleteSecureEventVariables`:
+const deleteSecureEventVars: DeleteSecureEventVariables = {
+  id: ..., 
+  eventcoord: ..., 
+};
+
+// Call the `deleteSecureEventRef()` function to get a reference to the mutation.
+const ref = deleteSecureEventRef(deleteSecureEventVars);
+// Variables can be defined inline as well.
+const ref = deleteSecureEventRef({ id: ..., eventcoord: ..., });
+
+// You can also pass in a `DataConnect` instance to the `MutationRef` function.
+const dataConnect = getDataConnect(connectorConfig);
+const ref = deleteSecureEventRef(dataConnect, deleteSecureEventVars);
+
+// Call `executeMutation()` on the reference to execute the mutation.
+// You can use the `await` keyword to wait for the promise to resolve.
+const { data } = await executeMutation(ref);
+
+console.log(data.eventList_deleteMany);
+
+// Or, you can use the `Promise` API.
+executeMutation(ref).then((response) => {
+  const data = response.data;
+  console.log(data.eventList_deleteMany);
 });
 ```
 

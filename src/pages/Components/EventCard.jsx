@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebase"; 
+import { auth } from "../../firebase";
 import { useEventContext } from "../EventContext.jsx";
 import "../../css/Events.css";
 import pencil from "../../assets/edit-pencil.png";
@@ -39,25 +39,38 @@ export default function EventCard({
   };
 
   // ==========================================
-  // REAL SOCIAL PROOF MATH
+  // REAL SOCIAL PROOF MATH (WITH GUEST FALLBACK)
   // ==========================================
   const safeRegs = allRegistrations || [];
   const safeUsers = allUsers || [];
   const eventAttendees = safeRegs.filter((reg) => reg.eventId === event.id);
-  
+
   let attendeeCount = eventAttendees.length;
   let displayAvatars = [];
 
-  // Generate real UI-Avatars from the DB users
-  if (attendeeCount > 0) {
-    displayAvatars = eventAttendees.slice(0, 3).map((reg) => {
-      const user = safeUsers.find((u) => u.id === reg.userId);
-      if (user) {
-        const initials = `${user.firstname?.[0] || ""}${user.lastname?.[0] || ""}`.toUpperCase();
-        return `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&bold=true`;
-      }
-      return `https://ui-avatars.com/api/?name=U&background=random&color=fff&bold=true`;
-    });
+  const currentUser = auth.currentUser;
+  const isGuest = !currentUser || currentUser.isAnonymous;
+
+  const idStr = String(event.id);
+
+  if (!isGuest) {
+    if (attendeeCount > 0) {
+      displayAvatars = eventAttendees.slice(0, 3).map((reg) => {
+        const user = safeUsers.find((u) => u.id === reg.userId);
+        if (user) {
+          const initials = `${user.firstname?.[0] || ""}${user.lastname?.[0] || ""}`.toUpperCase();
+          return `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&bold=true`;
+        }
+        return `https://ui-avatars.com/api/?name=U&background=random&color=fff&bold=true`;
+      });
+    }
+  } else {
+    attendeeCount = (idStr.charCodeAt(0) % 34) + 12;
+    displayAvatars = [
+      `https://ui-avatars.com/api/?name=${String.fromCharCode(65 + (idStr.charCodeAt(0) % 26))}&background=random&color=fff&bold=true`,
+      `https://ui-avatars.com/api/?name=${String.fromCharCode(65 + (idStr.charCodeAt(1) % 26))}&background=random&color=fff&bold=true`,
+      `https://ui-avatars.com/api/?name=${String.fromCharCode(65 + (idStr.charCodeAt(2) % 26))}&background=random&color=fff&bold=true`
+    ];
   }
 
   const formatDate = (date) => {
@@ -93,7 +106,7 @@ export default function EventCard({
         <h2 className="event-title">{event.eventname}</h2>
 
         {/* --- NEW SOCIAL PROOF FOR CARDS --- */}
-        {attendeeCount > 0 ? (
+        {attendeeCount > 0 || isGuest ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px', marginTop: '10px' }}>
             <div style={{ display: 'flex' }}>
               {displayAvatars.map((url, idx) => (
@@ -101,7 +114,11 @@ export default function EventCard({
               ))}
             </div>
             <span style={{ fontSize: '13px', color: '#6b7280', fontWeight: '500' }}>
-              <strong style={{ color: '#111827' }}>{attendeeCount}</strong> attending
+              {isGuest ? (
+                <strong style={{ color: '#111827' }}>Log in to see who's going!</strong>
+              ) : (
+                <><strong style={{ color: '#111827' }}>{attendeeCount}</strong> attending</>
+              )}
             </span>
           </div>
         ) : (

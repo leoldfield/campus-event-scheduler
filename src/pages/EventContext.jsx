@@ -2,12 +2,12 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import {
   createRegistration,
   deleteRegistration,
-  getRegistration,
-  listRegistrations, 
+  listAllRegistrations,
+  listSafeUsers,
+  deleteSecureEvent,
   getUserByFirebaseUid,
   findUserByEmail,
   listEvents,
-  listUsers, // <-- NEW: Imported to fetch user names for avatars!
 } from "../dataconnect-generated";
 import { getDataConnectClient, auth } from "../firebase";
 import {
@@ -19,16 +19,9 @@ import {
 const EventContext = createContext();
 
 const getStoredNotifications = () => {
-  try {
-    return JSON.parse(localStorage.getItem("notifications")) || [];
-  } catch {
-    return [];
-  }
+  try { return JSON.parse(localStorage.getItem("notifications")) || []; } catch { return []; }
 };
-
-const saveStoredNotifications = (list) => {
-  localStorage.setItem("notifications", JSON.stringify(list));
-};
+const saveStoredNotifications = (list) => { localStorage.setItem("notifications", JSON.stringify(list)); };
 
 export function EventProvider({ children }) {
   const [registeredEventIds, setRegisteredEventIds] = useState(new Set());
@@ -38,205 +31,167 @@ export function EventProvider({ children }) {
   const [eventsError, setEventsError] = useState("");
   const [notifications, setNotifications] = useState(getStoredNotifications);
 
-  // === NEW STATES FOR SOCIAL PROOF ===
   const [allRegistrations, setAllRegistrations] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
 
+  // LOAD EVENTS
   const refreshEvents = useCallback(async () => {
     try {
       setLoadingEvents(true);
       setEventsError("");
-      const client = getDataConnectClient();
-      const { data } = await listEvents(client, { fetchPolicy: "network-only" });
+      const { data } = await listEvents(getDataConnectClient(), { fetchPolicy: "network-only" });
       setEvents([...data?.eventLists || []]);
     } catch (err) {
-      console.error("Failed to refresh events", err);
       setEventsError(err?.message || "Failed to load events.");
     } finally {
       setLoadingEvents(false);
     }
   }, []);
 
-  const addNotification = (notification) => {
-    const newNotification = {
-      id: Date.now(),
-      seen: false,
-      ...notification,
-      time: new Date().toLocaleString([], {
-        year: "numeric", month: "short", day: "numeric",
-        hour: "2-digit", minute: "2-digit",
-      }),
-    };
-    const stored = getStoredNotifications();
-    const updated = [newNotification, ...stored];
-    saveStoredNotifications(updated);
-    setNotifications(updated);
-    window.dispatchEvent(new CustomEvent("toast", { detail: newNotification }));
-  };
-
-  const markNotificationRead = (id) => {
-    const updated = notifications.map((n) => n.id === id ? { ...n, seen: true } : n);
-    saveStoredNotifications(updated);
-    setNotifications(updated);
-  };
-
-  const markAllNotificationsRead = () => {
-    const updated = notifications.map((n) => ({ ...n, seen: true }));
-    saveStoredNotifications(updated);
-    setNotifications(updated);
-  };
-
-  const clearNotifications = () => {
-    localStorage.removeItem("notifications");
-    setNotifications([]);
-  };
-
-  useEffect(() => {
-    if (!dbUserId || events.length === 0 || registeredEventIds.size === 0) return;
-    const reminded = new Set(JSON.parse(localStorage.getItem("remindedEvents") || "[]"));
-    const now = new Date();
-    const soon = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-
-    registeredEventIds.forEach((eventId) => {
-      const event = events.find((e) => e.id === eventId);
-      if (!event) return;
-      const start = new Date(event.starttime);
-      if (Number.isNaN(start.getTime())) return;
-
-      if (start >= now && start <= soon && !reminded.has(eventId)) {
-        addNotification({
-          type: "reminder", title: "Event Reminder",
-          message: `${event.eventname} starts within 24 hours`,
-        });
-        reminded.add(eventId);
-      }
-    });
-    localStorage.setItem("remindedEvents", JSON.stringify([...reminded]));
-  }, [events, registeredEventIds, dbUserId]);
-
-  const resolveDbUserId = async (user) => {
-    let dbUser = null;
+  // ==========================================
+  // SECURE DATA LOADING (Only runs for Logged-In Users!)
+  // ==========================================
+  const loadSecurePlatformData = useCallback(async () => {
     try {
-      const uidResult = await getUserByFirebaseUid(getDataConnectClient(), { firebaseUid: user.uid });
-      dbUser = uidResult.data?.userLists?.[0];
-    } catch { }
+      const [usersRes, regsRes] = await Promise.all([
+        listSafeUsers(getDataConnectClient()),
+        listAllRegistrations(getDataConnectClient())
+      ]);
 
-    if (!dbUser && user.email) {
-      try {
-        const emailResult = await findUserByEmail(getDataConnectClient(), { email: user.email.toLowerCase() });
-        dbUser = emailResult.data?.userLists?.[0];
-      } catch { }
-    }
-    return dbUser?.id || null;
-  };
+      const users = usersRes.data?.userLists || [];
+      const regs = regsRes.data?.registrations || [];
 
-  const loadRegistrations = async (userId) => {
-    if (!userId) return;
-    try {
-      // 1. Fetch all registrations for Social Proof
-      const { data } = await listRegistrations(getDataConnectClient());
-      const regs = data?.registrations || [];
+      setAllUsers(users);
       setAllRegistrations(regs);
 
-      const userRegisteredEventIds = new Set(
-        regs.filter(reg => reg.userId === userId).map(reg => reg.eventId)
-      );
-      setRegisteredEventIds(userRegisteredEventIds);
-
-      // 2. Fetch all users to map names to Avatars
-      const { data: userData } = await listUsers(getDataConnectClient());
-      setAllUsers(userData?.userLists || []);
-      
+      // Return the data directly so the auth loop can use it immediately!
+      return { users, regs };
     } catch (err) {
-      console.error("Failed to load registrations or users", err);
+      console.error("Failed to load secure platform data", err);
+      return { users: [], regs: [] };
     }
-  };
+  }, []);
 
-  const updateEventLocal = (updatedEvent) => {
-    setEvents((prev) => prev.map((e) => e.id === updatedEvent.id ? { ...e, ...updatedEvent } : e));
-  };
+  // Initial load for EVERYONE (Just the public events!)
+  useEffect(() => {
+    refreshEvents();
+  }, [refreshEvents]);
 
-  const addEventLocal = (newEvent) => {
-    setEvents((prev) => [...prev, newEvent]);
-  };
-  
+  // Handle Authentication State
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      // IF GUEST OR LOGGED OUT: Wipe all private data to prevent leaks!
       if (!user || user.isAnonymous) {
         setDbUserId(null);
         setRegisteredEventIds(new Set());
+        setAllUsers([]);
+        setAllRegistrations([]);
         return;
       }
-      const id = await resolveDbUserId(user);
-      if (!id) return;
-      setDbUserId(id);
 
-      await Promise.all([
-        loadRegistrations(id),
-        refreshEvents(),
-      ]);
+      // IF LOGGED IN: Safely fetch the names and registrations, and grab the fresh data
+      const { regs } = await loadSecurePlatformData();
+
+      // Resolve DB User ID
+      let id = null;
+      try {
+        const uidResult = await getUserByFirebaseUid(getDataConnectClient(), { firebaseUid: user.uid });
+        id = uidResult.data?.userLists?.[0]?.id;
+      } catch { }
+      if (!id && user.email) {
+        try {
+          const emailResult = await findUserByEmail(getDataConnectClient(), { email: user.email.toLowerCase() });
+          id = emailResult.data?.userLists?.[0]?.id;
+        } catch { }
+      }
+
+      if (id) {
+        setDbUserId(id);
+        // Map over the fresh 'regs' variable we just fetched, NOT the React state!
+        setRegisteredEventIds(prev => {
+          const myRegs = regs.filter(reg => reg.userId === id).map(reg => reg.eventId);
+          return new Set([...prev, ...myRegs]);
+        });
+      }
     });
+
+    // THE FIX: We removed `allRegistrations` from this array so it never loops!
     return () => unsubscribe();
-  }, []);
+  }, [loadSecurePlatformData]);
+
+  const addNotification = (notification) => {
+    const newNotification = { id: Date.now(), seen: false, ...notification, time: new Date().toLocaleString() };
+    const updated = [newNotification, ...getStoredNotifications()];
+    saveStoredNotifications(updated);
+    setNotifications(updated);
+  };
 
   const registerForEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
     await createRegistration(getDataConnectClient(), { eventId, userId: dbUserId, notif: true });
     setRegisteredEventIds((prev) => new Set(prev).add(eventId));
-    
-    // Optimistically update global social proof immediately!
-    setAllRegistrations(prev => [...prev, { eventId, userId: dbUserId }]);
-
-    const event = events.find((e) => e.id === eventId);
-    if (event && currentUser?.email) {
-      try { await createGoogleCalendarEvent(event, currentUser); } catch (err) { console.warn(err); }
-    }
-    addNotification({ type: "success", title: "Registered", message: `You registered for ${event?.eventname || "an event"}` });
+    setAllRegistrations(prev => [...prev, { eventId, userId: dbUserId }]); // Optimistic update
+    addNotification({ type: "success", title: "Registered", message: "You registered for an event!" });
   };
 
   const unregisterFromEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
     await deleteRegistration(getDataConnectClient(), { eventId, userId: dbUserId });
-    setRegisteredEventIds((prev) => {
-      const next = new Set(prev);
-      next.delete(eventId);
-      return next;
-    });
-
-    // Optimistically update global social proof
+    setRegisteredEventIds((prev) => { const next = new Set(prev); next.delete(eventId); return next; });
     setAllRegistrations(prev => prev.filter(reg => !(reg.eventId === eventId && reg.userId === dbUserId)));
+    addNotification({ type: "info", title: "Unregistered", message: "You left an event." });
+  };
 
-    const event = events.find((e) => e.id === eventId);
-    if (event && currentUser?.email) {
-      try {
-        await deleteGoogleCalendarEvent(event, currentUser, { prompt: "none" });
-      } catch (err) {
-        if (err.message?.includes("interaction_required")) {
-          await requestGoogleCalendarAccess();
-          await deleteGoogleCalendarEvent(event, currentUser).catch(e => console.error(e));
-        }
-      }
+  // === SECURE DELETE EVENT LOGIC ===
+  const handleDeleteEvent = async (eventId, eventcoord) => {
+    try {
+      await deleteSecureEvent(getDataConnectClient(), { id: eventId, eventcoord: eventcoord });
+      setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      addNotification({ type: "success", title: "Deleted", message: "Event successfully deleted." });
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+      addNotification({ type: "error", title: "Error", message: "Could not delete event." });
     }
-    addNotification({ type: "info", title: "Unregistered", message: `You left ${event?.eventname || "an event"}` });
+  };
+
+  // ==========================================
+  // NOTIFICATION FUNCTIONS
+  // ==========================================
+  const markNotificationRead = (id) => {
+    const updated = notifications.map(n => n.id === id ? { ...n, seen: true } : n);
+    saveStoredNotifications(updated);
+    setNotifications(updated);
+  };
+
+  const markAllNotificationsRead = () => {
+    const updated = notifications.map(n => ({ ...n, seen: true }));
+    saveStoredNotifications(updated);
+    setNotifications(updated);
+  };
+
+  const clearNotifications = () => {
+    saveStoredNotifications([]);
+    setNotifications([]);
+  };
+
+  // ==========================================
+  // LOCAL EVENT OPTIMISTIC UPDATE (FOR THE MAP)
+  // ==========================================
+  const addEventLocal = (newEvent) => {
+    setEvents((prev) => [...prev, newEvent]);
   };
 
   return (
-    <EventContext.Provider
-      value={{
-        registeredEventIds, setRegisteredEventIds,
-        allRegistrations, allUsers, // <-- EXPOSED TO APP
-        notifications, addNotification,
-        registerForEvent, unregisterFromEvent,
-        markNotificationRead, markAllNotificationsRead, clearNotifications,
-        dbUserId, events, setEvents,
-        loadingEvents, eventsError, refreshEvents, updateEventLocal, addEventLocal,
-      }}
-    >
+    <EventContext.Provider value={{
+      registeredEventIds, allRegistrations, allUsers, notifications, addNotification,
+      registerForEvent, unregisterFromEvent, dbUserId, events, setEvents,
+      loadingEvents, eventsError, refreshEvents, handleDeleteEvent,
+      markNotificationRead, markAllNotificationsRead, clearNotifications,
+      addEventLocal
+    }}>
       {children}
     </EventContext.Provider>
   );
 }
 
-export function useEventContext() {
-  return useContext(EventContext);
-}
+export function useEventContext() { return useContext(EventContext); }

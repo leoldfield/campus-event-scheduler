@@ -1,4 +1,4 @@
-const { listEventsRef, listUsersRef, getEventByIdRef, createEventRef, getFirstNameByIdRef, getNameByIdRef, validateUserCredentialsRef, listRegistrationsRef, getRegistrationRef, createRegistrationRef, deleteRegistrationRef, createUserRef, findUserByEmailRef, getUserByFirebaseUidRef, updateUserProfileRef, updateEventRef, connectorConfig } = require('../index.cjs.js');
+const { listEventsRef, listUsersRef, getEventByIdRef, createEventRef, getFirstNameByIdRef, getNameByIdRef, validateUserCredentialsRef, listRegistrationsRef, getRegistrationRef, createRegistrationRef, deleteRegistrationRef, createUserRef, findUserByEmailRef, getUserByFirebaseUidRef, updateUserProfileRef, updateEventRef, listSafeUsersRef, listAllRegistrationsRef, deleteSecureEventRef, connectorConfig } = require('../index.cjs.js');
 const { validateArgs, CallerSdkTypeEnum } = require('firebase/data-connect');
 const { useDataConnectQuery, useDataConnectMutation, validateReactArgs } = require('@tanstack-query-firebase/react/data-connect');
 
@@ -106,6 +106,26 @@ exports.useUpdateEvent = function useUpdateEvent(dcOrOptions, options) {
   const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
   function refFactory(vars) {
     return updateEventRef(dcInstance, vars);
+  }
+  return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+
+exports.useListSafeUsers = function useListSafeUsers(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts } = validateReactArgs(connectorConfig, dcOrOptions, options);
+  const ref = listSafeUsersRef(dcInstance);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+
+exports.useListAllRegistrations = function useListAllRegistrations(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts } = validateReactArgs(connectorConfig, dcOrOptions, options);
+  const ref = listAllRegistrationsRef(dcInstance);
+  return useDataConnectQuery(ref, inputOpts, CallerSdkTypeEnum.GeneratedReact);
+}
+exports.useDeleteSecureEvent = function useDeleteSecureEvent(dcOrOptions, options) {
+  const { dc: dcInstance, vars: inputOpts } = validateArgs(connectorConfig, dcOrOptions, options);
+  function refFactory(vars) {
+    return deleteSecureEventRef(dcInstance, vars);
   }
   return useDataConnectMutation(refFactory, inputOpts, CallerSdkTypeEnum.GeneratedReact);
 }

@@ -189,8 +189,8 @@ export default function Events() {
   // =========================
   // EDIT
   // =========================
-  const handleEdit = (event) => {
-    navigate("/create", { state: { event } });
+  const handleEdit = (eventToEdit) => {
+    navigate("/create", { state: { event: eventToEdit } });
   };
 
   // =========================
@@ -421,12 +421,14 @@ export default function Events() {
                     <EventCard
                       key={event.id}
                       event={event}
-                      currentUser={currentUser} /* Make sure you pass the user! */
+                      currentUser={currentUser}
                       onRegister={handleRegister}
                       onShare={handleShare}
                       onOpen={(evt) => setSelectedEventId(evt.id)}
                       loading={registerLoadingId === event.id}
                       isRegistered={registeredEventIds.has(event.id)}
+                      showEdit={String(event.eventcoord).toLowerCase() === String(dbUserId).toLowerCase()}
+                      onEdit={handleEdit}
                     />
                   ))}
                 </div>
