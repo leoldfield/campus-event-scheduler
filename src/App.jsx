@@ -16,7 +16,6 @@ import Notification from "./pages/Notification.jsx";
 import Map from "./pages/Map.jsx";
 
 import notiBell from "./assets/notificationBell.png";
-import profilePicture from "./assets/johndoe.png";
 import logo from "./assets/ualr-logo.png";
 import "../src/css/App.css";
 import "./assets/edit-pencil.png";
@@ -48,6 +47,19 @@ export default function App() {
   const location = useLocation();
   const profileRef = useRef(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { dbUserId, allUsers } = useEventContext();
+
+ // Generate dynamic avatar for the Navbar
+  let navAvatarUrl = "https://ui-avatars.com/api/?name=U&background=ca1e4c&color=fff&bold=true";
+  
+  if (dbUserId && allUsers?.length > 0) {
+    const currentUserData = allUsers.find(u => u.id === dbUserId);
+    if (currentUserData) {
+      const initials = `${currentUserData.firstname?.[0] || ""}${currentUserData.lastname?.[0] || ""}`.toUpperCase() || "U";
+      navAvatarUrl = `https://ui-avatars.com/api/?name=${initials}&background=ca1e4c&color=fff&bold=true`;
+    }
+  }
 
   /* ================================
      AUTH LISTENER
@@ -135,7 +147,7 @@ export default function App() {
                 style={{ position: "relative" }}
               >
                 <img
-                  src={profilePicture}
+                  src={navAvatarUrl}
                   className="profilepic-mobile"
                   alt="Profile"
                   onClick={(e) => {
