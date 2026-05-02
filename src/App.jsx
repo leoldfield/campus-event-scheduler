@@ -22,6 +22,7 @@ import "./assets/edit-pencil.png";
 import NotificationToast from "./pages/Components/NotificationToast.jsx";
 import Footer from "./pages/Components/Footer.jsx";
 import Welcome from "./pages/Welcome.jsx";
+import EventsCalendar from './pages/Components/EventsCalendar.jsx';
 
 /* ================================
    FIXED PAGE WRAPPER (OUTSIDE APP)
@@ -117,8 +118,9 @@ export default function App() {
             <>
               <Link to="/" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Events</Link>
               <Link to="/MyEvents" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>My Events</Link>
+              <Link to="/create" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Create an Event</Link>
               <Link to="/map" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Map</Link>
-              <Link to="/create" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Create Event</Link>
+              <Link to="/calendar" className="nav-link">Calendar</Link>
             </>
           ) : (
             <>
@@ -215,6 +217,7 @@ export default function App() {
             <Route path="/Notification" element={<PageWrapper><Notification /></PageWrapper>} />
             <Route path="/UserProfile" element={<PageWrapper><UserProfile /></PageWrapper>} />
             <Route path="/welcome" element={<PageWrapper><Welcome /></PageWrapper>} />
+            <Route path="/calendar" element={<EventsCalendar />} />
           </Routes>
         </AnimatePresence>
       </div>

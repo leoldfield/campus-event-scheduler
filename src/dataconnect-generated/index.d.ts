@@ -62,6 +62,15 @@ export interface DeleteRegistrationVariables {
   userId: UUIDString;
 }
 
+export interface DeleteSecureEventData {
+  eventList_deleteMany: number;
+}
+
+export interface DeleteSecureEventVariables {
+  id: UUIDString;
+  eventcoord: UUIDString;
+}
+
 export interface EventList_Key {
   id: UUIDString;
   __typename?: 'EventList_Key';
@@ -151,6 +160,13 @@ export interface GetUserByFirebaseUidVariables {
   firebaseUid: string;
 }
 
+export interface ListAllRegistrationsData {
+  registrations: ({
+    eventId: UUIDString;
+    userId: UUIDString;
+  } & Registration_Key)[];
+}
+
 export interface ListEventsData {
   eventLists: ({
     id: UUIDString;
@@ -174,6 +190,14 @@ export interface ListRegistrationsData {
     userId: UUIDString;
     notif?: boolean | null;
   } & Registration_Key)[];
+}
+
+export interface ListSafeUsersData {
+  userLists: ({
+    id: UUIDString;
+    firstname: string;
+    lastname: string;
+  } & UserList_Key)[];
 }
 
 export interface ListUsersData {
@@ -433,4 +457,40 @@ export const updateEventRef: UpdateEventRef;
 
 export function updateEvent(vars: UpdateEventVariables): MutationPromise<UpdateEventData, UpdateEventVariables>;
 export function updateEvent(dc: DataConnect, vars: UpdateEventVariables): MutationPromise<UpdateEventData, UpdateEventVariables>;
+
+interface ListSafeUsersRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListSafeUsersData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListSafeUsersData, undefined>;
+  operationName: string;
+}
+export const listSafeUsersRef: ListSafeUsersRef;
+
+export function listSafeUsers(options?: ExecuteQueryOptions): QueryPromise<ListSafeUsersData, undefined>;
+export function listSafeUsers(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListSafeUsersData, undefined>;
+
+interface ListAllRegistrationsRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListAllRegistrationsData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListAllRegistrationsData, undefined>;
+  operationName: string;
+}
+export const listAllRegistrationsRef: ListAllRegistrationsRef;
+
+export function listAllRegistrations(options?: ExecuteQueryOptions): QueryPromise<ListAllRegistrationsData, undefined>;
+export function listAllRegistrations(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListAllRegistrationsData, undefined>;
+
+interface DeleteSecureEventRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (vars: DeleteSecureEventVariables): MutationRef<DeleteSecureEventData, DeleteSecureEventVariables>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect, vars: DeleteSecureEventVariables): MutationRef<DeleteSecureEventData, DeleteSecureEventVariables>;
+  operationName: string;
+}
+export const deleteSecureEventRef: DeleteSecureEventRef;
+
+export function deleteSecureEvent(vars: DeleteSecureEventVariables): MutationPromise<DeleteSecureEventData, DeleteSecureEventVariables>;
+export function deleteSecureEvent(dc: DataConnect, vars: DeleteSecureEventVariables): MutationPromise<DeleteSecureEventData, DeleteSecureEventVariables>;
 

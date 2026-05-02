@@ -1,0 +1,325 @@
+/* ==========================================
+   CALENDAR PAGE LAYOUT
+   ========================================== */
+
+.calendar-page-container {
+  width: 100%;
+  max-width: 1550px; /* Controls the total width to keep it perfectly centered */
+  margin: 0 auto;    /* Guarantees identical left/right margins */
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  height: calc(100vh - 80px); /* Adjust 80px based on your NavBar height */
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 60px;
+}
+
+.calendar-page-header {
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+
+.calendar-content-row {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* --- Left Sidebar --- */
+.calendar-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.btn-create-event {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: white;
+  color: #111827;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.btn-create-event:hover {
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  background-color: #f8fafc;
+}
+
+.btn-create-event .plus-icon {
+  font-size: 1.8rem;
+  color: #e02926;
+  line-height: 1;
+}
+
+.mini-calendar-wrapper {
+  background-color: white;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+  flex: 1; /* THIS forces the white box to stretch to the exact bottom of the big calendar */
+  overflow: hidden;
+}
+
+/* --- Right Main Calendar --- */
+.calendar-main-wrapper {
+  background-color: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Prevents flexbox blowouts */
+}
+
+/* ==========================================
+   PREMIUM FULLCALENDAR OVERRIDES
+   ========================================== */
+
+/* Global Calendar Variables */
+.fc {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --fc-border-color: #f1f5f9;
+  --fc-today-bg-color: #f8fafc;
+  --fc-button-bg-color: #ffffff;
+  --fc-button-border-color: #e2e8f0;
+  --fc-button-text-color: #475569;
+  --fc-button-hover-bg-color: #f8fafc;
+  --fc-button-hover-border-color: #cbd5e1;
+  --fc-button-active-bg-color: #f1f5f9;
+  --fc-button-active-border-color: #cbd5e1;
+}
+
+/* Header and Title */
+.fc .fc-toolbar-title {
+  font-size: 1.5rem !important;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+}
+
+/* Toolbar Spacing */
+.fc .fc-toolbar.fc-header-toolbar {
+  margin-bottom: 1.5em !important;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.fc .fc-toolbar-chunk {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+  margin-left: 0 !important; 
+}
+
+/* Modernize the Buttons */
+.fc .fc-button-primary {
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: capitalize;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+  padding: 0.5rem 1rem;
+}
+
+.fc .fc-button-primary:focus {
+  box-shadow: 0 0 0 2px rgba(224, 41, 38, 0.2) !important; 
+}
+
+.fc .fc-button-active {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  font-weight: 600;
+}
+
+.fc .fc-prev-button, .fc .fc-next-button {
+  border-radius: 50% !important;
+  padding: 0.5rem !important;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Day Headers (Mon, Tue, Wed) */
+.fc-col-header-cell-cushion {
+  padding: 12px 0 !important;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Date Numbers */
+.fc-daygrid-day-number {
+  color: #334155;
+  font-weight: 500;
+  padding: 8px !important;
+}
+
+/* Event Pills */
+.fc-event {
+  border-radius: 6px !important;
+  border: none !important;
+  padding: 3px 6px;
+  margin: 1px 4px !important;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.fc-event:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  opacity: 0.95;
+}
+
+.fc-event-time {
+  font-weight: 500;
+  opacity: 0.8;
+  margin-right: 4px;
+}
+
+/* ==========================================
+   MINI CALENDAR SIDEBAR STYLES
+   ========================================== */
+
+.mini-calendar-wrapper .fc-toolbar-title {
+  font-size: 1.1rem !important;
+}
+
+.mini-calendar-wrapper .fc-button {
+  background: transparent !important;
+  border: none !important;
+  color: #475569 !important;
+  box-shadow: none !important;
+  padding: 0.2rem !important;
+}
+
+.mini-calendar-wrapper .fc-button:hover {
+  background: #f1f5f9 !important;
+}
+
+.mini-calendar-wrapper .fc-daygrid-day-number {
+  font-size: 0.8rem;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: auto;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.mini-calendar-wrapper .fc-daygrid-day:hover .fc-daygrid-day-number {
+  background-color: #f1f5f9;
+}
+
+.mini-calendar-wrapper .fc-day-today .fc-daygrid-day-number {
+  background-color: #111827;
+  color: white;
+}
+
+/* ==========================================
+   MOBILE RESPONSIVENESS
+   ========================================== */
+
+@media (max-width: 1024px) {
+  /* 1. Let the page scroll naturally instead of locking it to screen height */
+  .calendar-page-container {
+    height: auto; 
+    min-height: calc(100vh - 80px);
+    padding: 1rem;
+  }
+
+  /* 2. Switch from a 2-column grid to a vertical stack */
+  .calendar-content-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 3. Hide the mini-calendar on smaller screens to save space */
+  .mini-calendar-wrapper {
+    display: none;
+  }
+
+  /* 4. Give the main calendar enough vertical room to breathe */
+  .calendar-main-wrapper {
+    height: 700px; 
+    padding: 12px;
+  }
+
+  /* 5. Stack the calendar controls (Prev/Next, Title, Month/Week view) */
+  .fc .fc-toolbar.fc-header-toolbar {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* 6. Center the buttons inside the stacked toolbar */
+  .fc .fc-toolbar-chunk {
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  
+  /* Make the title slightly smaller on mobile */
+  .fc .fc-toolbar-title {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* ==========================================
+   POPOVER STYLES (+ MORE EVENTS)
+   ========================================== */
+.fc-theme-standard .fc-popover {
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  z-index: 100; /* Ensures it floats above everything */
+}
+
+.fc-theme-standard .fc-popover-header {
+  background-color: #f8fafc;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 8px 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* The "+ more" link text */
+.fc-daygrid-more-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0284c7 !important; /* Matches your nice blue */
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.fc-daygrid-more-link:hover {
+  background-color: #e0f2fe;
+  text-decoration: none !important;
+}

@@ -196,7 +196,7 @@ export default function MyEvents() {
                       onRegister={handleUnregister}
                       onShare={handleShare}
                       onOpen={(event) => setSelectedEventId(event.id)}
-                      showEdit={event.eventcoord === dbUserId}
+                      showEdit={String(event.eventcoord).toLowerCase() === String(dbUserId).toLowerCase()}
                       onEdit={handleEdit}
                     />
                   ))}

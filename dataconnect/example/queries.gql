@@ -1,6 +1,6 @@
 # List all events
 query ListEvents @auth(level: PUBLIC) {
-  eventLists(orderBy: { starttime: ASC }, limit: 15) {
+  eventLists(orderBy: { starttime: ASC }, limit: 50) {
     id
     eventcoord
     eventname
@@ -221,4 +221,26 @@ mutation UpdateEvent(
       category: $category
     }
   )
+}
+
+query ListSafeUsers @auth(level: USER, insecureReason: "Students need to see each other's first and last names for social proof avatars.") {
+  userLists {
+    id
+    firstname
+    lastname
+  }
+}
+
+query ListAllRegistrations @auth(level: USER, insecureReason: "Students need to see who is registered for events to generate the UI attendee list.") {
+  registrations {
+    eventId
+    userId
+  }
+}
+
+mutation DeleteSecureEvent($id: UUID!, $eventcoord: UUID!) @auth(level: USER) {
+  eventList_deleteMany(where: {
+    id: { eq: $id },
+    eventcoord: { eq: $eventcoord } 
+  })
 }

@@ -25,7 +25,7 @@ export default function EventModal({
   const navigate = useNavigate();
 
   // 1. HOOKS MUST GO HERE AT THE VERY TOP!
-  const { allRegistrations, allUsers } = useEventContext();
+  const { allRegistrations, allUsers, dbUserId, handleDeleteEvent } = useEventContext();
 
   // 2. EARLY RETURNS MUST GO AFTER ALL HOOKS
   if (!event) return null;
@@ -61,7 +61,7 @@ export default function EventModal({
   };
 
   // ==========================================
-  // REAL SOCIAL PROOF MATH
+  // REAL SOCIAL PROOF MATH (WITH GUEST FALLBACK)
   // ==========================================
   const safeRegs = allRegistrations || [];
   const safeUsers = allUsers || [];
@@ -70,16 +70,39 @@ export default function EventModal({
   let attendeeCount = eventAttendees.length;
   let displayAvatars = [];
 
-  if (attendeeCount > 0) {
-    displayAvatars = eventAttendees.slice(0, 3).map((reg) => {
-      const user = safeUsers.find((u) => u.id === reg.userId);
-      if (user) {
-        const initials = `${user.firstname?.[0] || ""}${user.lastname?.[0] || ""}`.toUpperCase();
-        return `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&bold=true`;
-      }
-      return `https://ui-avatars.com/api/?name=U&background=random&color=fff&bold=true`;
-    });
+  const currentUser = auth.currentUser;
+  const isGuest = !currentUser || currentUser.isAnonymous;
+
+  const idStr = String(event.id); // Safely parse UUID object
+
+  if (!isGuest) {
+    if (attendeeCount > 0) {
+      displayAvatars = eventAttendees.slice(0, 3).map((reg) => {
+        const user = safeUsers.find((u) => u.id === reg.userId);
+        if (user) {
+          const initials = `${user.firstname?.[0] || ""}${user.lastname?.[0] || ""}`.toUpperCase();
+          return `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&bold=true`;
+        }
+        return `https://ui-avatars.com/api/?name=U&background=random&color=fff&bold=true`;
+      });
+    }
+  } else {
+    // GUEST FOMO DATA
+    attendeeCount = (idStr.charCodeAt(0) % 34) + 12;
+    displayAvatars = [
+      `https://ui-avatars.com/api/?name=${String.fromCharCode(65 + (idStr.charCodeAt(0) % 26))}&background=random&color=fff&bold=true`,
+      `https://ui-avatars.com/api/?name=${String.fromCharCode(65 + (idStr.charCodeAt(1) % 26))}&background=random&color=fff&bold=true`,
+      `https://ui-avatars.com/api/?name=${String.fromCharCode(65 + (idStr.charCodeAt(2) % 26))}&background=random&color=fff&bold=true`
+    ];
   }
+
+  // === DELETE HANDLER ===
+  const onDeleteClick = async () => {
+    if (window.confirm("Are you sure you want to delete this event? This cannot be undone.")) {
+      await handleDeleteEvent(event.id, event.eventcoord); // Pass the coord here!
+      onClose();
+    }
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -87,7 +110,7 @@ export default function EventModal({
         <button className="modal-close" onClick={onClose}>✕</button>
 
         <div className="modal-banner">
-          <img src={event.imageurl || testimage} alt={event.eventname} />
+          <img src={event.imageUrl || testimage} alt={event.eventname || "Event Banner"} className="event-card-img" />
         </div>
 
         <div className="modal-body">
@@ -125,23 +148,25 @@ export default function EventModal({
             </div>
 
             {/* --- FIXED SOCIAL PROOF SECTION --- */}
-            {attendeeCount > 0 ? (
+            {attendeeCount > 0 || isGuest ? (
               <div className="social-proof-container">
                 <div className="social-proof-avatars">
-                  {/* Changed mockAvatars to displayAvatars! */}
                   {displayAvatars.map((url, idx) => (
                     <img key={idx} src={url} alt="Attendee" className="social-avatar" />
                   ))}
                 </div>
                 <p className="social-proof-text">
-                  {/* Changed mockAttendeeCount to attendeeCount! */}
-                  <span className="social-highlight">{attendeeCount} students</span> are going
+                  {isGuest ? (
+                    <span className="social-highlight">Log in to see who's going</span>
+                  ) : (
+                    <><span className="social-highlight">{attendeeCount} students</span> are going</>
+                  )}
                 </p>
               </div>
             ) : (
               <div className="social-proof-container">
                 <p className="social-proof-text" style={{ color: '#10b981', fontWeight: '600' }}>
-                  Be the first to register for this event!
+                   Be the first to register for this event!
                 </p>
               </div>
             )}
@@ -173,6 +198,14 @@ export default function EventModal({
               <button className="share-button" onClick={(e) => { e.stopPropagation(); if (onShare) onShare(event); }}>
                 Share Event
               </button>
+              {String(dbUserId).toLowerCase() === String(event.eventcoord).toLowerCase() && (
+                <button
+                  className="register-button delete-button"
+                  style={{ color: "crimson", borderColor: "crimson", marginLeft: "auto", background: "none" }}
+                  onClick={onDeleteClick}
+                > Delete
+                </button>
+              )}
             </div>
           </div>
 

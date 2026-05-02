@@ -240,3 +240,47 @@ exports.updateEvent = function updateEvent(dcOrVars, vars) {
   return executeMutation(updateEventRef(dcInstance, inputVars));
 }
 ;
+
+const listSafeUsersRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListSafeUsers');
+}
+listSafeUsersRef.operationName = 'ListSafeUsers';
+exports.listSafeUsersRef = listSafeUsersRef;
+
+exports.listSafeUsers = function listSafeUsers(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listSafeUsersRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+;
+
+const listAllRegistrationsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAllRegistrations');
+}
+listAllRegistrationsRef.operationName = 'ListAllRegistrations';
+exports.listAllRegistrationsRef = listAllRegistrationsRef;
+
+exports.listAllRegistrations = function listAllRegistrations(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listAllRegistrationsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+;
+
+const deleteSecureEventRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteSecureEvent', inputVars);
+}
+deleteSecureEventRef.operationName = 'DeleteSecureEvent';
+exports.deleteSecureEventRef = deleteSecureEventRef;
+
+exports.deleteSecureEvent = function deleteSecureEvent(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteSecureEventRef(dcInstance, inputVars));
+}
+;

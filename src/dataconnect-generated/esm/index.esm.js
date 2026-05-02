@@ -207,3 +207,41 @@ export function updateEvent(dcOrVars, vars) {
   return executeMutation(updateEventRef(dcInstance, inputVars));
 }
 
+export const listSafeUsersRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListSafeUsers');
+}
+listSafeUsersRef.operationName = 'ListSafeUsers';
+
+export function listSafeUsers(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listSafeUsersRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+
+export const listAllRegistrationsRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListAllRegistrations');
+}
+listAllRegistrationsRef.operationName = 'ListAllRegistrations';
+
+export function listAllRegistrations(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listAllRegistrationsRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+
+export const deleteSecureEventRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return mutationRef(dcInstance, 'DeleteSecureEvent', inputVars);
+}
+deleteSecureEventRef.operationName = 'DeleteSecureEvent';
+
+export function deleteSecureEvent(dcOrVars, vars) {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(deleteSecureEventRef(dcInstance, inputVars));
+}
+

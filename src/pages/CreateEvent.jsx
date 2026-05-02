@@ -16,6 +16,7 @@ export default function CreateEvent() {
   const eventContext = useEventContext();
   const refreshEvents = eventContext?.refreshEvents;
   const addEventLocal = eventContext?.addEventLocal;
+  const dbUserId = eventContext?.dbUserId;
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(editingEvent?.imageUrl || "");
@@ -46,11 +47,6 @@ export default function CreateEvent() {
     });
   };
 
-  // A simple geocoder that returns { lat, lng } or null
-  // A smarter geocoder that returns { lat, lng } or null
-  // =========================
-  // LOCAL GEOJSON GEOCODER
-  // =========================
   // =========================
   // GOOGLE GEOCODER
   // =========================
@@ -60,13 +56,13 @@ export default function CreateEvent() {
     // Pull the API key from your environment variables
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
+    // ✅ FIX: If the API key is missing, return the campus fallback instead of null!
     if (!apiKey) {
-      console.error("Google Maps API key is missing from .env file!");
-      return null;
+      console.warn("Google Maps API key is missing from .env file! Defaulting to campus center.");
+      return { lat: 34.722, lng: -92.339 };
     }
 
-    // We append the city/state to give Google a hint, 
-    // but Google is incredibly smart at fuzzy matching.
+    // We append the city/state to give Google a hint
     const query = `${locationString}, Little Rock, AR`;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}&key=${apiKey}`;
 
@@ -210,7 +206,7 @@ export default function CreateEvent() {
         // ✅ CREATE PAYLOAD (Includes eventcoord)
         const createPayload = {
           id: crypto.randomUUID(),
-          eventcoord: crypto.randomUUID(), // Only needed for new events
+          eventcoord: dbUserId, // Only needed for new events
           eventname: eventName.trim(),
           location: location.trim(),
           eventdesc: eventDescription.trim(),
@@ -394,7 +390,6 @@ export default function CreateEvent() {
               {/* RIGHT SIDE: Live Card Preview */}
               <div className="review-preview">
                 <h2>Card Preview</h2>
-                {/* We pass showRegister={false} so the button doesn't confuse the user */}
                 <EventCard event={previewEvent} showRegister={true} />
               </div>
 
