@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import { useEventContext } from "./EventContext.jsx";
 import EventCard from "./Components/EventCard";
 import EventModal from "./Components/EventModal";
@@ -9,20 +8,25 @@ import "../css/Events.css";
 import "../css/EventModal.css";
 
 import pencil from "../assets/edit-pencil.png";
-
 import peopleBanner1 from "../assets/PeopleBanner1.png";
 import peopleBanner2 from "../assets/PeopleBanner2.png";
+import academicbg from "../assets/category-bg/academic-bg.jpg";
+import socialbg from "../assets/category-bg/social-bg.jpg";
+import sportsbg from "../assets/category-bg/sports-bg.jpg";
+import artbg from "../assets/category-bg/arts-bg.jpg";
+import technologybg from "../assets/category-bg/technology-bg.jpg";
+import careerbg from "../assets/category-bg/career-bg.jpg";
 
 // =========================
-// CATEGORY DATA FOR CARDS
+// NEW IMAGE CATEGORY DATA
 // =========================
-const CATEGORIES = [
-  { id: 1, name: "Academic", icon: "📚", },
-  { id: 2, name: "Social", icon: "🎉", },
-  { id: 3, name: "Sports", icon: "🏆", },
-  { id: 4, name: "Arts", icon: "🎨", },
-  { id: 5, name: "Technology", icon: "💻", },
-  { id: 6, name: "Career", icon: "💼", }
+const categoryList = [
+  { name: "Academic", image: "academic-bg.jpg" },
+  { name: "Social", image: "social-bg.jpg" },
+  { name: "Sports", image: "sports-bg.jpg" },
+  { name: "Arts", image: "arts-bg.jpg" },
+  { name: "Technology", image: "technology-bg.jpg" },
+  { name: "Career", image: "career-bg.jpg" },
 ];
 
 import {
@@ -47,7 +51,7 @@ export default function Events() {
   } = useEventContext();
 
   // =========================
-  // UI STATE
+  // UI STATE (Restored!)
   // =========================
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
@@ -66,8 +70,9 @@ export default function Events() {
   const [nameError, setNameError] = useState("");
 
   const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
-  const [visibleCount, setVisibleCount] = useState(8); // Shows 2 rows of 4 initially
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const [visibleCount, setVisibleCount] = useState(8);
+  const [isFilterOpen, setIsFilterOpen] = useState(false); // Your fancy sidebar state!
 
   // =========================
   // EVENTS
@@ -75,25 +80,6 @@ export default function Events() {
   useEffect(() => {
     refreshEvents();
   }, [refreshEvents]);
-
-  // Add this inside Events.jsx to catch shared links
-  useEffect(() => {
-    // Look at the URL for "?eventId=..."
-    const searchParams = new URLSearchParams(window.location.search);
-    const sharedEventId = searchParams.get("eventId");
-
-    // If there is an ID in the URL, and our events have finished loading...
-    if (sharedEventId && events.length > 0) {
-      // Make sure the event actually exists in our database
-      const eventToOpen = events.find(e => e.id === sharedEventId);
-      if (eventToOpen) {
-        setSelectedEventId(sharedEventId);
-
-        // Optional: Clean up the URL so it doesn't stay there if they close the modal
-        window.history.replaceState(null, '', '/');
-      }
-    }
-  }, [events]); // Re-run this check once the 'events' array is populated from Firebase
 
   const selectedEvent = useMemo(() => {
     return events.find((e) => e.id === selectedEventId) || null;
@@ -151,12 +137,9 @@ export default function Events() {
   // =========================
   const handleRegister = async (eventId) => {
     if (!isSignedInUser) return;
-
     try {
       await registerForEvent(eventId, currentUser);
-
       setSelectedEventId(null);
-
     } catch (err) {
       console.error(err);
     }
@@ -166,31 +149,23 @@ export default function Events() {
   // SHARE
   // =========================
   const handleShare = async (event) => {
-    const shareUrl = `${window.location.origin}/?eventId=${event.id}`;
-
+    const url = `${window.location.origin}/event/${event.id}`;
     if (navigator.share) {
-      try {
-        await navigator.share({
-          title: event.eventname,
-          text: `Check out ${event.eventname} on Campus Events!`,
-          url: shareUrl,
-        });
-      } catch (error) {
-        console.log("Error sharing:", error);
-      }
+      await navigator.share({
+        title: event.eventname,
+        url,
+      });
     } else {
-      // Fallback for Desktop: Copy link to clipboard
-      navigator.clipboard.writeText(shareUrl);
-      alert("Event link copied to clipboard!");
-      // (If you have a toast notification system, use that instead of alert!)
+      await navigator.clipboard.writeText(url);
+      alert("Link copied!");
     }
   };
 
   // =========================
   // EDIT
   // =========================
-  const handleEdit = (eventToEdit) => {
-    navigate("/create", { state: { event: eventToEdit } });
+  const handleEdit = (event) => {
+    navigate("/create", { state: { event } });
   };
 
   // =========================
@@ -228,22 +203,18 @@ export default function Events() {
         (selectedStatus === "upcoming" && eventStart >= now) ||
         (selectedStatus === "past" && eventStart < now);
 
-      // --- ADD THIS NEW CATEGORY CHECK ---
       const matchesCategory =
         selectedCategory === "all" ||
         (event.category && event.category.toLowerCase() === selectedCategory.toLowerCase());
 
-      // --- ADD matchesCategory TO THE RETURN STATEMENT ---
       return matchesSearch && matchesLocation && matchesStatus && matchesCategory;
     });
   }, [events, searchTerm, selectedLocation, selectedStatus, selectedCategory, registeredEventIds]);
 
   const handleCategoryClick = (categoryName) => {
     const lowerCat = categoryName.toLowerCase();
-    // Toggle off if they click the same category, otherwise set it
     setSelectedCategory((prev) => (prev === lowerCat ? "all" : lowerCat));
-
-    // Smooth scroll down to the events feed so they see the results!
+    setVisibleCount(8);
     window.scrollTo({ top: 800, behavior: "smooth" });
   };
 
@@ -258,14 +229,6 @@ export default function Events() {
     setSelectedCategory("all");
   };
 
-  const handleSeeMore = () => {
-    setVisibleCount((prev) => prev + 8);
-  };
-
-  // Only slice the events we want to show
-  const displayedEvents = filteredEvents.slice(0, visibleCount);
-
-  // Add this helper outside or inside your component
   const getTimeOfDayGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
@@ -285,7 +248,6 @@ export default function Events() {
           <div className="hero-content">
             <h1>UALR Campus Events</h1>
             <p>Find upcoming University of Arkansas at Little Rock events, sync your schedule, and register easily.</p>
-            {/* Note: Ensure isSignedInUser, loadingName, and firstName are defined/imported correctly in your component */}
             {isSignedInUser && (
               <h2 className="hero-welcome">
                 {getTimeOfDayGreeting()}, {firstName}!
@@ -296,146 +258,143 @@ export default function Events() {
         </section>
         <img src={peopleBanner2} alt="Students right" className="hero-side-image" />
       </div>
-      {/* CATEGORIES SECTION */}
-      <section className="categories-section">
+
+      {/* ==========================================
+         NEW IMAGE-DRIVEN CATEGORY CARDS
+         ========================================== */}
+      <section className="category-section">
         <div className="section-header">
           <h2>Explore by Category</h2>
-          <p>Find the perfect events tailored to your interests.</p>
         </div>
 
-        <div className="categories-grid">
-          {CATEGORIES.map((cat) => (
+        <div className="category-grid">
+
+          {/* Mapped Image Cards (Exactly 6) */}
+          {categoryList.map((cat) => (
             <div
-              key={cat.id}
-              className="category-card"
+              key={cat.name}
+              className={`category-card ${selectedCategory === cat.name.toLowerCase() ? "selected" : ""}`}
               onClick={() => handleCategoryClick(cat.name)}
             >
               <div
-                className="category-icon-wrapper"
-                style={{ backgroundColor: cat.color, color: cat.text }}
+                className="card-background"
+                style={{ backgroundImage: `url(/src/assets/category-bg/${cat.image})` }}
               >
-                {cat.icon}
+                {/* Darkened overlay */}
+                <div className="card-overlay" />
               </div>
-              <h3>{cat.name}</h3>
+
+              <div className="card-content">
+                <h3>{cat.name.toUpperCase()}</h3>
+              </div>
             </div>
           ))}
+
         </div>
       </section>
 
       {/* EVENTS SECTION */}
       <section className="events-section" style={{ margin: "40px 0" }}>
-        {/* NEW MOBILE HEADER GROUP */}
-        <div className="mobile-header-group" style={{ marginBottom: "24px" }}>
+        <div style={{ marginBottom: "24px" }}>
           <h2>Upcoming Events</h2>
-
-          {/* This button will ONLY show on mobile screens */}
-          <button
-            className="filter-toggle-btn mobile-only-btn"
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-          >
-            {isFilterOpen ? "Close Filters" : "Filters"}
-          </button>
         </div>
 
-        {/* NEW WRAPPER FOR SIDEBAR AND GRID */}
+        {/* RESTORED: WRAPPER FOR SIDEBAR AND GRID */}
         <div className="events-page-layout">
 
-          {/* LEFT SIDEBAR: EXPANDABLE */}
+          {/* RESTORED: LEFT SIDEBAR FILTERS (Your fancy button!) */}
           <aside className={`filters-sidebar ${isFilterOpen ? "open" : "closed"}`}>
             {isFilterOpen ? (
-              <div className="filter-content-wrapper">
+              <div className="filters-content">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                  <h3 style={{ margin: 0, borderBottom: "none", paddingBottom: 0 }}>Filter Events</h3>
-                  <button className="close-filter-btn" onClick={() => setIsFilterOpen(false)}>✕</button>
+                  <h3 style={{ margin: 0 }}>Filters</h3>
+                  <button className="close-filter-btn" onClick={() => setIsFilterOpen(false)}>
+                    ✖
+                  </button>
                 </div>
 
-                <div className="filter-group">
-                  <label>Search</label>
-                  <input type="text" className="ua-filter-input" placeholder="Search events..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                </div>
+                <label>Search</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Study Session..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="ua-filter-input"
+                  style={{ marginBottom: "16px" }}
+                />
 
-                <div className="filter-group">
-                  <label>Location</label>
-                  <select
-                    className="ua-filter-select"
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                  >
-                    <option value="all">All locations</option>
-                    {uniqueLocations.map((loc) => (
-                      <option key={loc}>{loc}</option>
-                    ))}
-                  </select>
-                </div>
+                <label>Status</label>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="ua-filter-select"
+                  style={{ marginBottom: "16px" }}
+                >
+                  <option value="all">All Events</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="past">Past</option>
+                </select>
 
-                <div className="filter-group">
-                  <label>Time</label>
-                  <select
-                    className="ua-filter-select"
-                    value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                  >
-                    <option value="all">All events</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="past">Past</option>
-                  </select>
-                </div>
+                <label>Location</label>
+                <select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  className="ua-filter-select"
+                  style={{ marginBottom: "16px" }}
+                >
+                  <option value="all">Any Location</option>
+                  {uniqueLocations.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
+                    </option>
+                  ))}
+                </select>
 
                 <button className="ua-filter-clear" onClick={clearFilters}>
-                  Clear Filters
+                  Clear All Filters
                 </button>
               </div>
             ) : (
-              < button className="open-filter-tab desktop-only-btn" onClick={() => setIsFilterOpen(true)}>
+              <button className="open-filter-tab" onClick={() => setIsFilterOpen(true)}>
                 <span className="vertical-text">FILTERS</span>
               </button>
             )}
           </aside>
 
-          {/* RIGHT MAIN CONTENT: EVENTS GRID & SEE MORE */}
-          <div className="events-main-content">
-
-
-
+          {/* MAIN EVENT GRID */}
+          <div className="events-main-list" style={{ flex: 1, minWidth: 0 }}>
             {filteredEvents.length === 0 ? (
-
-              /* === ZERO RESULTS EMPTY STATE === */
-              <div className="empty-state-wrapper" style={{ marginTop: "40px" }}>
-                <div className="empty-state-icon">🔍</div>
-                <h2>Nothing here to display!</h2>
-                <p>We couldn't find any events matching your current filters. Try selecting a different category or clearing your search to check out something else.</p>
-                <button
-                  className="empty-state-btn"
-                  onClick={clearFilters}
-                >
+              <div className="no-events-container">
+                <p>No events found for this category or search term.</p>
+                <button className="cta-button" onClick={clearFilters}>
                   Clear All Filters
                 </button>
               </div>
-
             ) : (
-
-              /* === EVENT GRID === */
               <>
                 <div className={`events-grid ${isFilterOpen ? "grid-3" : "grid-4"}`}>
-                  {filteredEvents.slice(0, visibleCount).map((event) => (
-                    <EventCard
-                      key={event.id}
-                      event={event}
-                      currentUser={currentUser}
-                      onRegister={handleRegister}
-                      onShare={handleShare}
-                      onOpen={(evt) => setSelectedEventId(evt.id)}
-                      loading={registerLoadingId === event.id}
-                      isRegistered={registeredEventIds.has(event.id)}
-                      showEdit={String(event.eventcoord).toLowerCase() === String(dbUserId).toLowerCase()}
-                      onEdit={handleEdit}
-                    />
-                  ))}
+                  {filteredEvents.slice(0, visibleCount).map((event) => {
+                    const isReg = registeredEventIds.has(event.id);
+                    const isLoading = registerLoadingId === event.id;
+
+                    return (
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        currentUser={currentUser}
+                        isRegistered={isReg}
+                        loading={isLoading}
+                        onRegister={handleRegister}
+                        onShare={handleShare}
+                        onOpen={(event) => setSelectedEventId(event.id)}
+                        showEdit={String(event.eventcoord).toLowerCase() === String(dbUserId).toLowerCase()}
+                        onEdit={handleEdit}
+                      />
+                    );
+                  })}
                 </div>
 
-                {/* === BUTTON OR "END OF LIST" TEXT === */}
-                {filteredEvents.length > 8 ? (
-                  // Show the button if there are more than 8 events total
+                {filteredEvents.length > 8 && (
                   <div className="see-more-container" style={{ textAlign: "center", marginTop: "40px" }}>
                     <button
                       className="cta-button"
@@ -451,32 +410,25 @@ export default function Events() {
                       {visibleCount >= filteredEvents.length ? "See Less Events" : "See More Events"}
                     </button>
                   </div>
-                ) : (
-                  // Show a subtle text if there are between 1 and 8 events (meaning no button is needed)
-                  <div style={{ textAlign: "center", marginTop: "100px", marginBottom: "-80px" }}>
-                    <p style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "24px" }}>
-                      That's all the events for now! Check back later for more.
-                    </p>
-                  </div>
                 )}
               </>
             )}
           </div>
         </div>
-      </section >
+      </section>
 
-      {/* HOW IT WORKS PLACEHOLDER */}
-      < section className="how-it-works-section" >
+      {/* HOW IT WORKS */}
+      <section className="how-it-works-section">
         <div className="section-header">
-          <h2>How Our App Works</h2>
-          <p>Your journey to campus engagement in three simple steps.</p>
+          <h2>How It Works</h2>
+          <p>Get involved on campus in three easy steps.</p>
         </div>
 
         <div className="steps-grid">
           <div className="step-card">
             <div className="step-number">1</div>
             <h3>Discover Events</h3>
-            <p>Browse our directory or use the smart filters to find activities, workshops, and socials that match your interests.</p>
+            <p>Browse the calendar or use our smart filters to find activities, workshops, and socials that match your interests.</p>
           </div>
 
           <div className="step-card">
@@ -491,10 +443,10 @@ export default function Events() {
             <p>Attend events, meet fellow Trojans, and make the most out of your UA Little Rock experience!</p>
           </div>
         </div>
-      </section >
+      </section>
 
       {/* JOIN PLACEHOLDER */}
-      < section className="join-section" >
+      <section className="join-section">
         <div className="join-content">
           <h2>Join the Campus Community</h2>
           <p>Don't miss out on what's happening around campus. Create an account today to start registering for events, syncing with your calendar, and connecting with peers!</p>
@@ -506,17 +458,16 @@ export default function Events() {
             Sign Up Now
           </button>
         </div>
-      </section >
+      </section>
 
       {/* MODAL */}
-      < EventModal
+      <EventModal
         event={selectedEvent}
-        onClose={() => setSelectedEventId(null)
-        }
+        onClose={() => setSelectedEventId(null)}
         onRegister={handleRegister}
         onShare={handleShare}
         loading={registerLoadingId === selectedEvent?.id}
       />
-    </div >
+    </div>
   );
 }
