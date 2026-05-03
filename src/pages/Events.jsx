@@ -21,12 +21,12 @@ import careerbg from "../assets/category-bg/career-bg.jpg";
 // NEW IMAGE CATEGORY DATA
 // =========================
 const categoryList = [
-  { name: "Academic", image: "academic-bg.jpg" },
-  { name: "Social", image: "social-bg.jpg" },
-  { name: "Sports", image: "sports-bg.jpg" },
-  { name: "Arts", image: "arts-bg.jpg" },
-  { name: "Technology", image: "technology-bg.jpg" },
-  { name: "Career", image: "career-bg.jpg" },
+  { name: "Academic", image: academicbg },
+  { name: "Social", image: socialbg },
+  { name: "Sports", image: sportsbg },
+  { name: "Arts", image: artbg },
+  { name: "Technology", image: technologybg },
+  { name: "Career", image: careerbg },
 ];
 
 import {
@@ -278,7 +278,7 @@ export default function Events() {
             >
               <div
                 className="card-background"
-                style={{ backgroundImage: `url(/src/assets/category-bg/${cat.image})` }}
+                style={{ backgroundImage: `url(${cat.image})` }}
               >
                 {/* Darkened overlay */}
                 <div className="card-overlay" />

@@ -659,22 +659,29 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem 1rem; 
+  padding: 1.5rem 1.2rem; /* Slightly more padding on the left for breathing room */
   color: white;
-  text-align: center;
   z-index: 10; 
   display: flex;
   align-items: flex-end;
-  justify-content: left;
+  justify-content: flex-start; /* Pushes content to the left */
+  text-align: left; /* Aligns the actual text to the left */
 }
 
 .category-card h3 {
-  font-size: 1.35rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.05em; 
   margin: 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); 
   color: white;
+  
+  /* Word-breaking rules from our last fix */
+  width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  line-height: .7;
 }
 /* ==========================================
    RESPONSIVE GRID ADJUSTMENTS
