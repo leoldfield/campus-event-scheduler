@@ -119,27 +119,75 @@ export function EventProvider({ children }) {
     return () => unsubscribe();
   }, [loadSecurePlatformData]);
 
-  const addNotification = (notification) => {
-    const newNotification = { id: Date.now(), seen: false, ...notification, time: new Date().toLocaleString() };
-    const updated = [newNotification, ...getStoredNotifications()];
-    saveStoredNotifications(updated);
-    setNotifications(updated);
+ const addNotification = (notif) => {
+    const newNotif = {
+      id: Date.now(),
+      time: new Date().toLocaleString(),
+      seen: false,
+      ...notif,
+    };
+
+    setNotifications((prev) => {
+      const updated = [newNotif, ...prev];
+      saveStoredNotifications(updated);
+      return updated;
+    });
+
+    // Also trigger the toast event
+    window.dispatchEvent(
+      new CustomEvent("toast", {
+        detail: newNotif,
+      })
+    );
   };
 
+// ==========================================
+  // REGISTER FOR EVENT (WITH GOOGLE CALENDAR)
+  // ==========================================
   const registerForEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
+    
+    // 1. Save to Database
     await createRegistration(getDataConnectClient(), { eventId, userId: dbUserId, notif: true });
+    
+    // 2. Update Local UI State
     setRegisteredEventIds((prev) => new Set(prev).add(eventId));
-    setAllRegistrations(prev => [...prev, { eventId, userId: dbUserId }]); // Optimistic update
-    addNotification({ type: "success", title: "Registered", message: "You registered for an event!" });
+    setAllRegistrations(prev => [...prev, { eventId, userId: dbUserId }]); 
+    
+    // 3. Sync to Google Calendar
+    try {
+      const eventToSync = events.find((e) => e.id === eventId);
+      if (currentUser && eventToSync) {
+        await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
+        await createGoogleCalendarEvent(currentUser, eventToSync); // <-- ADDS TO CALENDAR
+      }
+    } catch (err) {
+      console.error("Google Calendar sync failed:", err);
+    }
   };
 
+  // ==========================================
+  // UNREGISTER FROM EVENT (WITH GOOGLE CALENDAR)
+  // ==========================================
   const unregisterFromEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
+    
+    // 1. Remove from Database
     await deleteRegistration(getDataConnectClient(), { eventId, userId: dbUserId });
+    
+    // 2. Update Local UI State
     setRegisteredEventIds((prev) => { const next = new Set(prev); next.delete(eventId); return next; });
     setAllRegistrations(prev => prev.filter(reg => !(reg.eventId === eventId && reg.userId === dbUserId)));
-    addNotification({ type: "info", title: "Unregistered", message: "You left an event." });
+    
+    // 3. Remove from Google Calendar
+    try {
+      if (currentUser) {
+        await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
+        await deleteGoogleCalendarEvent(currentUser, eventId); // <-- REMOVES FROM CALENDAR
+      }
+    } catch (err) {
+      console.error("Google Calendar removal failed:", err);
+    }
   };
 
   // === SECURE DELETE EVENT LOGIC ===
@@ -147,7 +195,11 @@ export function EventProvider({ children }) {
     try {
       await deleteSecureEvent(getDataConnectClient(), { id: eventId, eventcoord: eventcoord });
       setEvents((prev) => prev.filter((e) => e.id !== eventId));
-      addNotification({ type: "success", title: "Deleted", message: "Event successfully deleted." });
+      addNotification({ 
+        type: "deletion", 
+        title: "Event Deleted", 
+        message: "Your event was successfully removed." 
+      });
     } catch (err) {
       console.error("Failed to delete event:", err);
       addNotification({ type: "error", title: "Error", message: "Could not delete event." });
@@ -157,21 +209,27 @@ export function EventProvider({ children }) {
   // ==========================================
   // NOTIFICATION FUNCTIONS
   // ==========================================
-  const markNotificationRead = (id) => {
-    const updated = notifications.map(n => n.id === id ? { ...n, seen: true } : n);
-    saveStoredNotifications(updated);
-    setNotifications(updated);
+ const markNotificationRead = (id) => {
+    setNotifications((prev) => {
+      const updated = prev.map((n) =>
+        n.id === id ? { ...n, seen: true } : n
+      );
+      saveStoredNotifications(updated);
+      return updated;
+    });
   };
 
   const markAllNotificationsRead = () => {
-    const updated = notifications.map(n => ({ ...n, seen: true }));
-    saveStoredNotifications(updated);
-    setNotifications(updated);
+    setNotifications((prev) => {
+      const updated = prev.map((n) => ({ ...n, seen: true }));
+      saveStoredNotifications(updated);
+      return updated;
+    });
   };
 
   const clearNotifications = () => {
-    saveStoredNotifications([]);
     setNotifications([]);
+    saveStoredNotifications([]);
   };
 
   // ==========================================
@@ -180,6 +238,59 @@ export function EventProvider({ children }) {
   const addEventLocal = (newEvent) => {
     setEvents((prev) => [...prev, newEvent]);
   };
+
+  // ==========================================
+  // EVENT REMINDERS (1 Hour, 1 Day, 3 Days)
+  // ==========================================
+  useEffect(() => {
+    if (events.length === 0 || registeredEventIds.size === 0) return;
+
+    const checkReminders = () => {
+      // Load history so we don't spam the user with the same reminder
+      const triggeredReminders = JSON.parse(localStorage.getItem("triggeredReminders")) || {};
+      let updated = false;
+      const now = new Date().getTime();
+
+      events.forEach((event) => {
+        if (registeredEventIds.has(event.id)) {
+          const eventTime = new Date(event.starttime).getTime();
+          const diffHours = (eventTime - now) / (1000 * 60 * 60);
+          
+          // Skip events that have already started
+          if (diffHours < 0) return; 
+
+          // 3 Days (Between 48 and 72 hours away)
+          if (diffHours <= 72 && diffHours > 48 && !triggeredReminders[`${event.id}_72hr`]) {
+            addNotification({ type: "reminder", title: "Event in 3 Days!", message: `Get ready! ${event.eventname} is coming up.` });
+            triggeredReminders[`${event.id}_72hr`] = true;
+            updated = true;
+          }
+          // 1 Day (Between 1 and 24 hours away)
+          else if (diffHours <= 24 && diffHours > 1 && !triggeredReminders[`${event.id}_24hr`]) {
+            addNotification({ type: "reminder", title: "Event Tomorrow!", message: `${event.eventname} is happening tomorrow.` });
+            triggeredReminders[`${event.id}_24hr`] = true;
+            updated = true;
+          }
+          // 1 Hour (Between 0 and 1 hour away)
+          else if (diffHours <= 1 && diffHours > 0 && !triggeredReminders[`${event.id}_1hr`]) {
+            addNotification({ type: "reminder", title: "Starting Soon!", message: `${event.eventname} starts in less than an hour!` });
+            triggeredReminders[`${event.id}_1hr`] = true;
+            updated = true;
+          }
+        }
+      });
+
+      // If we fired a new reminder, save it to storage
+      if (updated) {
+        localStorage.setItem("triggeredReminders", JSON.stringify(triggeredReminders));
+      }
+    };
+
+    checkReminders(); // Run once immediately on load
+    const interval = setInterval(checkReminders, 60000); // Then check the clock every 60 seconds
+    
+    return () => clearInterval(interval);
+  }, [events, registeredEventIds]);
 
   return (
     <EventContext.Provider value={{

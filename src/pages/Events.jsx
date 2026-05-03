@@ -7,7 +7,6 @@ import EventModal from "./Components/EventModal";
 import "../css/Events.css";
 import "../css/EventModal.css";
 
-import pencil from "../assets/edit-pencil.png";
 import peopleBanner1 from "../assets/PeopleBanner1.png";
 import peopleBanner2 from "../assets/PeopleBanner2.png";
 import academicbg from "../assets/category-bg/academic-bg.jpg";
@@ -42,37 +41,28 @@ export default function Events() {
   const {
     registeredEventIds,
     registerForEvent,
-    addNotification,
+    addNotification, // <-- NOTIFICATION ADDED HERE
     dbUserId,
     events,
     refreshEvents,
-    loadingEvents,
-    eventsError,
   } = useEventContext();
 
-  // =========================
-  // UI STATE (Restored!)
-  // =========================
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const [registerLoadingId, setRegisterLoadingId] = useState(null);
-  const [registerMessage, setRegisterMessage] = useState("");
-  const [registerError, setRegisterError] = useState("");
-
   const [selectedEventId, setSelectedEventId] = useState(null);
 
   const [currentUser, setCurrentUser] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [loadingName, setLoadingName] = useState(true);
-  const [nameError, setNameError] = useState("");
 
   const isSignedInUser = Boolean(currentUser && !currentUser.isAnonymous);
 
   const [visibleCount, setVisibleCount] = useState(8);
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // Your fancy sidebar state!
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // =========================
   // EVENTS
@@ -84,6 +74,19 @@ export default function Events() {
   const selectedEvent = useMemo(() => {
     return events.find((e) => e.id === selectedEventId) || null;
   }, [events, selectedEventId]);
+
+  // ==========================================
+  // AUTO-OPEN SHARED EVENT MODAL (NEW)
+  // ==========================================
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedEventId = params.get("eventId");
+
+    if (sharedEventId && events.length > 0) {
+      setSelectedEventId(sharedEventId);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+  }, [events]);
 
   // =========================
   // AUTH + NAME
@@ -102,7 +105,6 @@ export default function Events() {
 
       try {
         let matchedUser = null;
-
         try {
           const uidResult = await getUserByFirebaseUid(
             getDataConnectClient(),
@@ -120,9 +122,7 @@ export default function Events() {
         }
 
         setFirstName(matchedUser?.firstname || user.displayName || "");
-        setNameError("");
       } catch (err) {
-        setNameError(err.message);
         setFirstName(user.displayName || "");
       } finally {
         setLoadingName(false);
@@ -137,27 +137,50 @@ export default function Events() {
   // =========================
   const handleRegister = async (eventId) => {
     if (!isSignedInUser) return;
+    setRegisterLoadingId(eventId);
     try {
       await registerForEvent(eventId, currentUser);
       setSelectedEventId(null);
+      
+      const eventObj = events.find((e) => e.id === eventId);
+      const eventName = eventObj ? eventObj.eventname : "the event";
+
+      addNotification({ 
+        type: "success", 
+        title: "Registered!", 
+        message: `You successfully registered for ${eventName}.` 
+      });
+      
     } catch (err) {
       console.error(err);
+      addNotification({ 
+        type: "error", 
+        title: "Error", 
+        message: "Failed to register. Please try again." 
+      });
+    } finally {
+      setRegisterLoadingId(null);
     }
   };
 
   // =========================
-  // SHARE
+  // SHARE 
   // =========================
   const handleShare = async (event) => {
-    const url = `${window.location.origin}/event/${event.id}`;
-    if (navigator.share) {
-      await navigator.share({
-        title: event.eventname,
-        url,
-      });
-    } else {
-      await navigator.clipboard.writeText(url);
-      alert("Link copied!");
+    const shareUrl = `${window.location.origin}/events?eventId=${event.id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: event.eventname,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        // ✅ Fixed object format
+        addNotification({ type: "success", title: "Shared!", message: "Event link copied to clipboard!" });
+      }
+    } catch (err) {
+      console.error("Share failed:", err);
     }
   };
 
@@ -175,9 +198,6 @@ export default function Events() {
     return [...new Set(events.map((e) => e.location).filter(Boolean))];
   }, [events]);
 
-  // =========================
-  // FILTERED EVENTS
-  // =========================
   const filteredEvents = useMemo(() => {
     const now = new Date();
 
@@ -218,9 +238,6 @@ export default function Events() {
     window.scrollTo({ top: 800, behavior: "smooth" });
   };
 
-  // =========================
-  // CLEAR FILTERS
-  // =========================
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedLocation("all");
@@ -236,17 +253,13 @@ export default function Events() {
     return "Good evening";
   };
 
-  // =========================
-  // UI
-  // =========================
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px" }}>
       {/* HERO / INTRO SECTION */}
       <div className="hero-container">
-        <img src={peopleBanner1} alt="Students left" className="hero-side-image" />
         <section className="hero-section">
           <div className="hero-content">
-            <h1>UALR Campus Events</h1>
+            <h1>UA Little Rock Campus Events</h1>
             <p>Find upcoming University of Arkansas at Little Rock events, sync your schedule, and register easily.</p>
             {isSignedInUser && (
               <h2 className="hero-welcome">
@@ -256,20 +269,14 @@ export default function Events() {
             )}
           </div>
         </section>
-        <img src={peopleBanner2} alt="Students right" className="hero-side-image" />
       </div>
 
-      {/* ==========================================
-         NEW IMAGE-DRIVEN CATEGORY CARDS
-         ========================================== */}
       <section className="category-section">
         <div className="section-header">
           <h2>Explore by Category</h2>
         </div>
 
         <div className="category-grid">
-
-          {/* Mapped Image Cards (Exactly 6) */}
           {categoryList.map((cat) => (
             <div
               key={cat.name}
@@ -280,29 +287,32 @@ export default function Events() {
                 className="card-background"
                 style={{ backgroundImage: `url(${cat.image})` }}
               >
-                {/* Darkened overlay */}
                 <div className="card-overlay" />
               </div>
-
               <div className="card-content">
                 <h3>{cat.name.toUpperCase()}</h3>
               </div>
             </div>
           ))}
-
         </div>
       </section>
 
       {/* EVENTS SECTION */}
       <section className="events-section" style={{ margin: "40px 0" }}>
-        <div style={{ marginBottom: "24px" }}>
+
+        {/* MODIFIED: HORIZONTAL HEADER FOR MOBILE FIX */}
+        <div className="events-header" style={{ marginBottom: "24px" }}>
           <h2>Upcoming Events</h2>
+          <button
+            className="filter-toggle-btn mobile-only-btn"
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
+            {isFilterOpen ? "Close Filters" : "Filters"}
+          </button>
         </div>
 
-        {/* RESTORED: WRAPPER FOR SIDEBAR AND GRID */}
         <div className="events-page-layout">
-
-          {/* RESTORED: LEFT SIDEBAR FILTERS (Your fancy button!) */}
+          {/* LEFT SIDEBAR FILTERS */}
           <aside className={`filters-sidebar ${isFilterOpen ? "open" : "closed"}`}>
             {isFilterOpen ? (
               <div className="filters-content">
@@ -355,7 +365,7 @@ export default function Events() {
                 </button>
               </div>
             ) : (
-              <button className="open-filter-tab" onClick={() => setIsFilterOpen(true)}>
+              <button className="open-filter-tab desktop-only-btn" onClick={() => setIsFilterOpen(true)}>
                 <span className="vertical-text">FILTERS</span>
               </button>
             )}

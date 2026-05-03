@@ -20,13 +20,43 @@
 }
 
 /* =========================
+   HEADER & MOBILE TOGGLES (NEW FIX)
+========================= */
+.events-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.filter-toggle-btn {
+  background: #6E2639;
+  color: white;
+  padding: 8px 16px;
+  margin-top: 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filter-toggle-btn:hover {
+  background: #411621;
+}
+
+.mobile-only-btn {
+  display: none; /* Hidden on desktop */
+}
+
+/* =========================
    GRID
 ========================= */
 .events-grid {
   display: grid;
   gap: 24px;
   align-items: stretch;
-  transition: grid-template-columns 0.3s ease; /* Smooth transition when shifting */
+  transition: grid-template-columns 0.3s ease;
 }
 
 .events-grid.grid-4 {
@@ -44,6 +74,22 @@
   }
 }
 
+@media (max-width: 768px) {
+  /* Mobile Layout Overrides */
+  .events-header h2, .events-header h1 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .mobile-only-btn {
+    display: block; /* Show horizontal button on mobile */
+  }
+
+  .open-filter-tab {
+    display: none !important; /* Hide vertical tab on mobile */
+  }
+}
+
 @media (max-width: 600px) {
   .events-page-layout {
     flex-direction: column;
@@ -51,13 +97,7 @@
   .filters-sidebar.open, .filters-sidebar.closed {
     width: 100%;
     position: static;
-  }
-  .open-filter-tab {
-    height: 48px;
-  }
-  .vertical-text {
-    writing-mode: horizontal-tb;
-    transform: none;
+    margin: auto;
   }
   .events-grid.grid-4, .events-grid.grid-3 {
     grid-template-columns: 1fr;
@@ -65,7 +105,7 @@
 }
 
 /* =========================
-   EVENT CARD (CORE FIX HERE)
+   EVENT CARD 
 ========================= */
 .event-card {
   background: white;
@@ -90,19 +130,19 @@
 ========================= */
 .event-card-image img {
   width: 100%;
-  aspect-ratio: 16 / 9; /* Replaces height: 180px to maintain proportion */
+  aspect-ratio: 16 / 9;
   height: auto;
   object-fit: cover;
 }
 
 /* =========================
-   CONTENT (THIS PUSHES ACTIONS DOWN)
+   CONTENT
 ========================= */
 .event-card-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 14px; /* Reduced from 18px to tighten the card */
+  padding: 14px; 
 }
 
 /* TEXT */
@@ -118,7 +158,6 @@
   font-weight: 800;
   margin: 6px 0;
 }
-
 
 /* DATE PILLS */
 .event-card-date {
@@ -137,13 +176,13 @@
 }
 
 /* =========================
-   ACTION BUTTON AREA (FIXED)
+   ACTION BUTTON AREA 
 ========================= */
 .event-actions {
   margin-top: auto;
   display: flex;
-  gap: 12px; /* Reduced from 50px so buttons don't stretch the card */
-  padding: 12px 0 0 0; /* Tightened padding */
+  gap: 12px; 
+  padding: 12px 0 0 0; 
 }
 
 /* =========================
@@ -169,7 +208,6 @@
 
 .register-button.registered {
   background: #338a37;
-  margin-top: auto;
 }
 
 .register-button.registered:hover {
@@ -256,7 +294,7 @@
 }
 
 .see-more-button:hover {
-  background-color: #6E2639;
+  background: #6E2639;
   color: white;
 }
 
@@ -314,7 +352,7 @@
 }
 
 .filters-sidebar.closed {
-  width: 44px; /* Thin profile just for the tab */
+  width: 44px;
   padding: 0;
   background: transparent;
   border: none;
@@ -346,13 +384,13 @@
 
 /* Main Content Area */
 .events-main-content {
-  flex: 1; /* Takes up the remaining space */
+  flex: 1; 
 }
 
 .open-filter-tab {
   width: 100%;
   height: 140px;
-  background-color: #6E2639; /* Dark color to sit subtly on the edge */
+  background-color: #6E2639; 
   color: white;
   border: none;
   border-radius: 8px;
@@ -364,8 +402,8 @@
 }
 
 .open-filter-tab:hover {
-  background-color: #6E2639; /* Lights up with UALR red on hover */
-  transform: translateX(2px); /* Slight nudge to indicate it opens */
+  background-color: #411621; /* Slightly darker to indicate hover */
+  transform: translateX(2px);
 }
 
 .vertical-text {
@@ -436,7 +474,7 @@
 .step-number {
   width: 50px;
   height: 50px;
-  background-color: #6E2639; /* UALR Red */
+  background-color: #6E2639;
   color: white;
   font-size: 24px;
   font-weight: bold;
@@ -487,7 +525,7 @@
   font-size: 18px;
   line-height: 1.6;
   margin-bottom: 32px;
-  color: #fca5a5; /* A soft pinkish-red that contrasts beautifully against the dark red */
+  color: #fca5a5;
 }
 
 .cta-button {
@@ -505,29 +543,22 @@
 
 .cta-button:hover {
   background-color: #f3f4f6;
-  transform: scale(1.05); /* Slightly enlarges on hover */
+  transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
+
 /* =========================
    HERO BANNER SECTION
 ========================= */
 .hero-container {
   display: flex;
-  align-items: center; /* Vertically centers the banner and images */
+  align-items: center;
   justify-content: space-between;
-  gap: 24px; /* Space between the images and the banner */
+  gap: 24px;
   margin-bottom: 50px;
   margin-top: 30px;
 }
 
-/* Side Images */
-.hero-side-image {
-  width: 250px; /* You can adjust this value to make them smaller/larger */
-  height: auto;
-  object-fit: contain;
-}
-
-/* Keep your existing .hero-section intact, but tweak its width behavior */
 .hero-section {
   flex: 1; 
   color: white;
@@ -536,7 +567,7 @@
   text-align: center;
   position: relative;
   overflow: hidden;
-  margin-bottom: 0; /* Removed bottom margin because .hero-container handles it now */
+  margin-bottom: 0;
 }
 
 .hero-content {
@@ -567,15 +598,8 @@
   line-height: 1.5;
 }
 
-@media (max-width: 950px) {
-  .hero-side-image {
-    /* Hide the side images on small screens so the banner text has enough room */
-    display: none; 
-  }
-}
-
 /* ==========================================
-   NEW CATEGORY CARD SECTION (OVERRIDE)
+   NEW CATEGORY CARD SECTION
    ========================================== */
 .category-section {
   padding: 3rem 0;
@@ -592,7 +616,6 @@
   letter-spacing: 0.05em;
 }
 
-/* Grid Layout */
 .category-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr); 
@@ -600,7 +623,6 @@
   padding: 0 1rem;
 }
 
-/* Base style for all category cards */
 .category-card {
   position: relative;
   height: 180px; 
@@ -610,7 +632,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   border: 4px solid transparent; 
-  align-items: stretch; /* Fixes centering issue from old CSS */
+  align-items: stretch;
   justify-content: stretch;
   padding: 0;
 }
@@ -618,7 +640,7 @@
 .category-card:hover {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
   transform: translateY(-5px);
-  border-color: transparent; /* Removes the old red border hover */
+  border-color: transparent;
 }
 
 .category-card:hover .card-background {
@@ -630,9 +652,6 @@
   box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2);
 }
 
-/* ==========================================
-   CARD INTERIOR (BACKGROUND & CONTENT)
-   ========================================== */
 .category-card .card-background {
   position: absolute;
   top: 0;
@@ -659,13 +678,13 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem 1.2rem; /* Slightly more padding on the left for breathing room */
+  padding: 1.5rem 1.2rem;
   color: white;
   z-index: 10; 
   display: flex;
   align-items: flex-end;
-  justify-content: flex-start; /* Pushes content to the left */
-  text-align: left; /* Aligns the actual text to the left */
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .category-card h3 {
@@ -675,36 +694,31 @@
   margin: 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); 
   color: white;
-  
-  /* Word-breaking rules from our last fix */
   width: 100%;
   overflow-wrap: break-word;
-  word-break: break-word;
   hyphens: auto;
   line-height: .7;
 }
+
 /* ==========================================
    RESPONSIVE GRID ADJUSTMENTS
    ========================================== */
-/* Tablets & Smaller Desktops: 3 columns (Three over Three) */
 @media (max-width: 1024px) {
   .category-grid {
     grid-template-columns: repeat(3, 1fr); 
   }
 }
 
-/* Mobile & Small Tablets: 2 columns (Two over Two over Two) */
 @media (max-width: 768px) {
   .category-grid {
     grid-template-columns: repeat(2, 1fr); 
     gap: 15px;
   }
   .category-card {
-    height: 150px; /* Slightly shorter on mobile so they fit well */
+    height: 150px;
   }
 }
 
-/* Very Small Phones: Keep it 2 columns, but adjust height */
 @media (max-width: 480px) {
   .category-grid {
     grid-template-columns: repeat(2, 1fr); 
@@ -713,7 +727,7 @@
     height: 130px; 
   }
   .category-card h3 {
-    font-size: 1.1rem; /* Slightly smaller text for tiny screens */
+    font-size: 1.1rem;
   }
 }
 
@@ -725,36 +739,12 @@
   padding: 6px 10px;
   font-weight: 700;
   text-transform: uppercase;
-  margin-right: 8px; /* Adds space if placed next to date/time pills */
+  margin-right: 8px;
 }
 
-/* Category Specific Colors */
-.cat-academic {
-  background-color: #e0f2fe; /* Light Blue */
-  color: #0284c7;            /* Dark Blue */
-}
-
-.cat-social {
-  background-color: #fef08a; /* Light Yellow */
-  color: #a16207;            /* Dark Yellow/Gold */
-}
-
-.cat-sports {
-  background-color: #dcfce7; /* Light Green */
-  color: #16a34a;            /* Dark Green */
-}
-
-.cat-arts {
-  background-color: #f3e8ff; /* Light Purple */
-  color: #9333ea;            /* Dark Purple */
-}
-
-.cat-technology {
-  background-color: #e2e8f0; /* Slate Gray */
-  color: #475569;            /* Dark Slate */
-}
-
-.cat-career {
-  background-color: #ffedd5; /* Light Orange */
-  color: #ea580c;            /* Dark Orange */
-}
+.cat-academic { background-color: #e0f2fe; color: #0284c7; }
+.cat-social { background-color: #fef08a; color: #a16207; }
+.cat-sports { background-color: #dcfce7; color: #16a34a; }
+.cat-arts { background-color: #f3e8ff; color: #9333ea; }
+.cat-technology { background-color: #e2e8f0; color: #475569; }
+.cat-career { background-color: #ffedd5; color: #ea580c; }

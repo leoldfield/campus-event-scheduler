@@ -1,4 +1,3 @@
-/* We have removed the strict max-width: 900px to allow the new 1200px layout */
 .my-events-container {
   width: 100%;
 }
@@ -73,4 +72,22 @@
   background: #521c2a;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(110, 38, 57, 0.3);
+}
+
+.filter-toggle-btn-my-events {
+  background: #6E2639;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: -70px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filter-toggle-btn-my-events:hover {
+  background: #411621;
 }

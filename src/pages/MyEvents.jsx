@@ -5,15 +5,11 @@ import { useEventContext } from "./EventContext.jsx";
 import EventCard from "./Components/EventCard";
 import EventModal from "./Components/EventModal";
 import "../css/MyEvents.css";
-
-// You can reuse Events.css layout styles here or keep them global!
 import "../css/Events.css";
-
-import pencil from "../assets/edit-pencil.png";
-import testimage from "../assets/UALR-banner.jpg";
 
 import { deleteGoogleCalendarEvent } from "../googleCalendar";
 import { auth } from "../firebase";
+import { CgEnter } from "react-icons/cg";
 
 export default function MyEvents() {
   const navigate = useNavigate();
@@ -23,18 +19,17 @@ export default function MyEvents() {
     registeredEventIds,
     unregisterFromEvent,
     dbUserId,
+    addNotification // <-- NOTIFICATION ADDED HERE
   } = useEventContext();
 
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [unregisterLoading, setUnregisterLoading] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Filter States
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
 
-  // keep minimal auth only for Google Calendar cleanup
   React.useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
@@ -42,15 +37,10 @@ export default function MyEvents() {
     return () => unsub();
   }, []);
 
-  // =========================
-  // Derived state
-  // =========================
-  // 1. Get base registered events
   const registeredEvents = useMemo(() => {
     return events.filter((e) => registeredEventIds.has(e.id));
   }, [events, registeredEventIds]);
 
-  // 2. Apply filters to registered events
   const filteredRegisteredEvents = useMemo(() => {
     return registeredEvents.filter((event) => {
       const matchesSearch = event.eventname.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,7 +48,7 @@ export default function MyEvents() {
 
       let matchesStatus = true;
       const now = new Date();
-      const eventDate = new Date(event.starttime); // Assuming starttime exists
+      const eventDate = new Date(event.starttime);
       if (selectedStatus === "upcoming") matchesStatus = eventDate >= now;
       if (selectedStatus === "past") matchesStatus = eventDate < now;
 
@@ -73,31 +63,49 @@ export default function MyEvents() {
   // =========================
   // Unregister
   // =========================
+  // =========================
+  // Unregister
+  // =========================
   const handleUnregister = async (eventId) => {
     setUnregisterLoading(eventId);
     try {
-      // Centralize unregistration logic by passing currentUser to the context
       await unregisterFromEvent(eventId, currentUser);
       setSelectedEventId(null);
+      
+      // 👇 Look up the event name!
+      const eventObj = events.find((e) => e.id === eventId);
+      const eventName = eventObj ? eventObj.eventname : "the event";
+
+      addNotification({ 
+        type: "info", 
+        title: "Unregistered", 
+        message: `You have successfully left ${eventName}.` 
+      });
+      
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      addNotification({ 
+        type: "error", 
+        title: "Error", 
+        message: err.message || "Failed to unregister." 
+      });
     } finally {
       setUnregisterLoading(null);
     }
   };
 
   // =========================
-  // Share & Edit
+  // Share 
   // =========================
   const handleShare = async (event) => {
-    const url = `${window.location.origin}/event/${event.id}`;
+    const shareUrl = `${window.location.origin}/events?eventId=${event.id}`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: event.eventname, url });
+        await navigator.share({ title: event.eventname, url: shareUrl });
       } else {
-        await navigator.clipboard.writeText(url);
-        alert("Link copied!");
+        await navigator.clipboard.writeText(shareUrl);
+        // ✅ Fixed object format
+        addNotification({ type: "success", title: "Shared!", message: "Event link copied to clipboard!" });
       }
     } catch (err) {
       console.error("Share failed:", err);
@@ -108,21 +116,20 @@ export default function MyEvents() {
     navigate("/create", { state: { event } });
   };
 
-  // =========================
-  // UI
-  // =========================
   return (
     <div className="my-events-padding">
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px" }}>
 
         {/* HERO SECTION FOR MY EVENTS */}
         <section className="hero-section" style={{ marginBottom: "40px", padding: "60px 20px" }}>
-            <div className="hero-content">
-              <div className="mobile-header-group-myevents" style={{ marginBottom: "24px" }}>
-              <h1>My Registered Events</h1>
-              <p>Manage your upcoming schedule, edit your events, and sync with your calendar.</p>
+          <div className="hero-content">
+            <div style={{ marginBottom: "24px" }}>
+
+              <h1 style={{ margin: 0 }}>My Registered Events</h1>
+
+              <p style={{ marginTop: "12px" }}>Manage your upcoming schedule, edit your events, and sync with your calendar.</p>
               <button
-                className="filter-toggle-btn mobile-only-btn"
+                className="filter-toggle-btn-my-events mobile-only-btn"
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
               >
                 {isFilterOpen ? "Close Filters" : "Filters"}
@@ -133,16 +140,10 @@ export default function MyEvents() {
 
         {registeredEvents.length === 0 ? (
           <div className="empty-state-wrapper">
-            <div className="empty-state-icon">
-              {/* A nice, soft calendar/ticket emoji or SVG */}
-              🎟️
-            </div>
+            <div className="empty-state-icon">🎟️</div>
             <h2>Your schedule is wide open!</h2>
             <p>You haven't registered for any events yet. Discover what's happening around campus and get involved.</p>
-            <button
-              className="empty-state-btn"
-              onClick={() => navigate("/")}
-            >
+            <button className="empty-state-btn" onClick={() => navigate("/")}>
               Explore Events
             </button>
           </div>
@@ -150,7 +151,7 @@ export default function MyEvents() {
           <section className="events-section">
             <div className="events-page-layout">
 
-              {/* LEFT SIDEBAR: EXPANDABLE */}
+              {/* LEFT SIDEBAR */}
               <aside className={`filters-sidebar ${isFilterOpen ? "open" : "closed"}`}>
                 {isFilterOpen ? (
                   <div className="filter-content-wrapper">

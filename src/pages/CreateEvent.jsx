@@ -17,6 +17,7 @@ export default function CreateEvent() {
   const refreshEvents = eventContext?.refreshEvents;
   const addEventLocal = eventContext?.addEventLocal;
   const dbUserId = eventContext?.dbUserId;
+  const addNotification = eventContext?.addNotification;
 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(editingEvent?.imageUrl || "");
@@ -201,7 +202,14 @@ export default function CreateEvent() {
         eventContext?.updateEventLocal?.(updatePayload);
         await updateEvent(getDataConnectClient(), updatePayload);
 
-        setSuccessMessage("Event updated successfully.");
+        if (addNotification) {
+          addNotification({
+            type: "success",
+            title: "Event Updated!",
+            message: "Your event has been successfully updated."
+          });
+        }
+
       } else {
         // ✅ CREATE PAYLOAD (Includes eventcoord)
         const createPayload = {
@@ -221,7 +229,14 @@ export default function CreateEvent() {
         addEventLocal?.(createPayload);
 
         await createEvent(getDataConnectClient(), createPayload);
-        setSuccessMessage("Event created successfully.");
+
+        if (addNotification) {
+          addNotification({ 
+            type: "success", 
+            title: "Event Created!", 
+            message: "Your event has been successfully published." 
+          });
+        }
       }
 
       // ✅ CENTRALIZED SYNC
@@ -231,7 +246,12 @@ export default function CreateEvent() {
       }, 500)
     } catch (err) {
       console.error("Submit failed", err);
-      setError(err?.message || "Something went wrong.");
+      if (addNotification) {
+        addNotification({ 
+          type: "error", 
+          title: "Error", 
+          message: "Something went wrong saving the event." 
+        });}
     } finally {
       setIsSubmitting(false);
     }
@@ -381,7 +401,7 @@ export default function CreateEvent() {
                   <button type="button" className="stepButtonBack" onClick={prevStep}>
                     Back
                   </button>
-                  <button className="submitButton" type="submit" disabled={isSubmitting}>
+                  <button className="stepButtonNext" type="submit" disabled={isSubmitting}>
                     {isSubmitting ? (editingEvent ? "Updating..." : "Creating...") : (editingEvent ? "Update Event" : "Create Event")}
                   </button>
                 </div>

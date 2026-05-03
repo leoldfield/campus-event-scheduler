@@ -18,6 +18,7 @@ jobs:
         run: npm run build
         env:
           VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+          VITE_GOOGLE_CLIENT_ID: {{ 499171929559-udd7j2v2kba532dfsq8f927v6jnroato.apps.googleusercontent.com }}
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

@@ -5,6 +5,7 @@ import {
   FaCheckCircle,
   FaInfoCircle,
   FaBell,
+  FaRegTrashAlt,
 } from "react-icons/fa";
 
 const Notification = () => {
@@ -23,6 +24,8 @@ const Notification = () => {
         return <FaInfoCircle color="#2b6cb0" />;
       case "reminder":
         return <FaBell color="#d97706" />;
+        case "deletion":
+          return <FaRegTrashAlt color="grey" />;
       default:
         return <FaInfoCircle color="#666" />;
     }
