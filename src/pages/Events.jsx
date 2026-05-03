@@ -41,7 +41,7 @@ export default function Events() {
   const {
     registeredEventIds,
     registerForEvent,
-    addNotification, // <-- NOTIFICATION ADDED HERE
+    addNotification, 
     dbUserId,
     events,
     refreshEvents,
