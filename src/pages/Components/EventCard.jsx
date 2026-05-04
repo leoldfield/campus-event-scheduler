@@ -21,6 +21,9 @@ export default function EventCard({
   const navigate = useNavigate();
   const { allRegistrations, allUsers } = useEventContext();
 
+  const eventEndTime = new Date(event.endtime);
+  const hasEventPassed = eventEndTime < new Date();
+
   const handleCardClick = () => {
     if (onOpen) onOpen(event);
   };
@@ -129,12 +132,26 @@ export default function EventCard({
           {showRegister && (
             <button
               className={`register-button ${isRegistered ? "registered" : ""}`}
-              onClick={handleRegisterClick}
-              disabled={loading}
-              onMouseEnter={() => setIsHoveringButton(true)}
+              onClick={!hasEventPassed ? handleRegisterClick : undefined}
+              disabled={loading || hasEventPassed}
+              onMouseEnter={() => {
+                if (!hasEventPassed) { // Only show unregister on hover if event hasn't passed
+                  setIsHoveringButton(true);
+                } else {
+                  setIsHoveringButton(false); // Ensure it's false if event passed
+                }
+              }}
               onMouseLeave={() => setIsHoveringButton(false)}
             >
-              {isRegistered && isHoveringButton ? "Unregister" : isRegistered ? "Registered" : loading ? "Registering..." : "Register"}
+              {hasEventPassed && !isRegistered
+                ? "Event Ended"
+                : isRegistered && isHoveringButton
+                  ? "Unregister"
+                  : isRegistered
+                    ? "Registered"
+                    : loading
+                      ? "Registering..."
+                      : "Register"}
             </button>
           )}
           <button className="share-button" onClick={(e) => { e.stopPropagation(); if (onShare) onShare(event); }}>Share Event</button>
