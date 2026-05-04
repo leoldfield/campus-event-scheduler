@@ -59,7 +59,7 @@ mutation CreateEvent(
   $lng: Float
   $imageUrl: String
   $category: String
-) @auth(level: USER) {
+) @auth(level: USER) { # hostUid removed
   eventList_insert(
     data: {
       id: $id

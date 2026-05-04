@@ -186,7 +186,7 @@ export default function CreateEvent() {
       if (editingEvent) {
         // ✅ UPDATE PAYLOAD (Does NOT include eventcoord)
         const updatePayload = {
-          id: editingEvent.id || crypto.randomUUID,
+          id: editingEvent.id,
           eventname: eventName.trim(),
           location: location.trim(),
           eventdesc: eventDescription.trim(),

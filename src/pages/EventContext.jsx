@@ -198,9 +198,19 @@ export function EventProvider({ children }) {
   };
 
   // === SECURE DELETE EVENT LOGIC ===
-  const handleDeleteEvent = async (eventId, eventcoord) => {
+  const handleDeleteEvent = async (eventId, eventCreatorId) => {
+    if (!dbUserId) {
+      console.error("Cannot delete event: User not logged in.");
+      addNotification({ type: "error", title: "Error", message: "You must be logged in to delete events." });
+      return;
+    }
+    if (dbUserId !== eventCreatorId) {
+      console.error("Cannot delete event: User is not the event coordinator.");
+      addNotification({ type: "error", title: "Error", message: "You can only delete events you created." });
+      return;
+    }
     try {
-      await deleteSecureEvent(getDataConnectClient(), { id: eventId, eventcoord: eventcoord });
+      await deleteSecureEvent(getDataConnectClient(), { id: eventId, eventcoord: dbUserId });
       setEvents((prev) => prev.filter((e) => e.id !== eventId));
       addNotification({
         type: "deletion",
