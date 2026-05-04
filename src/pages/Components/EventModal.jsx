@@ -30,6 +30,9 @@ export default function EventModal({
   // 2. EARLY RETURNS MUST GO AFTER ALL HOOKS
   if (!event) return null;
 
+  const eventEndTime = new Date(event.endtime);
+  const hasEventPassed = eventEndTime < new Date();
+
   const catData = CATEGORIES.find(
     (c) => c.name.toLowerCase() === (event.category || "").toLowerCase()
   ) || { icon: "📌", color: "#f3f4f6", text: "#374151" };
@@ -180,8 +183,8 @@ export default function EventModal({
               {onRegister && (
                 <button
                   className={`register-button ${isRegistered ? "registered" : ""}`}
-                  onClick={handleRegisterClick}
-                  disabled={loading}
+                  onClick={!hasEventPassed ? handleRegisterClick : undefined} // Prevent click if event passed
+                  disabled={loading || hasEventPassed}
                   onMouseEnter={() => setIsHoveringButton(true)}
                   onMouseLeave={() => setIsHoveringButton(false)}
                 >
@@ -189,6 +192,8 @@ export default function EventModal({
                     ? "Unregister"
                     : isRegistered
                       ? "Registered"
+                      : hasEventPassed
+                        ? "Event Ended"
                       : loading
                         ? "Registering..."
                         : "Register Now"}

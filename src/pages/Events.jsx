@@ -199,7 +199,13 @@ export default function Events() {
   }, [events]);
 
   const filteredEvents = useMemo(() => {
-    const now = new Date();
+    const now = new Date(); // Current time for comparison
+
+    // Sort events by starttime in ascending order (earliest first)
+    const sortedEvents = [...events].sort((a, b) => {
+      return new Date(a.starttime).getTime() - new Date(b.starttime).getTime();
+    });
+
 
     return events.filter((event) => {
       if (registeredEventIds.has(event.id)) return false;
@@ -211,6 +217,9 @@ export default function Events() {
         event.eventname?.toLowerCase().includes(query) ||
         event.eventdesc?.toLowerCase().includes(query) ||
         event.location?.toLowerCase().includes(query);
+
+      // Hide events that have already passed
+      if (new Date(event.endtime) < now) return false;
 
       const matchesLocation =
         selectedLocation === "all" ||

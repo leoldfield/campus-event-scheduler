@@ -154,6 +154,20 @@ export function EventProvider({ children }) {
   const registerForEvent = async (eventId, currentUser) => {
     if (!dbUserId) return;
 
+    // Find the event to check its endtime
+    const eventToRegister = events.find((e) => e.id === eventId);
+    if (!eventToRegister) {
+      console.error("Event not found for registration:", eventId);
+      addNotification({ type: "error", title: "Error", message: "Event not found." });
+      return;
+    }
+
+    const eventEndTime = new Date(eventToRegister.endtime);
+    if (eventEndTime < new Date()) {
+      addNotification({ type: "error", title: "Registration Failed", message: "This event has already ended." });
+      return;
+    }
+
     // 1. Save to Database
     await createRegistration(getDataConnectClient(), { eventId, userId: dbUserId, notif: true });
 
