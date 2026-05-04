@@ -180,7 +180,7 @@ export function EventProvider({ children }) {
       const eventToSync = events.find((e) => e.id === eventId);
       if (currentUser && eventToSync) {
         await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
-        await createGoogleCalendarEvent(currentUser, eventToSync); // <-- ADDS TO CALENDAR
+      await createGoogleCalendarEvent(eventToSync, currentUser); // <-- ADDS TO CALENDAR
       }
     } catch (err) {
       console.error("Google Calendar sync failed:", err);
@@ -196,15 +196,20 @@ export function EventProvider({ children }) {
     // 1. Remove from Database
     await deleteRegistration(getDataConnectClient(), { eventId, userId: dbUserId });
 
+    // Find the event to pass to Google Calendar deletion
+    const eventToUnsync = events.find((e) => e.id === eventId);
+    if (!eventToUnsync) {
+      console.error("Event not found for unregistration:", eventId);
+    }
     // 2. Update Local UI State
     setRegisteredEventIds((prev) => { const next = new Set(prev); next.delete(eventId); return next; });
     setAllRegistrations(prev => prev.filter(reg => !(reg.eventId === eventId && reg.userId === dbUserId)));
 
     // 3. Remove from Google Calendar
     try {
-      if (currentUser) {
+      if (currentUser && eventToUnsync) { // Ensure eventToUnsync is found before attempting Google Calendar deletion
         await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
-        await deleteGoogleCalendarEvent(currentUser, eventId); // <-- REMOVES FROM CALENDAR
+        await deleteGoogleCalendarEvent(eventToUnsync, currentUser); // <-- REMOVES FROM CALENDAR
       }
     } catch (err) {
       console.error("Google Calendar removal failed:", err);
