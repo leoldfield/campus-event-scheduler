@@ -151,11 +151,14 @@ export function EventProvider({ children }) {
   // ==========================================
   // REGISTER FOR EVENT (WITH GOOGLE CALENDAR)
   // ==========================================
-  const registerForEvent = async (eventId, currentUser) => {
+  const registerForEvent = async (eventId, currentUser, eventToUse = null) => {
     if (!dbUserId) return;
 
     // Find the event to check its endtime
-    const eventToRegister = events.find((e) => e.id === eventId);
+    let eventToRegister = eventToUse;
+    if (!eventToRegister) {
+      eventToRegister = events.find((e) => e.id === eventId);
+    }
     if (!eventToRegister) {
       console.error("Event not found for registration:", eventId);
       addNotification({ type: "error", title: "Error", message: "Event not found." });
@@ -177,27 +180,39 @@ export function EventProvider({ children }) {
 
     // 3. Sync to Google Calendar
     try {
-      const eventToSync = events.find((e) => e.id === eventId);
-      if (currentUser && eventToSync) {
+      if (currentUser && eventToRegister) {
+        // Validate that starttime and endtime are valid date strings
+        const isValidStartTime = eventToRegister.starttime && typeof eventToRegister.starttime === 'string' && !isNaN(new Date(eventToRegister.starttime).getTime());
+        const isValidEndTime = eventToRegister.endtime && typeof eventToRegister.endtime === 'string' && !isNaN(new Date(eventToRegister.endtime).getTime());
+
+        if (!isValidStartTime || !isValidEndTime) {
+          console.error("Google Calendar sync failed: Event has invalid starttime or endtime.", eventToRegister);
+          addNotification({ type: "error", title: "Calendar Sync Failed", message: "Event is missing start or end time." });
+          return; // Skip calendar sync for this event
+        }
         await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
-      await createGoogleCalendarEvent(eventToSync, currentUser); // <-- ADDS TO CALENDAR
+        await createGoogleCalendarEvent(eventToSync, currentUser); // <-- ADDS TO CALENDAR
       }
     } catch (err) {
       console.error("Google Calendar sync failed:", err);
+      addNotification({ type: "error", title: "Calendar Sync Failed", message: err.message || "An unknown error occurred during sync." });
     }
   };
 
   // ==========================================
   // UNREGISTER FROM EVENT (WITH GOOGLE CALENDAR)
   // ==========================================
-  const unregisterFromEvent = async (eventId, currentUser) => {
+  const unregisterFromEvent = async (eventId, currentUser, eventToUse = null) => {
     if (!dbUserId) return;
 
     // 1. Remove from Database
     await deleteRegistration(getDataConnectClient(), { eventId, userId: dbUserId });
 
     // Find the event to pass to Google Calendar deletion
-    const eventToUnsync = events.find((e) => e.id === eventId);
+    let eventToUnsync = eventToUse;
+    if (!eventToUnsync) {
+      eventToUnsync = events.find((e) => e.id === eventId);
+    }
     if (!eventToUnsync) {
       console.error("Event not found for unregistration:", eventId);
     }
@@ -208,11 +223,21 @@ export function EventProvider({ children }) {
     // 3. Remove from Google Calendar
     try {
       if (currentUser && eventToUnsync) { // Ensure eventToUnsync is found before attempting Google Calendar deletion
+        // Validate that starttime and endtime are valid date strings
+        const isValidStartTime = eventToUnsync.starttime && typeof eventToUnsync.starttime === 'string' && !isNaN(new Date(eventToUnsync.starttime).getTime());
+        const isValidEndTime = eventToUnsync.endtime && typeof eventToUnsync.endtime === 'string' && !isNaN(new Date(eventToUnsync.endtime).getTime());
+
+        if (!isValidStartTime || !isValidEndTime) {
+          console.error("Google Calendar removal failed: Event has invalid starttime or endtime.", eventToUnsync);
+          addNotification({ type: "error", title: "Calendar Removal Failed", message: "Event is missing start or end time." });
+          return; // Skip calendar removal for this event
+        }
         await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
         await deleteGoogleCalendarEvent(eventToUnsync, currentUser); // <-- REMOVES FROM CALENDAR
       }
     } catch (err) {
       console.error("Google Calendar removal failed:", err);
+      addNotification({ type: "error", title: "Calendar Removal Failed", message: err.message || "An unknown error occurred during removal." });
     }
   };
 
