@@ -229,6 +229,7 @@ export default function CreateEvent() {
         addEventLocal?.(createPayload);
 
         await createEvent(getDataConnectClient(), createPayload);
+        if (auth.currentUser) { await eventContext?.registerForEvent(createPayload.id, auth.currentUser, createPayload); }
 
         if (addNotification) {
           addNotification({ 
