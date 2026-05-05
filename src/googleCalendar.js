@@ -1,9 +1,6 @@
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GOOGLE_SCOPE = "https://www.googleapis.com/auth/calendar.events";
 
-// TEMPORARY DEBUG: Log the client ID to see what it is in the deployed environment
-console.log("DEBUG: VITE_GOOGLE_CLIENT_ID from import.meta.env:", GOOGLE_CLIENT_ID);
-
 
 let tokenClient = null;
 let googleAccessToken = null;
