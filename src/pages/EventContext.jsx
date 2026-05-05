@@ -191,7 +191,7 @@ export function EventProvider({ children }) {
           return; // Skip calendar sync for this event
         }
         await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
-        await createGoogleCalendarEvent(eventToSync, currentUser); // <-- ADDS TO CALENDAR
+        await createGoogleCalendarEvent(eventToRegister, currentUser); // <-- ADDS TO CALENDAR
       }
     } catch (err) {
       console.error("Google Calendar sync failed:", err);
