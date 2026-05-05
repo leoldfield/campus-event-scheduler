@@ -12,6 +12,7 @@ import MyEvents from "./pages/MyEvents.jsx";
 import Events from "./pages/Events";
 import CreateEvent from "./pages/CreateEvent";
 import UserProfile from "./pages/UserProfile.jsx";
+import Settings from "./pages/Settings.jsx"; 
 import Notification from "./pages/Notification.jsx";
 import Map from "./pages/Map.jsx";
 
@@ -23,6 +24,7 @@ import NotificationToast from "./pages/Components/NotificationToast.jsx";
 import Footer from "./pages/Components/Footer.jsx";
 import Welcome from "./pages/Welcome.jsx";
 import EventsCalendar from './pages/Components/EventsCalendar.jsx';
+
 
 /* ================================
    FIXED PAGE WRAPPER (OUTSIDE APP)
@@ -181,6 +183,10 @@ export default function App() {
                         Profile
                       </Link>
 
+                       <Link to="/Settings" onClick={() => setProfileOpen(false)}>
+                        Settings
+                       </Link>
+
                       <button onClick={handleLogout}>
                         Logout
                       </button>
@@ -216,6 +222,7 @@ export default function App() {
             <Route path="/map" element={<PageWrapper><Map /></PageWrapper>} />
             <Route path="/Notification" element={<PageWrapper><Notification /></PageWrapper>} />
             <Route path="/UserProfile" element={<PageWrapper><UserProfile /></PageWrapper>} />
+            <Route path="/Settings" element={<PageWrapper><Settings /></PageWrapper>} />
             <Route path="/welcome" element={<PageWrapper><Welcome /></PageWrapper>} />
             <Route path="/calendar" element={<EventsCalendar />} />
           </Routes>
