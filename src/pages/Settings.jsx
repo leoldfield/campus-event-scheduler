@@ -1,10 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function Settings() {
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
+  // Sayfa açılınca kayıtlı ayarları getir
+  useEffect(() => {
+    const savedDarkMode = localStorage.getItem("darkMode");
+    const savedNotifications = localStorage.getItem("notifications");
+
+    if (savedDarkMode === "true") {
+      setDarkMode(true);
+      document.body.style.backgroundColor = "#121212";
+    }
+
+    if (savedNotifications !== null) {
+      setNotifications(savedNotifications === "true");
+    }
+  }, []);
+
+  // Dark mode toggle
+  const handleDarkModeChange = () => {
+    const newValue = !darkMode;
+    setDarkMode(newValue);
+
+    if (newValue) {
+      document.body.style.backgroundColor = "#121212";
+    } else {
+      document.body.style.backgroundColor = "white";
+    }
+  };
+
+  // Save butonu
   const handleSave = () => {
+    localStorage.setItem("darkMode", darkMode);
+    localStorage.setItem("notifications", notifications);
     alert("Preferences saved.");
   };
 
@@ -14,13 +44,14 @@ function Settings() {
         maxWidth: "600px",
         margin: "40px auto",
         padding: "30px",
-        backgroundColor: "white",
+        backgroundColor: darkMode ? "#1f1f1f" : "white",
+        color: darkMode ? "white" : "black",
         borderRadius: "12px",
         boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
       }}
     >
       <h1 style={{ marginBottom: "10px" }}>Preferences</h1>
-      <p style={{ marginBottom: "25px", color: "#555" }}>
+      <p style={{ marginBottom: "25px", color: darkMode ? "#ccc" : "#555" }}>
         Customize your experience.
       </p>
 
@@ -48,7 +79,7 @@ function Settings() {
           <input
             type="checkbox"
             checked={darkMode}
-            onChange={() => setDarkMode(!darkMode)}
+            onChange={handleDarkModeChange}
           />{" "}
           Enable dark mode
         </div>
