@@ -1,6 +1,10 @@
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GOOGLE_SCOPE = "https://www.googleapis.com/auth/calendar.events";
 
+// TEMPORARY DEBUG: Log the client ID to see what it is in the deployed environment
+console.log("DEBUG: VITE_GOOGLE_CLIENT_ID from import.meta.env:", GOOGLE_CLIENT_ID);
+
+
 let tokenClient = null;
 let googleAccessToken = null;
 let tokenExpiresAt = 0;
@@ -8,13 +12,22 @@ let tokenExpiresAt = 0;
 // Queue for handling multiple token requests sequentially
 let tokenRequestQueue = [];
 
+// Flag to indicate if Google Calendar integration is enabled.
+// This is set to false if VITE_GOOGLE_CLIENT_ID is missing.
+let isGoogleCalendarIntegrationEnabled = true;
+
 const ensureGoogleClientId = () => {
   if (!GOOGLE_CLIENT_ID) {
-    throw new Error(
-      "Missing environment variable VITE_GOOGLE_CLIENT_ID. Add a Google OAuth client ID to your Vite env."
+    console.error(
+      "Google Calendar integration is disabled: Missing VITE_GOOGLE_CLIENT_ID. " +
+      "Please ensure this environment variable is set during your Vite build process."
     );
+    isGoogleCalendarIntegrationEnabled = false;
   }
 };
+
+// Call this once when the module loads to perform the initial check.
+ensureGoogleClientId();
 
 const loadGsiScript = () => {
   return new Promise((resolve, reject) => {
@@ -46,6 +59,9 @@ const loadGsiScript = () => {
 };
 
 const ensureTokenClient = async () => {
+  if (!isGoogleCalendarIntegrationEnabled) {
+    throw new Error("Google Calendar integration is disabled due to missing client ID.");
+  }
   if (tokenClient) {
     return tokenClient;
   }
@@ -85,6 +101,9 @@ export function hasValidToken() {
 
 
 const requestAccessToken = async ({ prompt = "consent" } = {}) => {
+  if (!isGoogleCalendarIntegrationEnabled) {
+    throw new Error("Google Calendar integration is disabled due to missing client ID.");
+  }
   const client = await ensureTokenClient();
 
   if (hasValidToken() && tokenRequestQueue.length === 0) {
