@@ -331,3 +331,9 @@
   transform: none;
   box-shadow: none;
 }
+
+/* Dark Mode Map Hack */
+body.dark-mode .modal-map-iframe {
+  filter: invert(90%) hue-rotate(180deg) brightness(100%) contrast(100%);
+  border: 1px solid #444; /* Optional: adds a nice border to match dark mode */
+}

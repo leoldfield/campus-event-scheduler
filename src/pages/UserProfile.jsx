@@ -11,12 +11,12 @@ import "../css/UserProfile.css";
 
 // Category definitions for Top Interests styling
 const CATEGORIES = [
-  { id: 1, name: "Academic", icon: "📚", color: "#e0f2fe", text: "#0284c7" },
-  { id: 2, name: "Social", icon: "🎉", color: "#fef08a", text: "#a16207" },
-  { id: 3, name: "Sports", icon: "🏆", color: "#dcfce7", text: "#16a34a" },
-  { id: 4, name: "Arts", icon: "🎨", color: "#f3e8ff", text: "#9333ea" },
-  { id: 5, name: "Technology", icon: "💻", color: "#e2e8f0", text: "#475569" },
-  { id: 6, name: "Career", icon: "💼", color: "#ffedd5", text: "#ea580c" }
+  { id: 1, name: "Academic", color: "#e0f2fe", text: "#0284c7" },
+  { id: 2, name: "Social", color: "#fef08a", text: "#a16207" },
+  { id: 3, name: "Sports", color: "#dcfce7", text: "#16a34a" },
+  { id: 4, name: "Arts", color: "#f3e8ff", text: "#9333ea" },
+  { id: 5, name: "Technology", color: "#e2e8f0", text: "#475569" },
+  { id: 6, name: "Career", color: "#ffedd5", text: "#ea580c" }
 ];
 
 export default function UserProfile() {

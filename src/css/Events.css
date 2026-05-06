@@ -276,6 +276,18 @@
   margin-top: 10px;
 }
 
+body.dark-mode .ua-filter-clear {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+
+body.dark-mode .filters-sidebar.open {
+  background-color: transparent !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+
 .ua-filter-clear:hover {
   background-color: #e5e7eb;
   color: #1f2937;

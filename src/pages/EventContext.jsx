@@ -41,6 +41,24 @@ export function EventProvider({ children }) {
   const [allRegistrations, setAllRegistrations] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
 
+  // ==========================================
+  // GLOBAL DARK MODE STATE
+  // ==========================================
+  const [darkMode, setDarkMode] = useState(() => {
+    // Check local storage on initial load so it remembers the user's choice!
+    return localStorage.getItem("darkMode") === "true";
+  });
+
+  useEffect(() => {
+    // Automatically add or remove the 'dark-mode' class from the whole website
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
+
   // LOAD EVENTS
   const refreshEvents = useCallback(async () => {
     try {
@@ -171,31 +189,40 @@ export function EventProvider({ children }) {
       return;
     }
 
-    // 1. Save to Database
-    await createRegistration(getDataConnectClient(), { eventId, userId: dbUserId, notif: true });
-
-    // 2. Update Local UI State
-    setRegisteredEventIds((prev) => new Set(prev).add(eventId));
-    setAllRegistrations(prev => [...prev, { eventId, userId: dbUserId }]);
-
-    // 3. Sync to Google Calendar
     try {
-      if (currentUser && eventToRegister) {
-        // Validate that starttime and endtime are valid date strings
-        const isValidStartTime = eventToRegister.starttime && typeof eventToRegister.starttime === 'string' && !isNaN(new Date(eventToRegister.starttime).getTime());
-        const isValidEndTime = eventToRegister.endtime && typeof eventToRegister.endtime === 'string' && !isNaN(new Date(eventToRegister.endtime).getTime());
+      // 1. Save to Database
+      await createRegistration(getDataConnectClient(), { eventId, userId: dbUserId, notif: true });
 
-        if (!isValidStartTime || !isValidEndTime) {
-          console.error("Google Calendar sync failed: Event has invalid starttime or endtime.", eventToRegister);
-          addNotification({ type: "error", title: "Calendar Sync Failed", message: "Event is missing start or end time." });
-          return; // Skip calendar sync for this event
+      // 2. Update Local UI State
+      setRegisteredEventIds((prev) => new Set(prev).add(eventId));
+      setAllRegistrations(prev => [...prev, { eventId, userId: dbUserId }]);
+
+      // 3. Sync to Google Calendar (Wrapped safely so errors don't ruin the registration)
+      try {
+        if (currentUser && eventToRegister) {
+          // Validate that starttime and endtime are valid date strings
+          const isValidStartTime = eventToRegister.starttime && typeof eventToRegister.starttime === 'string' && !isNaN(new Date(eventToRegister.starttime).getTime());
+          const isValidEndTime = eventToRegister.endtime && typeof eventToRegister.endtime === 'string' && !isNaN(new Date(eventToRegister.endtime).getTime());
+
+          if (!isValidStartTime || !isValidEndTime) {
+            console.warn("Google Calendar sync skipped: Event has invalid start or end time.");
+          } else {
+            await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
+            await createGoogleCalendarEvent(eventToRegister, currentUser); // <-- ADDS TO CALENDAR
+          }
         }
-        await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
-        await createGoogleCalendarEvent(eventToRegister, currentUser); // <-- ADDS TO CALENDAR
+      } catch (calendarErr) {
+        // We log the calendar error, but WE DO NOT show an error notification!
+        console.warn("Google Calendar sync skipped or failed (Safe to ignore):", calendarErr.message);
       }
-    } catch (err) {
-      console.error("Google Calendar sync failed:", err);
-      addNotification({ type: "error", title: "Calendar Sync Failed", message: err.message || "An unknown error occurred during sync." });
+
+    } catch (dbErr) {
+      console.error("Database registration failed:", dbErr);
+      addNotification({
+        type: "error",
+        title: "Registration Failed",
+        message: "Could not complete registration.",
+      });
     }
   };
 
@@ -205,9 +232,6 @@ export function EventProvider({ children }) {
   const unregisterFromEvent = async (eventId, currentUser, eventToUse = null) => {
     if (!dbUserId) return;
 
-    // 1. Remove from Database
-    await deleteRegistration(getDataConnectClient(), { eventId, userId: dbUserId });
-
     // Find the event to pass to Google Calendar deletion
     let eventToUnsync = eventToUse;
     if (!eventToUnsync) {
@@ -216,28 +240,39 @@ export function EventProvider({ children }) {
     if (!eventToUnsync) {
       console.error("Event not found for unregistration:", eventId);
     }
-    // 2. Update Local UI State
-    setRegisteredEventIds((prev) => { const next = new Set(prev); next.delete(eventId); return next; });
-    setAllRegistrations(prev => prev.filter(reg => !(reg.eventId === eventId && reg.userId === dbUserId)));
 
-    // 3. Remove from Google Calendar
     try {
-      if (currentUser && eventToUnsync) { // Ensure eventToUnsync is found before attempting Google Calendar deletion
-        // Validate that starttime and endtime are valid date strings
-        const isValidStartTime = eventToUnsync.starttime && typeof eventToUnsync.starttime === 'string' && !isNaN(new Date(eventToUnsync.starttime).getTime());
-        const isValidEndTime = eventToUnsync.endtime && typeof eventToUnsync.endtime === 'string' && !isNaN(new Date(eventToUnsync.endtime).getTime());
+      // 1. Remove from Database
+      await deleteRegistration(getDataConnectClient(), { eventId, userId: dbUserId });
 
-        if (!isValidStartTime || !isValidEndTime) {
-          console.error("Google Calendar removal failed: Event has invalid starttime or endtime.", eventToUnsync);
-          addNotification({ type: "error", title: "Calendar Removal Failed", message: "Event is missing start or end time." });
-          return; // Skip calendar removal for this event
+      // 2. Update Local UI State
+      setRegisteredEventIds((prev) => { const next = new Set(prev); next.delete(eventId); return next; });
+      setAllRegistrations(prev => prev.filter(reg => !(reg.eventId === eventId && reg.userId === dbUserId)));
+
+      // 3. Remove from Google Calendar (Wrapped safely)
+      try {
+        if (currentUser && eventToUnsync) {
+          const isValidStartTime = eventToUnsync.starttime && typeof eventToUnsync.starttime === 'string' && !isNaN(new Date(eventToUnsync.starttime).getTime());
+          const isValidEndTime = eventToUnsync.endtime && typeof eventToUnsync.endtime === 'string' && !isNaN(new Date(eventToUnsync.endtime).getTime());
+
+          if (!isValidStartTime || !isValidEndTime) {
+            console.warn("Google Calendar removal skipped: Event has invalid start or end time.");
+          } else {
+            await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
+            await deleteGoogleCalendarEvent(eventToUnsync, currentUser); // <-- REMOVES FROM CALENDAR
+          }
         }
-        await requestGoogleCalendarAccess(currentUser); // <-- ASKS FOR PERMISSION
-        await deleteGoogleCalendarEvent(eventToUnsync, currentUser); // <-- REMOVES FROM CALENDAR
+      } catch (calendarErr) {
+        console.warn("Google Calendar removal failed (Safe to ignore):", calendarErr.message);
       }
-    } catch (err) {
-      console.error("Google Calendar removal failed:", err);
-      addNotification({ type: "error", title: "Calendar Removal Failed", message: err.message || "An unknown error occurred during removal." });
+
+    } catch (dbErr) {
+      console.error("Database unregistration failed:", dbErr);
+      addNotification({
+        type: "error",
+        title: "Unregister Failed",
+        message: "Could not unregister from the event.",
+      });
     }
   };
 
@@ -368,7 +403,8 @@ export function EventProvider({ children }) {
       registerForEvent, unregisterFromEvent, dbUserId, events, setEvents,
       loadingEvents, eventsError, refreshEvents, handleDeleteEvent,
       markNotificationRead, markAllNotificationsRead, clearNotifications,
-      addEventLocal
+      addEventLocal,
+      darkMode, setDarkMode
     }}>
       {children}
     </EventContext.Provider>

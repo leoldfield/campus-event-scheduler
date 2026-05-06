@@ -1,10 +1,3 @@
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
-}
-
 .profile-container {
   display: grid;
   grid-template-columns: 1.05fr 1.7fr;
@@ -12,6 +5,8 @@ body {
   align-items: start;
   max-width: 1200px;
   margin: 0 auto;
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 .left-column,
@@ -590,4 +585,47 @@ body {
   .badges-container {
     grid-template-columns: 1fr;
   }
+}
+
+/* --- DARK MODE OVERRIDES --- */
+body.dark-mode .activity-stats-grid {
+  background: none;
+}
+
+body.dark-mode .activity-stat-box {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+
+body.dark-mode .badge-item {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .stat-number,
+body.dark-mode .badge-name {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .info-table {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .profile-page {
+  background: transparent;
+}
+
+body.dark-mode .card {
+  border: none;
+}
+
+body.dark-mode .btn.btn-outline {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .btn.btn-outline:hover {
+  background-color: #1b1b1b !important;
+  color: #e0e0e0 !important;
 }

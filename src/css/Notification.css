@@ -143,3 +143,24 @@
 .notification-card.reminder {
   border-left: 4px solid orange;
 }
+
+body.dark-mode .notification-card.success {
+  border-left: 4px solid green;
+}
+
+body.dark-mode .notification-card.info {
+  border-left: 4px solid #2b6cb0;
+}
+
+body.dark-mode .notification-card.reminder {
+  border-left: 4px solid orange;
+}
+
+
+body.dark-mode .notifications-container {
+  background-color: transparent !important;
+}
+
+body.dark-mode .notification-card {
+  background-color: #2c2c2c !important;
+}

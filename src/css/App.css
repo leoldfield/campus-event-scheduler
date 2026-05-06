@@ -327,3 +327,488 @@ body,
     transform: translateY(0);
   }
 }
+
+/* =========================
+   GLOBAL DARK MODE
+========================= */
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Make sure text inside your page wrappers stays readable */
+body.dark-mode .page,
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3,
+body.dark-mode p {
+  color: #e0e0e0;
+}
+
+body.dark-mode .event-card {
+  background-color: #1e1e1e;
+  border-color: #333;
+}
+
+/* =========================================================
+   DARK MODE EXPANSION PACK (Modals, Forms, Cards, Dropdowns)
+========================================================= */
+
+/* 1. Profile Dropdown */
+body.dark-mode .dropdown-menu,
+body.dark-mode .profile-dropdown {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+}
+
+body.dark-mode .dropdown-item,
+body.dark-mode .dropdown-menu a,
+body.dark-mode .dropdown-menu button {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-menu a:hover {
+  background-color: #333 !important;
+}
+
+/* 2. Event Cards & Pill Dates */
+body.dark-mode .event-card {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+}
+
+/* 2. Event Card Pills (Dates, Times, Locations ONLY) */
+body.dark-mode .event-card .date-pill,
+body.dark-mode .event-card .time-pill,
+body.dark-mode .event-card .location-pill,
+body.dark-mode .event-date {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+/* Leave the category tags alone so they keep their unique colors! */
+
+/* 3. Modals (Event Modal Background) */
+body.dark-mode .modal-content,
+body.dark-mode .event-modal,
+body.dark-mode .modal-container {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #333 !important;
+}
+
+body.dark-mode .modal-close {
+  color: #fff !important;
+}
+
+/* 4. Form Inputs & Textareas (Create Event, Profile, Login/Register) */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #aaa !important;
+}
+
+/* 5. Pages & Containers (Create Event, Profile, Settings) */
+body.dark-mode .create-event-container,
+body.dark-mode .form-card,
+body.dark-mode .form-container {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+}
+
+body.dark-mode .notif-btn .read,
+body.dark-mode .notif-btn-clear {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border: 1px solid #444 !important;
+}
+
+body.dark-mode .notif-btn.read {
+  border: none;
+}
+
+body.dark-mode .notif-btn.read:hover {
+  background-color: rgb(0, 68, 0);
+}
+
+body.dark-mode .notif-btn-clear:hover {
+  background-color: #444 !important;
+}
+
+/* =========================================================
+   DARK MODE PHASE 2 (Step Cards, Pills, Notifications, Forms)
+========================================================= */
+
+/* 1. "How it Works" Step Cards on Events Page */
+body.dark-mode .step-card {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+  color: #e0e0e0 !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .step-number {
+  background-color: #7a1f3d !important; /* Keeping your theme color */
+  color: #ffffff !important;
+}
+
+/* 2. Event Card Pills (Dates, Categories, Locations) */
+/* Targeting common pill/badge class names inside event cards */
+/* 2. Event Card Pills (Dates, Times, Locations ONLY) */
+body.dark-mode .event-card .date-pill,
+body.dark-mode .event-card .time-pill,
+body.dark-mode .event-card .location-pill {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+
+/* 3. Create Event Page & Forms */
+body.dark-mode .create-event-wrapper,
+body.dark-mode form,
+body.dark-mode .form-group label {
+  color: #e0e0e0 !important;
+}
+
+/* Give form backgrounds a dark gray instead of harsh white */
+body.dark-mode input[type="text"],
+body.dark-mode input[type="date"],
+body.dark-mode input[type="time"],
+body.dark-mode input[type="number"],
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+  border: 1px solid #555 !important;
+}
+
+/* Ensure text inside notifications is light */
+body.dark-mode .notification-message,
+body.dark-mode .notification-title,
+body.dark-mode .notification-card h3,
+body.dark-mode .notification-card p {
+  color: #e0e0e0 !important;
+}
+
+/* =========================================================
+   DARK MODE PHASE 3 (Final Polish & Bug Fixes)
+========================================================= */
+
+/* 1. Create Event, Login, & Register Pages */
+body.dark-mode .create-event-wrapper {
+  background-color: #121212 !important; /* Matches main background */
+}
+
+body.dark-mode .create-event-card {
+  background-color: #1e1e1e !important;
+  border-top: 6px solid #7a1f3d !important; /* Keep the maroon accent */
+}
+
+body.dark-mode .image-upload-box {
+  background-color: #2c2c2c !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .authenticateText {
+  background-color: #1e1e1e !important;
+  border-top: 1px solid #333 !important;
+}
+
+/* 2. Profile Dropdown Text & Hover Fixes */
+body.dark-mode .dropdown-menu *,
+body.dark-mode .profile-dropdown * {
+  color: #e0e0e0 !important; /* Forces all text to be readable */
+}
+
+body.dark-mode .dropdown-menu a:hover,
+body.dark-mode .dropdown-menu button:hover,
+body.dark-mode .dropdown-item:hover {
+  background-color: #333 !important; /* Dark gray hover */
+  color: #ffffff !important;
+}
+
+/* 3. Event Modal Information Fixes */
+/* The "Attendees" social proof box inside the modal */
+body.dark-mode .social-proof-container {
+  background-color: #2c2c2c !important;
+  border: 1px solid #444 !important;
+}
+
+/* Ensure all text inside the modal body flips to light gray */
+body.dark-mode .modal-body,
+body.dark-mode .modal-body h2,
+body.dark-mode .modal-body h3,
+body.dark-mode .modal-body p,
+body.dark-mode .modal-map-sidebar,
+body.dark-mode .modal-info-grid {
+  background-color: transparent !important; 
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .modal-info-grid {
+   background-color: #2c2c2c !important;
+  border: 1px solid #444 !important;
+}
+
+/* =========================================================
+   DARK MODE PHASE 4 (Login, Profile, Hover, & Preview Fixes)
+========================================================= */
+
+/* 1. Login Page Fixes (.auth-wrapper & .auth-card) */
+body.dark-mode .auth-wrapper {
+  background-color: #121212 !important; /* Matches main dark background */
+}
+
+body.dark-mode .auth-card {
+  background-color: #1e1e1e !important;
+  border-top: 6px solid #7a1f3d !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .auth-header h1,
+body.dark-mode .auth-header p {
+  color: #e0e0e0 !important;
+}
+
+/* 2. User Profile Page Fixes (.card) */
+body.dark-mode .card,
+body.dark-mode .profile-card,
+body.dark-mode .stats-card {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #333 !important;
+}
+
+body.dark-mode .stat-value,
+body.dark-mode .profile-name {
+  color: #ffffff !important;
+}
+
+body.dark-mode .stat-label,
+body.dark-mode .subsection-title {
+  color: #aaa !important;
+}
+
+body.dark-mode .pill {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+
+/* 3. Profile Dropdown Hover Fix */
+/* Forcing all hover states in dropdowns to be a highly visible dark gray */
+body.dark-mode .dropdown-menu *:hover,
+body.dark-mode .profile-dropdown *:hover,
+body.dark-mode .dropdown-item:hover,
+body.dark-mode [class*="dropdown"] li:hover {
+  background-color: #444444 !important; 
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   DARK MODE PHASE 4 (Final Corrections)
+========================================================= */
+
+/* 1. Login Page & Register Page Footer Fix */
+body.dark-mode .authenticateText,
+body.dark-mode .auth-footer {
+  background-color: #1a1a1a !important; /* Slightly darker than the card */
+  border-top: 1px solid #333 !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .authenticateText p,
+body.dark-mode .authenticateText span,
+body.dark-mode .auth-switch {
+  color: #e0e0e0 !important;
+  background-color: transparent !important;
+}
+
+/* 2. User Profile Page Fixes */
+body.dark-mode .profile-container {
+  background-color: transparent !important;
+}
+
+body.dark-mode .edit-icon-button {
+  filter: invert(90%) hue-rotate(180deg) brightness(100%) contrast(100%);
+}
+
+body.dark-mode .share-button {
+  color: white;
+}
+
+body.dark-mode .card,
+body.dark-mode .profile-card,
+body.dark-mode .stats-card {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #333 !important;
+}
+
+body.dark-mode .stat-value,
+body.dark-mode .profile-name { color: #ffffff !important; }
+body.dark-mode .stat-label,
+body.dark-mode .subsection-title { color: #aaa !important; }
+
+/* 3. Profile Dropdown Hover Fix */
+body.dark-mode .dropdown-menu *:hover,
+body.dark-mode .profile-dropdown *:hover,
+body.dark-mode .dropdown-item:hover,
+body.dark-mode [class*="dropdown"] li:hover {
+  background-color: #444444 !important; 
+  color: #ffffff !important;
+}
+
+/* 4. Create Event Last Page (Review Card) Fix */
+/* Targets ONLY the inner card so it matches light mode's layout, but dark! */
+body.dark-mode .create-event-card .review-card {
+  background-color: #2c2c2c !important;
+  border: 1px solid #444 !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .create-event-card .review-header {
+  border-bottom: 1px solid #444 !important;
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .create-event-card .review-row {
+  border-bottom: 1px solid #444 !important;
+}
+
+body.dark-mode .create-event-card .review-label {
+  color: #aaa !important;
+}
+
+body.dark-mode .create-event-card .review-value {
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   DARK MODE PHASE 5 (The Final Bug Fixes)
+========================================================= */
+
+/* 1. RESTORE COLORFUL CATEGORY BADGES */
+/* This forces the browser to ignore previous dark mode rules for categories */
+body.dark-mode .event-card .badge,
+body.dark-mode .badge {
+  background-color: inherit; /* Let the inline styles in EventCard.jsx work! */
+  border: none !important;
+}
+
+/* 2. PROFILE PAGE BACKGROUND & CARDS */
+/* Strips out the weird white boxes behind the profile grid */
+body.dark-mode .profile-container,
+body.dark-mode .left-column,
+body.dark-mode .right-column {
+  background-color: transparent !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .profile-card,
+body.dark-mode .stats-card {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+  color: #e0e0e0 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+}
+
+/* 3. DROPDOWN HOVER FIX (Works for both Light and Dark mode) */
+/* Light Mode Hover */
+.dropdown-menu a:hover, 
+.dropdown-menu button:hover, 
+.dropdown-item:hover {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+/* Dark Mode Hover */
+body.dark-mode .dropdown-menu a:hover, 
+body.dark-mode .dropdown-menu button:hover, 
+body.dark-mode .dropdown-item:hover {
+  background-color: #444444 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .dropdown-menu,
+body.dark-mode .profile-dropdown {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+}
+
+/* 4. CREATE EVENT REVIEW BOX (DARK MODE OVERRIDE) */
+body.dark-mode .review-card {
+  background-color: #1e1e1e !important;
+  border-color: #333 !important;
+}
+
+body.dark-mode .review-header {
+  background-color: #2c2c2c !important;
+  border-bottom-color: #444 !important;
+}
+
+body.dark-mode .review-header h3,
+body.dark-mode .review-value {
+  color: #ffffff !important;
+}
+
+body.dark-mode .step-indicator,
+body.dark-mode .review-label {
+  color: #aaaaaa !important;
+}
+
+body.dark-mode .review-item {
+  border-bottom-color: #333 !important;
+}
+
+/* =========================================================
+   DARK MODE PHASE 6 (The Final Boss)
+========================================================= */
+
+/* 1. EVENT CARD DATE/TIME PILLS */
+/* Targets the actual 'info-pill' class used in your components */
+body.dark-mode .event-card .info-pill {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #444 !important;
+}
+
+/* 2. EVENT MODAL INFO BOXES (Time, Location, & Social Proof) */
+body.dark-mode .modal-info-item,
+body.dark-mode .social-proof-container {
+  background-color: #2c2c2c !important;
+  border: 1px solid #444 !important;
+  color: #e0e0e0 !important;
+}
+
+/* Fixes the dark text inside the modal boxes */
+body.dark-mode .modal-info-item h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .modal-info-item p,
+body.dark-mode .social-proof-text,
+body.dark-mode .social-proof-text strong {
+  color: #e0e0e0 !important;
+}
+
+/* 3. OUTER PAGE WRAPPER BACKGROUNDS */
+/* Forces the stubborn light-gray background wrappers to become transparent */
+body.dark-mode .create-event-wrapper,
+body.dark-mode .auth-wrapper,
+body.dark-mode .profile-container,
+body.dark-mode .profile-wrapper,
+body.dark-mode .page-wrapper {
+  background-color: transparent !important;
+}

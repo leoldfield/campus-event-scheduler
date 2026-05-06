@@ -91,3 +91,7 @@
 .filter-toggle-btn-my-events:hover {
   background: #411621;
 }
+
+body.dark-mode .empty-state-wrapper {
+  background: #2c2c2c !important;
+}
