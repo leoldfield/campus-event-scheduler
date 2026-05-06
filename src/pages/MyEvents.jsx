@@ -62,31 +62,28 @@ export default function MyEvents() {
   // =========================
   // Unregister
   // =========================
-  // =========================
-  // Unregister
-  // =========================
   const handleUnregister = async (eventId) => {
     setUnregisterLoading(eventId);
     try {
       await unregisterFromEvent(eventId, currentUser);
       setSelectedEventId(null);
-      
+
       // 👇 Look up the event name!
       const eventObj = events.find((e) => e.id === eventId);
       const eventName = eventObj ? eventObj.eventname : "the event";
 
-      addNotification({ 
-        type: "info", 
-        title: "Unregistered", 
-        message: `You have successfully left ${eventName}.` 
+      addNotification({
+        type: "info",
+        title: "Unregistered",
+        message: `You have successfully left ${eventName}.`
       });
-      
+
     } catch (err) {
       console.error(err);
-      addNotification({ 
-        type: "error", 
-        title: "Error", 
-        message: err.message || "Failed to unregister." 
+      addNotification({
+        type: "error",
+        title: "Error",
+        message: err.message || "Failed to unregister."
       });
     } finally {
       setUnregisterLoading(null);
@@ -94,20 +91,26 @@ export default function MyEvents() {
   };
 
   // =========================
-  // Share 
+  // SHARE 
   // =========================
   const handleShare = async (event) => {
-    const shareUrl = `${window.location.origin}/events?eventId=${event.id}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: event.eventname, url: shareUrl });
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-        // ✅ Fixed object format
-        addNotification({ type: "success", title: "Shared!", message: "Event link copied to clipboard!" });
+    const shareUrl = `${window.location.origin}/?eventId=${event.id}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: event.eventname,
+          text: `Check out ${event.eventname} on Campus Events!`,
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.log("Error sharing:", error);
       }
-    } catch (err) {
-      console.error("Share failed:", err);
+    } else {
+      // Fallback for Desktop: Copy link to clipboard
+      navigator.clipboard.writeText(shareUrl);
+      alert("Event link copied to clipboard!");
+      // (If you have a toast notification system, use that instead of alert!)
     }
   };
 

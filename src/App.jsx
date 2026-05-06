@@ -91,11 +91,16 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      setProfileOpen(false);
-      navigate("/");
+      await signOut(auth); // Log out of Firebase
+      
+      // 1. Wipe the old user's notifications from the browser
+      localStorage.removeItem("notifications"); 
+      localStorage.removeItem("triggeredReminders");
+      
+      // 2. Force a hard refresh to completely clear React's memory!
+      window.location.href = "/login"; 
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error("Error logging out:", error);
     }
   };
 
@@ -122,7 +127,7 @@ export default function App() {
               <Link to="/MyEvents" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>My Events</Link>
               <Link to="/create" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Create an Event</Link>
               <Link to="/map" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Map</Link>
-              <Link to="/calendar" className="nav-link">Calendar</Link>
+              <Link to="/calendar" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Calendar</Link>
             </>
           ) : (
             <>

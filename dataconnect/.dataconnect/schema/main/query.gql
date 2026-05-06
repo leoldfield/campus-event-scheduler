@@ -73,7 +73,7 @@ extend type Query {
     """
     Maximum number of rows to return (defaults to 100 rows).
     """
-    limit: Int = 100
+    limit: Int = 1000
 
     """
     Set to true to return distinct results.
@@ -107,7 +107,7 @@ extend type Query {
     """
     Maximum number of rows to return (defaults to 100 rows).
     """
-    limit: Int = 100
+    limit: Int = 1000
 
     """
     Set to true to return distinct results.
@@ -141,7 +141,7 @@ extend type Query {
     """
     Maximum number of rows to return (defaults to 100 rows).
     """
-    limit: Int = 100
+    limit: Int = 1000
 
     """
     Set to true to return distinct results.

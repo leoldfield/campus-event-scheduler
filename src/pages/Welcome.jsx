@@ -36,8 +36,7 @@ export default function Welcome() {
 
         <button 
           className="welcome-cta-button"
-          onClick={() => navigate("/")}
-        >
+          onClick={() => window.location.href = "/"}>
           Explore Events Now
         </button>
 
