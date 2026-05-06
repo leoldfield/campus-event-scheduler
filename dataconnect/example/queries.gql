@@ -1,6 +1,6 @@
 # List all events
 query ListEvents @auth(level: PUBLIC) {
-  eventLists(orderBy: { starttime: ASC }, limit: 50) {
+  eventLists(orderBy: { starttime: ASC }, limit: 1000) {
     id
     eventcoord
     eventname
@@ -18,7 +18,7 @@ query ListEvents @auth(level: PUBLIC) {
 
 # List all users
 query ListUsers @auth(level: USER) {
-  userLists {
+  userLists(limit: 1000) {
     id
     firstname
     lastname
@@ -103,7 +103,7 @@ query ValidateUserCredentials($email: String!, $password: String!)
 }
 
 query ListRegistrations @auth(level: USER) {
-  registrations {
+  registrations(limit: 1000) {
     eventId
     userId
     notif
@@ -224,7 +224,7 @@ mutation UpdateEvent(
 }
 
 query ListSafeUsers @auth(level: USER, insecureReason: "Students need to see each other's first and last names for social proof avatars.") {
-  userLists {
+  userLists(limit: 1000) {
     id
     firstname
     lastname
@@ -232,7 +232,7 @@ query ListSafeUsers @auth(level: USER, insecureReason: "Students need to see eac
 }
 
 query ListAllRegistrations @auth(level: USER, insecureReason: "Students need to see who is registered for events to generate the UI attendee list.") {
-  registrations {
+  registrations(limit: 1000) {
     eventId
     userId
   }
