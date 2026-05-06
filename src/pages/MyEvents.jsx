@@ -50,7 +50,6 @@ export default function MyEvents() {
       const now = new Date();
       const eventDate = new Date(event.starttime);
       if (selectedStatus === "upcoming") matchesStatus = eventDate >= now;
-      if (selectedStatus === "past") matchesStatus = eventDate < now;
 
       return matchesSearch && matchesStatus;
     });
@@ -170,7 +169,6 @@ export default function MyEvents() {
                       <select className="ua-filter-select" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} >
                         <option value="all">All events</option>
                         <option value="upcoming">Upcoming</option>
-                        <option value="past">Past</option>
                       </select>
                     </div>
 

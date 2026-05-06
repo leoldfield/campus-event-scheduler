@@ -229,8 +229,7 @@ export default function Events() {
 
       const matchesStatus =
         selectedStatus === "all" ||
-        (selectedStatus === "upcoming" && eventStart >= now) ||
-        (selectedStatus === "past" && eventStart < now);
+        (selectedStatus === "upcoming" && eventStart >= now);
 
       const matchesCategory =
         selectedCategory === "all" ||
@@ -351,7 +350,6 @@ export default function Events() {
                 >
                   <option value="all">All Events</option>
                   <option value="upcoming">Upcoming</option>
-                  <option value="past">Past</option>
                 </select>
 
                 <label>Location</label>
@@ -464,18 +462,35 @@ export default function Events() {
         </div>
       </section>
 
-      {/* JOIN PLACEHOLDER */}
+      {/* JOIN / WELCOME BACK SECTION */}
       <section className="join-section">
         <div className="join-content">
-          <h2>Join the Campus Community</h2>
-          <p>Don't miss out on what's happening around campus. Create an account today to start registering for events, syncing with your calendar, and connecting with peers!</p>
+          {/* Check if the user is logged in using auth (make sure auth is imported at the top!) */}
+          {!auth.currentUser ? (
+            <>
+              <h2>Join the Campus Community</h2>
+              <p>Don't miss out on what's happening around campus. Create an account today to start registering for events, syncing with your calendar, and connecting with peers!</p>
 
-          <button
-            className="cta-button"
-            onClick={() => navigate("/register")}
-          >
-            Sign Up Now
-          </button>
+              <button
+                className="cta-button"
+                onClick={() => navigate("/register")}
+              >
+                Sign Up Now
+              </button>
+            </>
+          ) : (
+            <>
+              <h2>Ready for your next event?</h2>
+              <p>You are all set to discover and track your favorite campus activities. Head over to your dashboard to manage your upcoming schedule!</p>
+
+              <button
+                className="cta-button"
+                onClick={() => navigate("/MyEvents")}
+              >
+                View My Events
+              </button>
+            </>
+          )}
         </div>
       </section>
 
